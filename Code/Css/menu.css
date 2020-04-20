@@ -1,0 +1,44 @@
+menu button
+{
+    border: none;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    background: none;
+    position: absolute;
+    
+   
+}
+body{
+
+    background-image: url("../../resources/Sprites/Main Menu/background menu.png");
+    background-repeat: no-repeat;
+}
+
+#jogar{
+    border: none;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    background: none;
+    position: absolute;
+    left: 340px;
+    top:368px;
+}
+
+#opcoes{
+    
+    left: 320px;
+    top: 434px;
+}
+
+#ajuda{
+
+    left: 290px;
+    top: 485px;
+}
+
+#creditos{
+    left: 270px;
+    top: 534px;
+}
