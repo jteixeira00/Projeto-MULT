@@ -11,10 +11,14 @@ const htmldir = "HTML/";
 function main(){
     var startPage = 1;
     showPage(startPage);
-    //window.addEventListener("message", messageHandler);
+    
+    window.addEventListener("message", messageHandler);
+    console.log("1");
     var frm = document.getElementsByTagName("iframe")[0];
-    //frm.addEventListener("load", iframeHandler);
-
+    console.log("2");
+    frm.addEventListener("load", iframeHandler);
+    console.log("3");
+    
 }
 
 
@@ -27,19 +31,32 @@ function showPage(pageNum){
     }
 
     if (pageNum == 2){
-        frm.src = htmldir+"jogar.html"
+        frm.src = "../index.html"
 
     }
     if(pageNum == 3){
-        frm.src = "opcoes.html"
+        frm.src = htmldir+"opcoes.html"
 
     }
     if (pageNum == 4){
-        frm.src = "ajuda.html"
+        frm.src = htmldir+"ajuda.html"
     }
     if(pageNum == 5){
-        frm.src = "creditos.html"
+        frm.src = htmldir+"creditos.html"
     }
 
 
+}
+
+function messageHandler(ev){
+    if(ev.data== "jogar"){
+        showPage(2);
+    }
+}
+
+function iframeHandler(ev){
+
+    var frm = ev.target;
+    console.log("batata");
+	frm.contentWindow.postMessage("start", "*");
 }
