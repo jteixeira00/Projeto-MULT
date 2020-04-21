@@ -46,6 +46,7 @@ function preload(){
     this.load.spritesheet('padeira_weapon_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_jump_L.png', { frameWidth: 136, frameHeight: 140 });
     this.load.spritesheet('padeira_weapon_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_R.png', { frameWidth: 124, frameHeight: 140 });
     this.load.spritesheet('padeira_weapon_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_L.png', { frameWidth: 124, frameHeight: 140 });
+    this.load.spritesheet('padeira_attack2', 'Resources/Sprite Sheets/Padeira/Padeira_attack2.png', { frameWidth: 156, frameHeight: 140 });
 }
 
 
@@ -66,7 +67,7 @@ function create(){
         key: 'left',
         frames: this.anims.generateFrameNumbers('padeira_walk_L', { start: 0, end: 5 }),
         frameRate: 15,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
@@ -80,20 +81,20 @@ function create(){
         key: 'right',
         frames: this.anims.generateFrameNumbers('padeira_walk_R', { start: 0, end: 5 }),
         frameRate: 15,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'jump_R',
         frames: this.anims.generateFrameNumbers('padeira_jump_R', { start: 0, end: 3 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     this.anims.create({
         key: 'jump_L',
         frames: this.anims.generateFrameNumbers('padeira_jump_L', { start: 3, end: 0 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
@@ -101,14 +102,14 @@ function create(){
         key: 'fall_R',
         frames: this.anims.generateFrameNumbers('padeira_fall_R', { start: 0, end: 1 }),
         frameRate: 20,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'fall_L',
         frames: this.anims.generateFrameNumbers('padeira_fall_L', { start: 1, end: 0 }),
         frameRate: 20,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
@@ -150,34 +151,34 @@ function create(){
         key: 'w_idle',
         frames: this.anims.generateFrameNumbers('padeira_weapon_idle', { start: 0, end: 3 }),
         frameRate: 7,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'w_right',
         frames: this.anims.generateFrameNumbers('padeira_weapon_walk_R', { start: 0, end: 5 }),
         frameRate: 15,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'w_left',
         frames: this.anims.generateFrameNumbers('padeira_weapon_walk_L', { start: 0, end: 5 }),
         frameRate: 15,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'w_jump_R',
         frames: this.anims.generateFrameNumbers('padeira_weapon_jump_R', { start: 0, end: 3 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     this.anims.create({
         key: 'w_jump_L',
         frames: this.anims.generateFrameNumbers('padeira_weapon_jump_L', { start: 3, end: 0 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
@@ -185,14 +186,21 @@ function create(){
         key: 'w_fall_R',
         frames: this.anims.generateFrameNumbers('padeira_weapon_fall_R', { start: 0, end: 1 }),
         frameRate: 20,
-        repeat: -1
+        repeat: 0
     });
 
     this.anims.create({
         key: 'w_fall_L',
         frames: this.anims.generateFrameNumbers('padeira_weapon_fall_L', { start: 0, end: 1 }),
         frameRate: 20,
-        repeat: -1
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack2',
+        frames: this.anims.generateFrameNumbers('padeira_attack2', { start: 0, end: 8 }),
+        frameRate: 30,
+        repeat: 0
     });
 
     cursors = this.input.keyboard.createCursorKeys();
@@ -204,26 +212,63 @@ function create(){
 var atual // true = direita, false = esquerda
 var pico = false
 var weapon = false
-
+var attack = false
 
 function toggleWeapon(){
-
     if (weapon)
         weapon = false;
     else
         weapon = true;
 }
 
+
+function toggleAttack(){
+	attack = false
+}
+
 var start_time = performance.now();
 
 function update (){
+
 
     var time = performance.now() - start_time;
 
     if (gameOver)
         return;
-    
-    if (cursors.left.isDown){
+
+    if (Phaser.Input.Keyboard.JustDown(spacebar) && player.body.touching.down){
+    	
+
+         if (weapon){
+        	attack = true;               
+            if (player.body.velocity.x >= 0){
+                player.anims.play('w_in_R', true);
+            	player.once('animationcomplete', () => {attack = false;weapon = false;}) 
+            }
+            else if (player.body.velocity.x < 0){
+                player.anims.play('w_in_L', true);
+            	player.once('animationcomplete', () => {attack = false;weapon = false;})
+            }
+        }
+        
+        else if (!weapon){    
+       		attack = true;        
+            if (player.body.velocity.x >= 0){
+                player.anims.play('w_attack2', true);
+                player.once('animationcomplete', () => {attack = false;weapon = true;})
+            }
+            else if (player.body.velocity.x < 0){
+                player.anims.play('w_attack2', true);
+                player.once('animationcomplete', () => {attack = false;weapon = true;})
+            }
+                    
+        }
+        cursors = this.input.keyboard.createCursorKeys();
+        
+        start_time = performance.now()
+    }
+
+    if (cursors.left.isDown && !attack){
         player.setVelocityX(-350);
 
         if (player.body.touching.down)
@@ -235,7 +280,7 @@ function update (){
         start_time = performance.now()
     }
 
-    else if (cursors.right.isDown){
+    else if (cursors.right.isDown && !attack){
         player.setVelocityX(350);
 
         if (player.body.touching.down)
@@ -249,10 +294,13 @@ function update (){
 
     else if (player.body.touching.down){
         player.setVelocityX(0);
-        if (!weapon)
+        if (!weapon && !attack){
             player.anims.play('idle', true);
-        else
+        }
+        else if (weapon && !attack){
+        	player.setVelocityX(0);
             player.anims.play('w_idle', true);
+        }
         pico = false;
         start_time = performance.now()
     }
@@ -322,26 +370,6 @@ function update (){
         start_time = performance.now()
     }
 
-    if (Phaser.Input.Keyboard.JustDown(spacebar)){
-        if (weapon){
-            toggleWeapon();
-            
-            if (player.body.velocity.x >= 0)
-                player.anims.play('w_in_R', true);
-            else
-                player.anims.play('w_in_L', true);
-        }
-        
-        else if (!weapon){
-            toggleWeapon();
-            
-            if (player.body.velocity.x >= 0)
-                player.anims.play('w_out_R', false);
-            else
-                player.anims.play('w_out_L', false);
-        }
-        
-        console.log(weapon, player.body.velocity.x);
-        start_time = performance.now()
-    }   
+   
 }
+
