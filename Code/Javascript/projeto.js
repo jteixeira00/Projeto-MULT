@@ -9,7 +9,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 20 },
+            gravity: { y: 10 },
             debug: false
         }
     },
@@ -33,6 +33,7 @@ function preload(){
     this.load.spritesheet('padeira_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_jump_L.png', { frameWidth: 72, frameHeight: 108 });
     this.load.spritesheet('padeira_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_fall_R.png', { frameWidth: 72, frameHeight: 108 });
     this.load.spritesheet('padeira_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_fall_L.png', { frameWidth: 72, frameHeight: 108 });
+    this.load.spritesheet('padeira_fall_P', 'Resources/Sprite Sheets/Padeira/Padeira_fall_P.png', { frameWidth: 68, frameHeight: 104 });
 }
 
 
@@ -98,12 +99,20 @@ function create(){
         repeat: -1
     });
 
+    this.anims.create({
+        key: 'fall_P',
+        frames: this.anims.generateFrameNumbers('padeira_fall_P', { start: 0, end: 0 }),
+        frameRate: 40,
+        repeat: 0
+    });
+
     cursors = this.input.keyboard.createCursorKeys();
     
     this.physics.add.collider(player, platforms);
 }
 
 var atual // true = direita, false = esquerda
+var pico = false
 
 function update (){
 
@@ -128,11 +137,12 @@ function update (){
     else if (player.body.touching.down){
         player.setVelocityX(0);
         player.anims.play('idle', true);
+        pico = false;
     }
     
     if (cursors.up.isDown && player.body.touching.down){
 
-        player.setVelocityY(-300);
+        player.setVelocityY(-600);
         
         if (player.body.velocity.x >= 0){
             player.anims.play('jump_R', true);
@@ -150,6 +160,10 @@ function update (){
         if (player.body.velocity.y >= 0){
 
             if (player.body.velocity.x >= 0){
+            	if(pico == false){
+            		player.anims.play('fall_P',false);
+            		pico = true;
+            	}
                 player.anims.play('fall_R', true);
             }
 
