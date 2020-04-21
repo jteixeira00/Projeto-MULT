@@ -1,34 +1,51 @@
+"use strict";
 
+var masterW;
+
+(function(){
+    window.addEventListener("load", main);
+}());
 
 function main(){
-    var myWindow = window.open("html/main menu.html", "mainWindow", "width = " + 1200 + ", height = " + 800);
 
-    document.getElementById("jogar").onclick = function(){Jogar()};
-    document.getElementById("opcoes").onclick = function(){Opcoes()};
-    document.getElementById("ajuda").onclick = function(){Ajuda()};
-    document.getElementById("creditos").onclick = function(){Creditos()};
+    var jogarBtn = document.getElementById("jogar");
+    var opcoesBtn = document.getElementById("opcoes");
+    var ajudaBtn = document.getElementById("ajuda");
+    var creditsoBtn = document.getElementById("creditos");
 
-    
+    window.addEventListener("message", messageHandler);
+    jogarBtn.addEventListener("click", Jogar);
+    opcoesBtn.addEventListener("click", Opcoes);
+    ajudaBtn.addEventListener("click", Ajuda);
+    creditsoBtn.addEventListener("click", Creditos);
 
+}
 
+function messageHandler(ev){
+    console.log("recebi");
+    masterW = ev.source;
 }
 
 function Jogar(){
     //redirecionar para o jogo
-
+    masterW.postMessage("jogar","*");
 }
 
 function Opcoes(){
     //redirecionar para as opçoes
+    masterW.postMessage("opcoes","*");
         
 }
 
 function Ajuda(){
     //redirecionar para as instruçoes
+    masterW.postMessage("ajuda","*");
 
 }
 
 function Creditos(){
+    masterW.postMessage("creditos","*");
+    
     //roll the credits
 
 
