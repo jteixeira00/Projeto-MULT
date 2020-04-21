@@ -136,14 +136,14 @@ function create(){
     this.anims.create({
         key: 'w_in_R',
         frames: this.anims.generateFrameNumbers('padeira_weapon_out_R', { start: 14, end: 0 }),
-        frameRate: 40,
+        frameRate: 50,
         repeat: 0
     });
 
     this.anims.create({
         key: 'w_in_L',
         frames: this.anims.generateFrameNumbers('padeira_weapon_out_L', { start: 0, end: 14 }),
-        frameRate: 40,
+        frameRate: 50,
         repeat: 0
     });
 
@@ -240,14 +240,15 @@ function update (){
     	
 
          if (weapon){
+         	//inserir animação de ataque aqui plus attack_2 olhar para a esquerda
         	attack = true;               
             if (player.body.velocity.x >= 0){
                 player.anims.play('w_in_R', true);
-            	player.once('animationcomplete', () => {attack = false;weapon = false;}) 
+            	player.once('animationcomplete', () => {attack = false;weapon = true;}) 
             }
             else if (player.body.velocity.x < 0){
                 player.anims.play('w_in_L', true);
-            	player.once('animationcomplete', () => {attack = false;weapon = false;})
+            	player.once('animationcomplete', () => {attack = false;weapon = true;})
             }
         }
         
