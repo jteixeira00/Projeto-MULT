@@ -1,5 +1,7 @@
 menu button
 {
+    outline : none;
+    -moz-outline : none;
     border: none;
     cursor: pointer;
     margin: 0px;
@@ -16,12 +18,6 @@ body{
 }
 
 #jogar{
-    border: none;
-    cursor: pointer;
-    margin: 0px;
-    padding: 0px;
-    background: none;
-    position: absolute;
     left: 340px;
     top:368px;
 }
