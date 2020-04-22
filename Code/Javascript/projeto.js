@@ -28,25 +28,34 @@ function preload(){
     this.load.image('sky', 'Resources/Sprites/Temp Assets/bck.png');
     this.load.image('ground', 'Resources/Sprites/Temp Assets/platform.png');
 
-    this.load.spritesheet('padeira_idle', 'Resources/Sprite Sheets/Padeira/Padeira_idle.png', { frameWidth: 72, frameHeight: 140 });
-    this.load.spritesheet('padeira_walk_R', 'Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 140 });
-    this.load.spritesheet('padeira_walk_L', 'Resources/Sprite Sheets/Padeira/Padeira_walk_L.png', { frameWidth: 72, frameHeight: 140 });
-    this.load.spritesheet('padeira_jump_R', 'Resources/Sprite Sheets/Padeira/Padeira_jump_R.png', { frameWidth: 64, frameHeight: 140 });
-    this.load.spritesheet('padeira_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_jump_L.png', { frameWidth: 64, frameHeight: 140 });
-    this.load.spritesheet('padeira_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_fall_R.png', { frameWidth: 68, frameHeight: 140 });
-    this.load.spritesheet('padeira_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_fall_L.png', { frameWidth: 68, frameHeight: 140 });
-    this.load.spritesheet('padeira_fall_P', 'Resources/Sprite Sheets/Padeira/Padeira_fall_P.png', { frameWidth: 68, frameHeight: 104 });
+    this.load.spritesheet('padeira_idle_L', 'Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('padeira_idle_R', 'Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('padeira_walk_R', 'Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('padeira_walk_L', 'Resources/Sprite Sheets/Padeira/Padeira_walk_L.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('padeira_jump_R', 'Resources/Sprite Sheets/Padeira/Padeira_jump_R.png', { frameWidth: 64, frameHeight: 168 });
+    this.load.spritesheet('padeira_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_jump_L.png', { frameWidth: 64, frameHeight: 168 });
+    this.load.spritesheet('padeira_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_fall_R.png', { frameWidth: 68, frameHeight: 168 });
+    this.load.spritesheet('padeira_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_fall_L.png', { frameWidth: 68, frameHeight: 168 });
+    this.load.spritesheet('padeira_fall_P', 'Resources/Sprite Sheets/Padeira/Padeira_fall_P.png', { frameWidth: 68, frameHeight: 168 });
 
-    this.load.spritesheet('padeira_weapon_out_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_out_R.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_out_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_out_L.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_walk_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_walk_R.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_walk_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_walk_L.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_idle', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_idle.png', { frameWidth: 124, frameHeight: 140 }); 
-    this.load.spritesheet('padeira_weapon_jump_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_jump_R.png', { frameWidth: 136, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_jump_L.png', { frameWidth: 136, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_R.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_weapon_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_L.png', { frameWidth: 124, frameHeight: 140 });
-    this.load.spritesheet('padeira_attack2', 'Resources/Sprite Sheets/Padeira/Padeira_attack2.png', { frameWidth: 156, frameHeight: 140 });
+    this.load.spritesheet('padeira_weapon_in_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_out_R.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_in_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_out_L.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_walk_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_walk_R.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_walk_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_walk_L.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_idle_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_idle_R.png', { frameWidth: 124, frameHeight: 168 }); 
+    this.load.spritesheet('padeira_weapon_idle_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_idle_L.png', { frameWidth: 124, frameHeight: 168 }); 
+    this.load.spritesheet('padeira_weapon_jump_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_jump_R.png', { frameWidth: 136, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_jump_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_jump_L.png', { frameWidth: 136, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_fall_R', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_R.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_weapon_fall_L', 'Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_L.png', { frameWidth: 124, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_R', 'Resources/Sprite Sheets/Padeira/Padeira_attack1_R.png', { frameWidth: 164, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_L', 'Resources/Sprite Sheets/Padeira/Padeira_attack1_L.png', { frameWidth: 164, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack2_R', 'Resources/Sprite Sheets/Padeira/Padeira_attack2_R.png', { frameWidth: 156, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack2_L', 'Resources/Sprite Sheets/Padeira/Padeira_attack2_L.png', { frameWidth: 156, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack3_R', 'Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack3_L', 'Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack4_R', 'Resources/Sprite Sheets/Padeira/Padeira_attack4_R.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack4_L', 'Resources/Sprite Sheets/Padeira/Padeira_attack4_L.png', { frameWidth: 160, frameHeight: 168 });
 }
 
 
@@ -58,7 +67,7 @@ function create(){
 
     platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
-    player = this.physics.add.sprite(100, 400, 'padeira_idle');
+    player = this.physics.add.sprite(100, 400, 'padeira_idle_R');
     
     player.setBounce(0);
     player.setCollideWorldBounds(true);
@@ -71,8 +80,15 @@ function create(){
     });
 
     this.anims.create({
-        key: 'idle',
-        frames: this.anims.generateFrameNumbers('padeira_idle', { start: 0, end: 3 }),
+        key: 'idle_L',
+        frames: this.anims.generateFrameNumbers('padeira_idle_L', { start: 0, end: 3 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'idle_R',
+        frames: this.anims.generateFrameNumbers('padeira_idle_R', { start: 3, end: 0 }),
         frameRate: 7,
         repeat: 0
     });
@@ -120,36 +136,29 @@ function create(){
     });
 
     this.anims.create({
-        key: 'w_out_R',
-        frames: this.anims.generateFrameNumbers('padeira_weapon_out_R', { start: 0, end: 14 }),
-        frameRate: 40,
-        repeat: 0
-    });
-
-    this.anims.create({
-        key: 'w_out_L',
-        frames: this.anims.generateFrameNumbers('padeira_weapon_out_L', { start: 14, end: 0 }),
-        frameRate: 40,
-        repeat: 0
-    });
-
-    this.anims.create({
         key: 'w_in_R',
-        frames: this.anims.generateFrameNumbers('padeira_weapon_out_R', { start: 14, end: 0 }),
+        frames: this.anims.generateFrameNumbers('padeira_weapon_in_R', { start: 14, end: 0 }),
         frameRate: 50,
         repeat: 0
     });
 
     this.anims.create({
         key: 'w_in_L',
-        frames: this.anims.generateFrameNumbers('padeira_weapon_out_L', { start: 0, end: 14 }),
+        frames: this.anims.generateFrameNumbers('padeira_weapon_in_L', { start: 0, end: 14 }),
         frameRate: 50,
         repeat: 0
     });
 
     this.anims.create({
-        key: 'w_idle',
-        frames: this.anims.generateFrameNumbers('padeira_weapon_idle', { start: 0, end: 3 }),
+        key: 'w_idle_R',
+        frames: this.anims.generateFrameNumbers('padeira_weapon_idle_R', { start: 0, end: 3 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_idle_L',
+        frames: this.anims.generateFrameNumbers('padeira_weapon_idle_L', { start: 3, end: 0 }),
         frameRate: 7,
         repeat: 0
     });
@@ -197,11 +206,61 @@ function create(){
     });
 
     this.anims.create({
-        key: 'w_attack2',
-        frames: this.anims.generateFrameNumbers('padeira_attack2', { start: 0, end: 8 }),
+        key: 'w_attack2_R',
+        frames: this.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 8 }),
         frameRate: 30,
         repeat: 0
     });
+
+    this.anims.create({
+        key: 'w_attack2_L',
+        frames: this.anims.generateFrameNumbers('padeira_attack2_L', { start: 8, end: 0 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack1_R',
+        frames: this.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 7 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack1_L',
+        frames: this.anims.generateFrameNumbers('padeira_attack1_L', { start: 7, end: 0 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack3_R',
+        frames: this.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack3_L',
+        frames: this.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack4_R',
+        frames: this.anims.generateFrameNumbers('padeira_attack4_R', { start: 0, end: 11 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'w_attack4_L',
+        frames: this.anims.generateFrameNumbers('padeira_attack4_R', { start: 11, end: 0 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
 
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -213,6 +272,8 @@ var atual // true = direita, false = esquerda
 var pico = false
 var weapon = false
 var attack = false
+var counter = 0
+var wait = false;
 
 function toggleWeapon(){
     if (weapon)
@@ -240,14 +301,30 @@ function update (){
     	
 
          if (weapon){
-         	//inserir animação de ataque aqui plus attack_2 olhar para a esquerda
-        	attack = true;               
+         	//animação de ataque também serem para a esquerda usando a direção na classe
+        	               
             if (player.body.velocity.x >= 0){
-                player.anims.play('w_in_R', true);
-            	player.once('animationcomplete', () => {attack = false;weapon = true;}) 
+            	if (counter == 0 && !attack){
+            		attack = true;
+            	    player.anims.play('w_attack1_R', true);
+            	    player.once('animationcomplete', () => {attack = false;weapon = true;})
+            	    counter += 1; 
+            	}
+            	else if (counter == 1 && !attack){
+            		attack = true;
+            	    player.anims.play('w_attack3_R', true);
+            	    player.once('animationcomplete', () => {attack = false;weapon = true;})
+            		counter+=1;
+            	}
+            	else if (counter == 2 && !attack){
+            		attack = true;
+            	    player.anims.play('w_attack4_R', true);
+            	    player.once('animationcomplete', () => {attack = false;weapon = true;})
+            		counter = 0;
+            	}
             }
             else if (player.body.velocity.x < 0){
-                player.anims.play('w_in_L', true);
+                player.anims.play('w_attack4_R', true);
             	player.once('animationcomplete', () => {attack = false;weapon = true;})
             }
         }
@@ -255,11 +332,11 @@ function update (){
         else if (!weapon){    
        		attack = true;        
             if (player.body.velocity.x >= 0){
-                player.anims.play('w_attack2', true);
+                player.anims.play('w_attack2_R', true);
                 player.once('animationcomplete', () => {attack = false;weapon = true;})
             }
             else if (player.body.velocity.x < 0){
-                player.anims.play('w_attack2', true);
+                player.anims.play('w_attack2_L', true);
                 player.once('animationcomplete', () => {attack = false;weapon = true;})
             }
                     
@@ -294,13 +371,12 @@ function update (){
     }
 
     else if (player.body.touching.down){
-        player.setVelocityX(0);
+    	player.setVelocityX(0)
         if (!weapon && !attack){
-            player.anims.play('idle', true);
+        	    player.anims.play('idle_R', true);
         }
         else if (weapon && !attack){
-        	player.setVelocityX(0);
-            player.anims.play('w_idle', true);
+            player.anims.play('w_idle_R', true);
         }
         pico = false;
         start_time = performance.now()
