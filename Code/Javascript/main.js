@@ -13,11 +13,8 @@ function main(){
     showPage(startPage);
     
     window.addEventListener("message", messageHandler);
-    console.log("1");
     var frm = document.getElementsByTagName("iframe")[0];
-    console.log("2");
     frm.addEventListener("load", iframeHandler);
-    console.log("3");
     
 }
 
@@ -25,6 +22,7 @@ function main(){
 function showPage(pageNum){
 
     var frm = document.getElementsByTagName("iframe")[0];
+    var dir;
     if (pageNum == 1){
         frm.src = htmldir+"main menu.html"
 
@@ -49,14 +47,28 @@ function showPage(pageNum){
 }
 
 function messageHandler(ev){
+    if(ev.data == "voltar"){
+        showPage(1);
+
+    }
     if(ev.data== "jogar"){
         showPage(2);
+    }
+
+    if(ev.data == "opcoes"){
+        showPage(3);
+    }
+    if(ev.data == "ajuda"){
+        showPage(4);
+    }
+    if(ev.data == "creditos"){
+        
     }
 }
 
 function iframeHandler(ev){
 
     var frm = ev.target;
-    console.log("batata");
+    
 	frm.contentWindow.postMessage("start", "*");
 }

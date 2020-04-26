@@ -22,8 +22,11 @@ function main(){
 }
 
 function messageHandler(ev){
-    console.log("recebi");
     masterW = ev.source;
+    if(ev.data == "voltar"){
+        masterW.postMessage("voltar", "*");
+    }
+
 }
 
 function Jogar(){
