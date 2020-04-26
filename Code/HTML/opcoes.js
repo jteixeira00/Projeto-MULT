@@ -2,7 +2,7 @@
 var volumeFrame = 14;
 var volume; 
 var config = {
-    type: Phaser.canvas,
+    type: Phaser.CANVAS,
     width: 1200,
     height: 800,
     scene: {

@@ -12,7 +12,8 @@ menu button
    
 }
 body{
-
+    margin: auto;
+    padding: 0;
     background-image: url("../../resources/Sprites/Main Menu/background menu.png");
     background-repeat: no-repeat;
 }
@@ -37,4 +38,9 @@ body{
 #creditos{
     left: 270px;
     top: 534px;
+}
+
+head {
+    padding: 0;
+    margin: auto;
 }
