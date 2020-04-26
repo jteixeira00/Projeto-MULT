@@ -14,7 +14,7 @@ var config = {
 var opcoes = new Phaser.Game(config);
 
 function preload(){
-    this.load.image("background","../../Resources/Sprite/Opções/backgrund.png");
+    this.load.image("background","./../../Resources/Sprite/Opções/backgrund.png");
     this.load.image("gram+","../../Resources/Sprite/Opções/gramof +.png" );
     this.load.image("gram-","../../Resources/Sprite/Opções/gramof -.png" );
     this.load.image("banner","../../Resources/Sprite/Opções/banner som.png"  );
