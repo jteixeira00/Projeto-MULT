@@ -1,7 +1,7 @@
 "use strict";
 
 const totPages = 5;
-const htmldir = "HTML/";
+const htmldir = "Code/HTML/";
 
 (function(){
     window.addEventListener("load", main);
@@ -29,7 +29,7 @@ function showPage(pageNum){
     }
 
     if (pageNum == 2){
-        frm.src = "../index.html"
+        frm.src = htmldir+"jogo.html"
 
     }
     if(pageNum == 3){

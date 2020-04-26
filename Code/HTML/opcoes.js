@@ -15,7 +15,7 @@ var config = {
 var opcoes = new Phaser.Game(config);
 
 function preload(){
-    this.load.image("background","../../res/backgrund.png");
+    this.load.image("background","res/backgrund.png");
     this.load.image("gram+","res/gramof +.png" );
     this.load.image("gram-","res/gramof -.png" );
     this.load.image("banner","res/banner som.png"  );
