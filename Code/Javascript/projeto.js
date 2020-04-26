@@ -9,8 +9,8 @@ var spacebar;
 
 var config = {
     type: Phaser.CANVAS,
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     physics: {
         default: 'arcade',
         arcade: {
@@ -31,9 +31,9 @@ var game = new Phaser.Game(config);
 
 function preload(){
     
-    this.load.image('sky', 'Resources/Sprites/Temp Assets/bck.png');
+    this.load.image('sky', 'Resources/Sprites/Temp Assets/bck.png'); 
     this.load.image('ground', 'Resources/Sprites/Temp Assets/platform.png');
-
+    
     this.load.spritesheet('padeira_idle_L', 'Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', 'Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', 'Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -261,12 +261,20 @@ function loadAnim(scene){
 function create(){
 
     this.add.image(400, 300, 'sky');
+    this.physics.world.setBounds(0, 0, 2000, 800);
 
     platforms = this.physics.add.staticGroup();
-
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+    
+    platforms.create(200, 768, 'ground').setScale(1).refreshBody();
+    platforms.create(600, 775, 'ground').setScale(1).refreshBody();
+    platforms.create(1000, 780, 'ground').setScale(1).refreshBody();
+    platforms.create(1400, 785, 'ground').setScale(1).refreshBody();
+    platforms.create(1800, 790, 'ground').setScale(1).refreshBody();
 
     padeira = new Padeira(100, 50, this, 100, 400, 'padeira_idle_R');
+    
+    this.cameras.main.setBounds(0, 0, 2000, 800);
+    this.cameras.main.startFollow(padeira);
 
     loadAnim(this);
 
