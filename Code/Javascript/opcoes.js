@@ -1,72 +1,111 @@
 
 var volumeFrame = 14;
-
+var volume; 
+var masterW;
 var config = {
     type: Phaser.canvas,
     width: 1200,
     height: 800,
     scene: {
         preload: preload,
-        create: create
+        create: create,
+        update: update
     }
 };
 
+(function(){
+    window.addEventListener("load", create);
+}());
+
 var opcoes = new Phaser.Game(config);
 
+
+window.addEventListener("message", messageHandler);
+
+
 function preload(){
-    this.load.image("background","./../../Resources/Sprite/Opções/backgrund.png");
-    this.load.image("gram+","../../Resources/Sprite/Opções/gramof +.png" );
-    this.load.image("gram-","../../Resources/Sprite/Opções/gramof -.png" );
-    this.load.image("banner","../../Resources/Sprite/Opções/banner som.png"  );
-    this.load.spritesheet("soundbar", "../../Resources/Sprite Sheets/Opções/volume-sheet.png", {frameWidth: 350, frameHeight: 120});
+    this.load.image("background","../Javascript/res/backgrund.png");
+    this.load.image("gram+","../Javascript/res/gramof +.png" );
+    this.load.image("gram-","../Javascript/res/gramof -.png" );
+    this.load.image("banner","../Javascript/res/banner som.png"  );
+    this.load.image("voltar", "../Javascript/res/voltar.png" );
+    this.load.spritesheet("soundbar", "res/volume-sheet.png", {frameWidth: 294, frameHeight: 72});
 }
 
 
 
 function create(){
     
-    this.add.image(0,0,"background");
-    var gramMais = this.add.image(400, 800, "gram+");
+    this.add.image(600,400,"background");
+    var gramMais = this.add.image(880, 335, "gram+");
+    volume = this.add.sprite(600,400, "soundbar");
     gramMais.setInteractive();
-    gramMais.on("pointerdown", () => this.updateVolume(1));
-    var gramMenos = this.add.image(400, 400, "gram-");
+    gramMais.on("pointerdown", () => updateVolume(1));
+    var gramMenos = this.add.image(350, 380, "gram-");
     gramMenos.setInteractive();
-    gramMenos.on("pointerdown", () => this.updateVolume(-1));
-    this.add.image(200, 600, "banner");
+    gramMenos.on("pointerdown", () => updateVolume(-1));
+    this.add.image(600, 130, "banner");
 
-    this.anim.create({
+    var voltarBtn = this.add.image(50, 700, "voltar");
+    voltarBtn.setInteractive();
+    voltarBtn.on("pointerdown",()=>Voltar());
+
+    this.anims.create({
         key: "volume",
-        frames: this.anims.generateFrameNumbers("volume", {start:1, end: 14}),
-        frameRate:10,
+        frames: this.anims.generateFrameNumbers("soundbar", {start:0, end: 14}),
+        frameRate:1,
         repeat:-1
 
 
     });
+    volume.anims.play("volume", true);
+    //volume.frame = 10;
+    volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
-    volume.anims.pause(volume.anims.currentAnim.frame[14]);
-
-
+    
 }
-
 function updateVolume(change){
     
     if (change==1){
         if(volumeFrame<14){
+            console.log("volume +");
             volumeFrame = volumeFrame+1;
-            volume.anims.pause(volume.anims.currentAnim.frame[volumeFrame]);
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
         }
         
-        console.log("volume +");
+        
     }
     if(change==-1){
-        if(volumeFrame>1){
+        if(volumeFrame>0){
+            console.log("volume -");
             volumeFrame = volumeFrame-1;
-            volume.anims.pause(volume.anims.currentAnim.frame[volumeFrame]);
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
         }
-        console.log("volume -");
+      
     }
 
 
-} 
+}
+
+function messageHandler(ev){
+    masterW = ev.source;
+
+}
+    
+function Voltar(){
+    console.log("voltar");
+    masterW.postMessage("voltar","*");
+
+
+}
+
+function update(){
+
+    
+
+}
+

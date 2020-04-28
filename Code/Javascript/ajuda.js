@@ -13,9 +13,6 @@ function main(){
     var backBtn = document.getElementById("voltar");
     backBtn.addEventListener("click", Voltar);
 
-
-
-
 }
 
 
