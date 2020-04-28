@@ -252,7 +252,7 @@ function loadAnim(scene){
 
     scene.anims.create({
         key: 'w_attack4_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack4_R', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack4_L', { start: 11, end: 0 }),
         frameRate: 20,
         repeat: 0
     });
@@ -285,10 +285,16 @@ function create(){
 }
 
 
-var pico = false;
 
+function attackC(){
+	if (padeira.animationCounter == 2)
+		padeira.animationCounter = 0
+	else
+		padeira.animationCounter += 1
+}
 
 function update (){
+
 
     if (gameOver)
         return;
@@ -299,40 +305,55 @@ function update (){
          if (padeira.weapon){
          	//animação de ataque também serem para a esquerda usando a direção na classe
         	               
-            if (padeira.body.velocity.x >= 0){
-                
+            if (padeira.facing == true){                
             	if (padeira.animationCounter == 0 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack1_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            	    padeira.animationCounter += 1; 
+            	    attackC();
             	}
             	else if (padeira.animationCounter == 1 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack3_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		padeira.animationCounter += 1;
+            		attackC();
             	}
             	else if (padeira.animationCounter == 2 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack4_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		padeira.animationCounter = 0;
+            		attackC();
             	}
             }
-            else if (padeira.body.velocity.x < 0){
-                padeira.anims.play('w_attack4_R', true);
-            	padeira.once('animationcomplete', () => {padeira.attacking = false;})
+            else if (padeira.facing == false){
+            	if (padeira.animationCounter == 0 && !padeira.attacking){
+            		padeira.attacking = true;
+            	    padeira.anims.play('w_attack1_L', true);
+            	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
+            	    attackC(); 
+            	}
+            	else if (padeira.animationCounter == 1 && !padeira.attacking){
+            		padeira.attacking = true;
+            	    padeira.anims.play('w_attack3_L', true);
+            	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
+            		attackC();
+            	}
+            	else if (padeira.animationCounter == 2 && !padeira.attacking){
+            		padeira.attacking = true;
+            	    padeira.anims.play('w_attack4_L', true);
+            	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
+            		attackC();
+            	}
             }
         }
         
         else if (!padeira.weapon){    
        		padeira.attacking = true;        
-            if (padeira.body.velocity.x >= 0){
+            if (padeira.facing == true){
                 padeira.anims.play('w_attack2_R', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
-            else if (padeira.body.velocity.x < 0){
+            else{
                 padeira.anims.play('w_attack2_L', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
@@ -342,7 +363,7 @@ function update (){
 
     if (cursors.left.isDown && !padeira.attacking){
         padeira.body.setVelocityX(-350);
-
+        padeira.facing = false
         if (padeira.body.touching.down)
             if (!padeira.weapon)
                 padeira.anims.play('left', true);
@@ -353,7 +374,7 @@ function update (){
 
     else if (cursors.right.isDown && !padeira.attacking){
         padeira.body.setVelocityX(350);
-
+        padeira.facing = true
         if (padeira.body.touching.down)
             if (!padeira.weapon)
                 padeira.anims.play('right', true);
@@ -365,44 +386,43 @@ function update (){
     else if (padeira.body.touching.down){
     	padeira.body.setVelocityX(0)
         if (!padeira.weapon && !padeira.attacking){
-        	    padeira.anims.play('idle_R', true);
+        	if(padeira.facing == true)
+        	  	padeira.anims.play('idle_R', true);
+        	else
+        		padeira.anims.play('idle_L', true);
         }
         else if (padeira.weapon && !padeira.attacking){
-            padeira.anims.play('w_idle_R', true);
+        	if(padeira.facing == true)
+        	  	padeira.anims.play('w_idle_R', true);
+        	else
+        		padeira.anims.play('w_idle_L', true);
         }
-        pico = false;
     }
     
     if (cursors.up.isDown && padeira.body.touching.down){
 
         padeira.body.setVelocityY(-650);
-        
-        if (padeira.body.velocity.x >= 0){
-            if (!padeira.weapon)
+        if (padeira.facing == true){
+            if (!padeira.weapon){
                 padeira.anims.play('jump_R', true);
+            }
             else
                 padeira.anims.play('w_jump_R', true);
-            padeira.facing = true;
         }
-        
+
         else{
-            if (!padeira.weapon)
+            if (!padeira.weapon){
                 padeira.anims.play('jump_L', true);
+            }
             else
                 padeira.anims.play('w_jump_L', true);
-            padeira.facing = false;
         }
     }
     
     else if (!padeira.body.touching.down){
 
         if (padeira.body.velocity.y >= 0){
-
-            if (padeira.body.velocity.x >= 0){
-            	if (pico == false && padeira.weapon){
-            		padeira.anims.play('fall_P',false);
-            		pico = true;
-                }
+            if (padeira.facing == true){
                 if (!padeira.weapon)
                     padeira.anims.play('fall_R', true);
                 else
@@ -414,25 +434,6 @@ function update (){
                     padeira.anims.play('fall_L', true);
                 else
                     padeira.anims.play('w_fall_L', true);
-        }
-
-        else{
-
-            if (!padeira.facing && padeira.body.velocity.x >= 0){
-                if (!padeira.weapon)
-                    padeira.anims.play('jump_R', false);
-                else
-                    padeira.anims.play('w_jump_R', true);
-                padeira.facing = true;
-            }
-
-            else if (padeira.facing && padeira.body.velocity.x < 0){
-                if (!padeira.weapon)
-                    padeira.anims.play('jump_L', false);
-                else
-                    padeira.anims.play('w_jump_L', true);
-                padeira.facing = false;
-            }
         }
     }  
 }
