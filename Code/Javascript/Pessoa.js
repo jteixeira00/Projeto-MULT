@@ -40,6 +40,13 @@ class Padeira extends Pessoa{
         else
             target = true;
     }
+
+    updateAnimationCounter(){
+        if (padeira.animationCounter == 2)
+		    padeira.animationCounter = 0
+        else
+            padeira.animationCounter += 1
+    }
 }
 
 

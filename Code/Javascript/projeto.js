@@ -258,6 +258,7 @@ function loadAnim(scene){
     });
 }
 
+
 function create(){
 
     this.add.image(400, 300, 'sky');
@@ -285,16 +286,7 @@ function create(){
 }
 
 
-
-function attackC(){
-	if (padeira.animationCounter == 2)
-		padeira.animationCounter = 0
-	else
-		padeira.animationCounter += 1
-}
-
 function update (){
-
 
     if (gameOver)
         return;
@@ -310,19 +302,19 @@ function update (){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack1_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            	    attackC();
+            	    padeira.updateAnimationCounter();
             	}
             	else if (padeira.animationCounter == 1 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack3_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		attackC();
+            		padeira.updateAnimationCounter();
             	}
             	else if (padeira.animationCounter == 2 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack4_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		attackC();
+            		padeira.updateAnimationCounter();
             	}
             }
             else if (padeira.facing == false){
@@ -330,19 +322,19 @@ function update (){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack1_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            	    attackC(); 
+            	    padeira.updateAnimationCounter(); 
             	}
             	else if (padeira.animationCounter == 1 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack3_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		attackC();
+            		padeira.updateAnimationCounter();
             	}
             	else if (padeira.animationCounter == 2 && !padeira.attacking){
             		padeira.attacking = true;
             	    padeira.anims.play('w_attack4_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
-            		attackC();
+            		padeira.updateAnimationCounter();
             	}
             }
         }
