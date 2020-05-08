@@ -6,6 +6,8 @@ var gameOver = false;
 var padeira;
 var cursors; 
 var spacebar;
+var retangulo;
+var retangul2;
 
 var config = {
     type: Phaser.CANVAS,
@@ -15,7 +17,8 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
+
         }
     },
     scene: {
@@ -272,8 +275,16 @@ function create(){
     platforms.create(1400, 785, 'ground').setScale(1).refreshBody();
     platforms.create(1800, 790, 'ground').setScale(1).refreshBody();
 
-    padeira = new Padeira(100, 50, this, 100, 400, 'padeira_idle_R');
-    
+    padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
+    padeira.body.setSize(72, 104, true);
+    padeira.body.offset.y = 64;
+
+    retangulo = this.add.rectangle(0, 40, 600, 600, 0x6666ff, 0x0);
+    this.physics.world.enableBody(retangulo, 0);
+
+    retangul2 = this.add.rectangle(500, 40, 150, 150, 0x6666ff);
+    this.physics.world.enableBody(retangul2, 0);
+
     this.cameras.main.setBounds(0, 0, 2000, 800);
     this.cameras.main.startFollow(padeira);
 
@@ -283,11 +294,12 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.physics.add.collider(padeira, platforms);
+    this.physics.add.collider(retangul2, platforms);
 }
 
 
 function update (){
-
+    
     if (gameOver)
         return;
 
@@ -296,7 +308,9 @@ function update (){
 
          if (padeira.weapon){
          	//animação de ataque também serem para a esquerda usando a direção na classe
-        	               
+            var elementos = this.physics.overlapRect(padeira.x + 100, padeira.y - 100, 200, 100);
+            console.log(elementos);
+
             if (padeira.facing == true){                
             	if (padeira.animationCounter == 0 && !padeira.attacking){
             		padeira.attacking = true;
@@ -340,7 +354,8 @@ function update (){
         }
         
         else if (!padeira.weapon){    
-       		padeira.attacking = true;        
+            padeira.attacking = true;
+            padeira.body.offset.x = 28;           
             if (padeira.facing == true){
                 padeira.anims.play('w_attack2_R', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
@@ -428,4 +443,6 @@ function update (){
                     padeira.anims.play('w_fall_L', true);
         }
     }  
+
+    this.physics.moveToObject(retangulo, padeira, 100, 10);
 }
