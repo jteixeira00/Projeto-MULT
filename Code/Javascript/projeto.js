@@ -1,9 +1,11 @@
 "use strict";
 
 
+
 var platforms;
 var gameOver = false;
 var padeira;
+var castelhano;
 var cursors; 
 var spacebar;
 var retangulo;
@@ -17,7 +19,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
 
         }
     },
@@ -66,10 +68,23 @@ function preload(){
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack4_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack4_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_L.png', { frameWidth: 160, frameHeight: 168 });
+
+    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano/knight_idle.png', { frameWidth: 42, frameHeight: 42 });
 }
 
 
 function loadAnim(scene){
+
+
+
+	scene.anims.create({
+        key: 'c_idle',
+        frames: scene.anims.generateFrameNumbers('castelhano_idle', { start: 0, end: 3 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
+
 
     scene.anims.create({
         key: 'left',
@@ -276,11 +291,14 @@ function create(){
     platforms.create(1800, 790, 'ground').setScale(1).refreshBody();
 
     padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
+
+    castelhano = new Padeira(100, 50, this, 0, 0, 'c_idle');
+
     padeira.body.setSize(72, 104, true);
     padeira.body.offset.y = 64;
 
-    retangulo = this.add.rectangle(0, 40, 600, 600, 0x6666ff, 0x0);
-    this.physics.world.enableBody(retangulo, 0);
+    retangulo = this.add.rectangle(0, 40, 40, 40, 0x6666ff, 0x0);
+    this.physics.world.enableBody(retangulo, 0);    
 
     retangul2 = this.add.rectangle(500, 40, 150, 150, 0x6666ff);
     this.physics.world.enableBody(retangul2, 0);
@@ -294,11 +312,26 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.physics.add.collider(padeira, platforms);
+
+    this.physics.add.collider(castelhano, platforms);
+
     this.physics.add.collider(retangul2, platforms);
+
+
+
+
 }
 
 
 function update (){
+
+
+
+	if (padeira.facing){
+		this.physics.moveTo(retangulo, padeira.x + 60,padeira.y + 28,10,50);
+	}
+	else
+		this.physics.moveTo(retangulo, padeira.x - 60,padeira.y + 28,10,50);
     
     if (gameOver)
         return;
@@ -307,9 +340,16 @@ function update (){
     	
 
          if (padeira.weapon){
-         	//animação de ataque também serem para a esquerda usando a direção na classe
-            var elementos = this.physics.overlapRect(padeira.x + 100, padeira.y - 100, 200, 100);
-            console.log(elementos);
+            var elementos = this.physics.overlap(retangulo,retangul2);
+            if (elementos){
+            	retangul2.body.setDrag(200,200)
+            	retangul2.body.setVelocityY(-1000);
+            	if(padeira.facing)
+            		retangul2.body.setVelocityX(350);
+            	else
+            		retangul2.body.setVelocityX(-350);
+            	
+            }
 
             if (padeira.facing == true){                
             	if (padeira.animationCounter == 0 && !padeira.attacking){
@@ -444,5 +484,4 @@ function update (){
         }
     }  
 
-    this.physics.moveToObject(retangulo, padeira, 100, 10);
 }
