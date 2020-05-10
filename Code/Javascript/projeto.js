@@ -222,21 +222,21 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack2_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 8 }),
-        frameRate: 30,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack2_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 8, end: 0 }),
-        frameRate: 1,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack1_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 7 }),
-        frameRate: 1,
+        frameRate: 30,
         repeat: 0
     });
 
@@ -250,7 +250,7 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack3_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
-        frameRate: 1,
+        frameRate: 20,
         repeat: 0
     });
 
@@ -271,7 +271,7 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack4_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack4_L', { start: 11, end: 0 }),
-        frameRate: 20,
+        frameRate: 1,
         repeat: 0
     });
 }
@@ -334,26 +334,20 @@ function update (){
 	//!!!!!!!!!!!!!!!!!!!!
 	//Idle -> meter box no meio
 	//Ataque -> mexer a box inversa para cada lado
+	// this.physics.moveTo(retangulo, padeira.x - 60,padeira.y + 28,10,50)
 	//!!!!!!!!!!!!!!!!!!!!!!
+
+	this.physics.moveTo(retangulo, padeira.x,padeira.y + 28,10,50);
 	
    	castelhano.anims.play('c_idle', true);
+   	this.physics.moveToObject(castelhano,retangul2,100);
    	
-   	   	this.physics.moveToObject(castelhano,retangul2,100);
-   	
-
-
-
-	if (padeira.facing){
-		this.physics.moveTo(retangulo, padeira.x + 60,padeira.y + 28,10,50);
-	}
-	else
-		this.physics.moveTo(retangulo, padeira.x - 60,padeira.y + 28,10,50);
     
     if (gameOver)
         return;
 
     if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down){
-
+    	this.physics.moveTo(retangulo, padeira.x,padeira.y + 28,10,50);
         if (padeira.weapon){
             var elementos = this.physics.overlap(retangulo,retangul2);
             if (elementos){
@@ -369,7 +363,9 @@ function update (){
             	if (padeira.animationCounter == 0 && !padeira.attacking){
             		padeira.attacking = true;
 
-            		retangulo.body.setSize(40, 103, true);
+			        retangulo.body.setSize(100, 103, true);
+			        retangulo.body.offset.y = 4;
+			        retangulo.body.offset.x = 0;
 
             	    padeira.anims.play('w_attack1_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
@@ -377,9 +373,10 @@ function update (){
             	}
             	else if (padeira.animationCounter == 1 && !padeira.attacking){
             		padeira.attacking = true;
-
-            		retangulo.body.setSize(100, 140, true);
-            		retangulo.body.offset.y = -16
+			        
+			        retangulo.body.setSize(100, 168, true);
+			        retangulo.body.offset.y = -60;
+			        retangulo.body.offset.x = 0;
 
             	    padeira.anims.play('w_attack3_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
@@ -388,7 +385,9 @@ function update (){
             	else if (padeira.animationCounter == 2 && !padeira.attacking){
             		padeira.attacking = true;
 
-					retangulo.body.setSize(100, 140, true);
+			        retangulo.body.setSize(158, 168, true);
+			        retangulo.body.offset.y = -60;
+			        retangulo.body.offset.x = -58;
 
             	    padeira.anims.play('w_attack4_R', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
@@ -398,18 +397,34 @@ function update (){
             else if (padeira.facing == false){
             	if (padeira.animationCounter == 0 && !padeira.attacking){
             		padeira.attacking = true;
+
+
+			        retangulo.body.setSize(100, 103, true);
+			        retangulo.body.offset.y = 4;
+			        retangulo.body.offset.x = -64;
+
             	    padeira.anims.play('w_attack1_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
             	    padeira.updateAnimationCounter(); 
             	}
             	else if (padeira.animationCounter == 1 && !padeira.attacking){
             		padeira.attacking = true;
+
+			        retangulo.body.setSize(100, 168, true);
+			        retangulo.body.offset.y = -60;
+			        retangulo.body.offset.x = -60;
+
             	    padeira.anims.play('w_attack3_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
             		padeira.updateAnimationCounter();
             	}
             	else if (padeira.animationCounter == 2 && !padeira.attacking){
             		padeira.attacking = true;
+
+			        retangulo.body.setSize(158, 168, true);
+			        retangulo.body.offset.y = -60;
+			        retangulo.body.offset.x = -58;
+
             	    padeira.anims.play('w_attack4_L', true);
             	    padeira.once('animationcomplete', () => {padeira.attacking = false;})
             		padeira.updateAnimationCounter();
@@ -420,17 +435,16 @@ function update (){
         else if (!padeira.weapon){    
             padeira.attacking = true;
             padeira.body.offset.x = 28;
+	        this.physics.moveTo(retangulo, padeira.x,padeira.y + 28,10,50);
+	        retangulo.body.setSize(100, 140, true);
+	        retangulo.body.offset.y = -32;
             if (padeira.facing == true){
-
-	            this.physics.moveTo(retangulo, padeira.x + 60,padeira.y + 28,10,50);
-	            retangulo.body.setSize(140, 140, true);
-	            retangulo.body.offset.x = -100
-	            retangulo.body.offset.y = -32 
-
+            	retangulo.body.offset.x = 0;
                 padeira.anims.play('w_attack2_R', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
             else{
+            	retangulo.body.offset.x = -60;
                 padeira.anims.play('w_attack2_L', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
