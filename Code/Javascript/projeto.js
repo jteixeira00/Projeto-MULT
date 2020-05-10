@@ -69,7 +69,7 @@ function preload(){
     this.load.spritesheet('padeira_attack4_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack4_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_L.png', { frameWidth: 160, frameHeight: 168 });
 
-    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano/knight_idle.png', { frameWidth: 59, frameHeight: 104 });
+    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle.png', { frameWidth: 59, frameHeight: 104 });
 }
 
 
