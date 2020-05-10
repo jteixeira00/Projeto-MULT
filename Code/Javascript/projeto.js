@@ -69,7 +69,7 @@ function preload(){
     this.load.spritesheet('padeira_attack4_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack4_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack4_L.png', { frameWidth: 160, frameHeight: 168 });
 
-    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle.png', { frameWidth: 59, frameHeight: 104 });
+    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_S.png', { frameWidth: 59, frameHeight: 104 });
 }
 
 
@@ -264,14 +264,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack4_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack4_R', { start: 0, end: 11 }),
-        frameRate: 1,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack4_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack4_L', { start: 11, end: 0 }),
-        frameRate: 1,
+        frameRate: 20,
         repeat: 0
     });
 }
