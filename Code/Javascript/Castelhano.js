@@ -5,8 +5,16 @@ class Castelhano extends Pessoa{
         super(hp, dmg, scene, x, y, sprite);
     }
 
-    getHit(){
+    getHit(rightKnockback){
 
-        console.log("Ah; mataram-me!");
+        console.log("Ah! Mataram-me!");
+
+        this.body.setDrag(200,200);
+        this.body.setVelocityY(-1000);
+
+        if(rightKnockback)
+            this.body.setVelocityX(350);
+        else
+            this.body.setVelocityX(-350); 
     }
 }

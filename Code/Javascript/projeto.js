@@ -7,8 +7,6 @@ var padeira;
 var castelhano;
 var cursors; 
 var spacebar;
-var retangulo;
-var retangul2;
 
 var config = {
     type: Phaser.CANVAS,
@@ -36,7 +34,8 @@ function preload(){
     
     this.load.image('sky', '../../Resources/Sprites/Temp Assets/bck.png');
     this.load.image('ground', '../../Resources/Sprites/Temp Assets/platform.png');
-
+    this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
+    
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -73,6 +72,7 @@ function preload(){
 
 function loadAnim(scene){
 
+    scene.smash = scene.sound.add('smash');
 
 	scene.anims.create({
         key: 'c_idle',
@@ -297,12 +297,6 @@ function create(){
     castelhano.body.offset.y = 0;
     castelhano.body.offset.x = 8;
 
-    retangulo = this.add.rectangle(0, 40, 40, 104, 0x6666ff, 0x0);
-    this.physics.world.enableBody(retangulo, 0);    
-
-    //retangul2 = this.add.rectangle(500, 40, 150, 150, 0x6666ff);
-    //this.physics.world.enableBody(retangul2, 0);
-
     this.cameras.main.setBounds(0, 0, 2000, 800);
     this.cameras.main.startFollow(padeira);
 
@@ -314,18 +308,10 @@ function create(){
     this.physics.add.collider(padeira, platforms);
 
     this.physics.add.collider(castelhano, platforms);
-
-    //this.physics.add.collider(retangul2, platforms);
 }
 
 
 function update (){
-
-	//!!!!!!!!!!!!!!!!!!!!
-	//Idle -> meter box no meio
-	//Ataque -> mexer a box inversa para cada lado
-	// this.physics.moveTo(retangulo, padeira.x - 60,padeira.y + 28,10,50)
-	//!!!!!!!!!!!!!!!!!!!!!!
 
     if (gameOver) return;
 
@@ -336,66 +322,40 @@ function update (){
 
 function updatePadeira(scene){
 
-    //scene.physics.moveTo(retangulo, padeira.x, padeira.y + 28, 10, 50);
-
     if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.attacking){
     	
         if (padeira.weapon){
             
-            var array = padeira.updateAttackingHitbox(retangulo);
+            var array = padeira.updateAttackingHitbox();
 
             padeira.attacking = true;
             padeira.anims.play(array[0], true);
+            scene.smash.play();
             padeira.once('animationcomplete', () => {padeira.attacking = false;});
             padeira.updateAnimationCounter(); 
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             
-            console.log(elementos);
             for (var i = 0; i < elementos.length; i++){
                 console.log(elementos[i]);
+                console.log(padeira.facingRight);
                 if (elementos[i].gameObject != padeira){
-                    elementos[i].gameObject.getHit();
+                    elementos[i].gameObject.getHit(padeira.facingRight);
                 }
             }
-            //elementos.forEach(function getHit(item){item.hit(padeira.facingRight)});
-
-            // if (elementos){
-            //     retangul2.body.setDrag(200,200)
-            //     retangul2.body.setVelocityY(-1000);
-            //     if(padeira.facingRight)
-            //         retangul2.body.setVelocityX(350);
-            //     else
-            //         retangul2.body.setVelocityX(-350);            	
-            // }
         }
         
         else if (!padeira.weapon){    
             padeira.attacking = true;
-            padeira.body.offset.x = 28;
-	        scene.physics.moveTo(retangulo, padeira.x,padeira.y + 28,10,50);
-	        retangulo.body.setSize(100, 140, true);
-	        retangulo.body.offset.y = -32;
+            padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
-                retangulo.body.offset.x = 0;
                 padeira.anims.play('w_attack0_R', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
             else{
-            	retangulo.body.offset.x = -60;
                 padeira.anims.play('w_attack0_L', true);
                 padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
             }
-            //var elementos = scene.physics.overlap(retangulo,retangul2);
-            
-            // if (elementos){
-            //     retangul2.body.setDrag(200,200)
-            //     retangul2.body.setVelocityY(-1000);
-            //     if(padeira.facingRight)
-            //         retangul2.body.setVelocityX(350);
-            //     else
-            //         retangul2.body.setVelocityX(-350);     
-            // }        
         }
     }
 
@@ -478,6 +438,5 @@ function updatePadeira(scene){
 
 function updateEnemies(scene){
 
-    //scene.physics.moveToObject(castelhano, retangul2, 100);
     castelhano.anims.play('c_idle', true);
 }
