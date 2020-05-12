@@ -8,6 +8,8 @@ var castelhano;
 var cursors; 
 var spacebar;
 
+var enemies;
+
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -16,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
 
         }
     },
@@ -32,8 +34,8 @@ var game = new Phaser.Game(config);
 
 function preload(){
     
-    this.load.image('sky', '../../Resources/Sprites/Temp Assets/bck.png');
-    this.load.image('ground', '../../Resources/Sprites/Temp Assets/platform.png');
+    this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
+    this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
@@ -66,7 +68,8 @@ function preload(){
     this.load.spritesheet('padeira_attack3_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
 
-    this.load.spritesheet('castelhano_idle', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_S.png', { frameWidth: 59, frameHeight: 104 });
+    this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 59, frameHeight: 104 });
+    this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 70, frameHeight: 104 });
 }
 
 
@@ -75,9 +78,16 @@ function loadAnim(scene){
     scene.smash = scene.sound.add('smash');
 
 	scene.anims.create({
-        key: 'c_idle',
-        frames: scene.anims.generateFrameNumbers('castelhano_idle', { start: 0, end: 3 }),
+        key: 'c_s_idle_r',
+        frames: scene.anims.generateFrameNumbers('castelhano_S_idle_R', { start: 0, end: 3 }),
         frameRate: 7,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_s_death_r',
+        frames: scene.anims.generateFrameNumbers('castelhano_S_death_R', { start: 0, end: 7 }),
+        frameRate: 5,
         repeat: 0
     });
 
@@ -274,30 +284,28 @@ function loadAnim(scene){
 
 function create(){
 
-    this.add.image(400, 300, 'sky');
-    this.physics.world.setBounds(0, 0, 2000, 800);
+    this.add.image(1200, 400, 'sky');
+    this.physics.world.setBounds(0, 0, 2400, 800);
 
     platforms = this.physics.add.staticGroup();
-    
-    platforms.create(200, 768, 'ground').setScale(1).refreshBody();
-    platforms.create(600, 768, 'ground').setScale(1).refreshBody();
-    platforms.create(1000, 768, 'ground').setScale(1).refreshBody();
-    platforms.create(1400, 768, 'ground').setScale(1).refreshBody();
-    platforms.create(1800, 768, 'ground').setScale(1).refreshBody();
+    enemies = this.add.group();
 
-    padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
+    platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
     castelhano = new Castelhano(100, 50, this, 0, 0, 'c_idle');
+    enemies.add(castelhano);
+    
+    padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
 
     padeira.body.setSize(72, 104, true); 
     padeira.body.offset.y = 64;
 
     castelhano.body.setSize(48, 104, true);
-    castelhano.x = 200
+    castelhano.x = 1200
     castelhano.body.offset.y = 0;
     castelhano.body.offset.x = 8;
 
-    this.cameras.main.setBounds(0, 0, 2000, 800);
+    this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
 
     loadAnim(this);
@@ -316,8 +324,8 @@ function update (){
     if (gameOver) return;
 
     updatePadeira(this);  
-   	
-    updateEnemies(this);
+    
+    enemies.getChildren().forEach(function(enemy){updateEnemies(enemy)});
 }
 
 function updatePadeira(scene){
@@ -330,17 +338,16 @@ function updatePadeira(scene){
 
             padeira.attacking = true;
             padeira.anims.play(array[0], true);
-            scene.smash.play();
+            //scene.smash.play();
             padeira.once('animationcomplete', () => {padeira.attacking = false;});
             padeira.updateAnimationCounter(); 
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
-            
+            console.log(elementos);
             for (var i = 0; i < elementos.length; i++){
-                console.log(elementos[i]);
-                console.log(padeira.facingRight);
                 if (elementos[i].gameObject != padeira){
-                    elementos[i].gameObject.getHit(padeira.facingRight);
+                    elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
+                    console.log(elementos[i].gameObject.healthPoints);
                 }
             }
         }
@@ -436,7 +443,16 @@ function updatePadeira(scene){
     }
 }
 
-function updateEnemies(scene){
+function updateEnemies(enemy){
 
-    castelhano.anims.play('c_idle', true);
+    if (!enemy.alive()){
+        enemy.anims.play('c_s_death_r', true);
+        enemy.once('animationcomplete', () => {enemy.destroy();});
+    }
+
+    else if (enemy.alive()){
+        enemy.anims.play('c_s_idle_r', true);
+    }
 }
+
+// Need armor getting spanked sound
