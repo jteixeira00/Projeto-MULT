@@ -4,7 +4,6 @@
 var platforms;
 var gameOver = false;
 var padeira;
-var castelhano;
 var cursors; 
 var spacebar;
 
@@ -18,7 +17,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
 
         }
     },
@@ -300,7 +299,7 @@ function create(){
 
     platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
-    castelhano = new Castelhano(100, 50, this, 1200, 0, 'c_idle', enemies);
+    for (var i = 0; i < 50; i++) new Castelhano(100, 50, this, 400 + 30*i, 0, 'c_idle', enemies);
     
     padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
 
@@ -476,7 +475,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage);
+                            elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
                     }
                     enemy.attacking = false;

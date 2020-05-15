@@ -45,18 +45,23 @@ class Padeira extends Pessoa{
         }
     }
 
-    getHit(rightKnockback, damage){
+    getHit(rightKnockback, damage, scene){
 
-        this.healthPoints -= damage;
+        if (!this.invulnerable){
+            this.healthPoints -= damage;
 
-        console.log("Padeira got hit");
+            console.log("Padeira got hit");
 
-        this.body.setDrag(300,50);
-        this.body.setVelocityY(-200);
+            this.body.setDrag(300,50);
+            this.body.setVelocityY(-200);
 
-        if(rightKnockback)
-            this.body.setVelocityX(200);
-        else
-            this.body.setVelocityX(-200); 
+            if(rightKnockback)
+                this.body.setVelocityX(200);
+            else
+                this.body.setVelocityX(-200);
+
+            this.invulnerable = true;
+            scene.time.delayedCall(1000, () => {this.invulnerable = false;}, null, this);
+        }
     }
 }
