@@ -18,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
 
         }
     },
@@ -70,12 +70,20 @@ function preload(){
 
     this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 59, frameHeight: 104 });
     this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 70, frameHeight: 104 });
+    this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
 }
 
 
 function loadAnim(scene){
 
     scene.smash = scene.sound.add('smash');
+
+    scene.anims.create({
+        key: 'c_s_attack_r',
+        frames: scene.anims.generateFrameNumbers('castelhano_S_attack_R', { start: 0, end: 9 }),
+        frameRate: 15,
+        repeat: 0
+    });
 
 	scene.anims.create({
         key: 'c_s_idle_r',
@@ -292,18 +300,9 @@ function create(){
 
     platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
-    castelhano = new Castelhano(100, 50, this, 0, 0, 'c_idle');
-    enemies.add(castelhano);
+    castelhano = new Castelhano(100, 50, this, 1200, 0, 'c_idle', enemies);
     
     padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
-
-    padeira.body.setSize(72, 104, true); 
-    padeira.body.offset.y = 64;
-
-    castelhano.body.setSize(48, 104, true);
-    castelhano.x = 1200
-    castelhano.body.offset.y = 0;
-    castelhano.body.offset.x = 8;
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
@@ -314,8 +313,7 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.physics.add.collider(padeira, platforms);
-
-    this.physics.add.collider(castelhano, platforms);
+    this.physics.add.collider(enemies, platforms);
 }
 
 
@@ -325,8 +323,10 @@ function update (){
 
     updatePadeira(this);  
     
-    enemies.getChildren().forEach(function(enemy){updateEnemies(enemy)});
+    for (var i = 0; i < enemies.getChildren().length; i++)
+        updateEnemies(enemies.getChildren()[i], this);
 }
+
 
 function updatePadeira(scene){
 
@@ -343,11 +343,9 @@ function updatePadeira(scene){
             padeira.updateAnimationCounter(); 
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
-            console.log(elementos);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
                     elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
-                    console.log(elementos[i].gameObject.healthPoints);
                 }
             }
         }
@@ -443,16 +441,47 @@ function updatePadeira(scene){
     }
 }
 
-function updateEnemies(enemy){
+// Need armor getting spanked sound
+
+function updateEnemies(enemy, scene){
+
+    var x_padeira = padeira.body.x;
 
     if (!enemy.alive()){
         enemy.anims.play('c_s_death_r', true);
         enemy.once('animationcomplete', () => {enemy.destroy();});
     }
 
-    else if (enemy.alive()){
-        enemy.anims.play('c_s_idle_r', true);
+    else if (enemy.alive() && !enemy.attacking){
+        
+        if (padeira.body.touching.down){
+            if (enemy.body.x > x_padeira + 100){
+                enemy.moveLeft();
+                enemy.anims.play('c_s_idle_r', true);
+            }
+
+            else if (enemy.body.x < x_padeira - 100){
+                enemy.moveRight();
+                enemy.anims.play('c_s_idle_r', true); 
+            }
+
+            else{
+                enemy.attacking = true;
+                enemy.body.setVelocityX(0)
+                enemy.anims.play('c_s_attack_r', true);
+                
+                enemy.once('animationcomplete', () => {
+                    var array = enemy.getAttackingHitbox(); 
+                    // scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
+                    var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
+                    for (var i = 0; i < elementos.length; i++){
+                        if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
+                            elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage);
+                        }
+                    }
+                    enemy.attacking = false;
+                });
+            }
+        }
     }
 }
-
-// Need armor getting spanked sound

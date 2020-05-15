@@ -4,10 +4,13 @@ class Padeira extends Pessoa{
 
         super(hp, dmg, scene, x, y, sprite);
 
-        this.facingRight = true;
-        this.attacking = false;
         this.animationCounter = 0;
         this.weapon = false;
+        this.invulnerable = false; //ligar por 1s depois de levar porrada
+        // ver one shot timers
+
+        this.body.setSize(72, 104, true); 
+        this.body.offset.y = 64;
     }
 
     updateAnimationCounter(){
@@ -40,5 +43,20 @@ class Padeira extends Pessoa{
             
             else return [string, -79, -84, 158, 168];
         }
+    }
+
+    getHit(rightKnockback, damage){
+
+        this.healthPoints -= damage;
+
+        console.log("Padeira got hit");
+
+        this.body.setDrag(300,50);
+        this.body.setVelocityY(-200);
+
+        if(rightKnockback)
+            this.body.setVelocityX(200);
+        else
+            this.body.setVelocityX(-200); 
     }
 }
