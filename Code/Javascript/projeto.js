@@ -45,7 +45,7 @@ function preload(){
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     
-    this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_L', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_L.png', { frameWidth: 72, frameHeight: 168 });
@@ -78,6 +78,7 @@ function preload(){
     this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_attack_l', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_L.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
 
     this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
@@ -134,8 +135,15 @@ function loadAnim(scene){
 
     scene.anims.create({
         key: 'c_s_attack_r',
-        frames: scene.anims.generateFrameNumbers('castelhano_S_attack_R', { start: 0, end: 9 }),
-        frameRate: 15,
+        frames: scene.anims.generateFrameNumbers('castelhano_S_attack_R', { start: 0, end: 5 }),
+        frameRate: 2,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_s_attack_l',
+        frames: scene.anims.generateFrameNumbers('c_s_attack_l', { start: 9, end: 4 }),
+        frameRate: 2,
         repeat: 0
     });
 
@@ -170,7 +178,7 @@ function loadAnim(scene){
 
     scene.anims.create({
         key: 'idle_L',
-        frames: scene.anims.generateFrameNumbers('padeira_idle_L', { start: 0, end: 3 }),
+        frames: scene.anims.generateFrameNumbers('idle_L', { start: 0, end: 3 }),
         frameRate: 7,
         repeat: 0
     });
@@ -390,6 +398,7 @@ function create(){
     this.physics.add.collider(enemies, platforms);
    
 
+    for (var i = 0; i < 1; i++) new Castelhano(100, 50, this, 0 + i*20, 0, 'c_s_idle_r', enemies);
   
 
 
@@ -445,7 +454,7 @@ function updatePadeira(scene){
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
                     console.log("antes pixel collision");
-                    if (padeira.pixelCollision(padeira, elementos[i].gameObject))
+                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
@@ -562,7 +571,7 @@ function updateEnemies(enemy, scene){
 
     else if (enemy.alive() && !enemy.immobile){
         
-        //if (enemy.body.touching.down){
+        if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
                 enemy.moveLeft();
                 enemy.anims.play('c_s_walk_r', true);
@@ -577,27 +586,65 @@ function updateEnemies(enemy, scene){
             else{
                 enemy.immobile = true;
                 enemy.body.setVelocityX(0)
-                enemy.anims.play('c_s_attack_r', true);
-
+                enemy.anims.play('c_s_attack_l', true);
+                //enemy.anims.pause(enemy.anims.currentAnim.frames[5]);
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
-                    // scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
+                    //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            console.log("antes pixel collision");
-                            if (padeira.pixelCollision(enemy, elementos[i].gameObject))    
+                            console.log("intersecao de hitboxes");
+                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
-                    }
-                    enemy.immobile = false;
-                });
+                    } 
+                    enemy.immobile = false; });
             }
-        //}
+        }
     }
 }
 
 
+function pixelCollision(s1, s2, scene){
+
+    var xs1 = s1.x - s1.width / 2;
+    var xs2 = s2.x - s2.width / 2
+    var ys1 = s1.y - s1.height / 2;
+    var ys2 = s2.y - s2.height / 2;
+
+    var xMin = Math.max(xs1, xs2);
+    var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
+    var yMin = Math.max(ys1, ys2);
+    var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
+
+    scene.add.rectangle(xMin + 4, yMin + 4, 8, 8, 0xff0000);
+    scene.add.rectangle(xMax + 4, yMin + 4, 8, 8, 0xff0000);
+    scene.add.rectangle(xMin + 4, yMax + 4, 8, 8, 0x0000ff);
+    scene.add.rectangle(xMax + 4, yMax + 4, 8, 8, 0x0000ff);
+
+    for (var y = yMin; y < yMax; y++){  
+        for (var x = xMin; x < xMax; x++){
+
+            var xlocalA = Math.round(x - xs1);
+            var ylocalA = Math.round(y - ys1);
+                
+            var xlocalB = Math.round(x - xs2);
+            var ylocalB = Math.round(y - ys2);
+
+            var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.index);
+            var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.index - 1); 
+
+            console.log(a1, a2);
+            
+            if (a1 != 0 && a2 != 0){
+                scene.add.rectangle(x + 4, y + 4, 8, 8, 0x00ff00);
+                return true;
+            }   
+        }
+    }
+    return false;   
+}
 function updatePortal(portal, scene){
 
 	if(!openP){

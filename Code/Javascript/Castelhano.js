@@ -4,7 +4,7 @@ class Castelhano extends Pessoa{
 
         super(hp, dmg, scene, x, y, sprite);
 
-        this.setDepth(0);
+        this.setDepth(2);
         this.body.setSize(48, 104, true);
         this.body.offset.y = 0;
         this.body.offset.x = 8;
@@ -32,7 +32,7 @@ class Castelhano extends Pessoa{
         this.body.offset.x = 32;
         this.body.offset.y = 12;
         this.facingRight = true;
-        this.flipX = false;
+        //this.flipX = false;
     }
 
     moveLeft(){
@@ -40,7 +40,7 @@ class Castelhano extends Pessoa{
         this.body.offset.x = 60;
         this.body.offset.y = 12;
         this.facingRight = false;
-        this.flipX = true;
+        //this.flipX = true;
     }
 
     alive(){
@@ -52,9 +52,9 @@ class Castelhano extends Pessoa{
     getAttackingHitbox(){
         
         if (this.facingRight == true)
-            return [-24, -52, 80, 60];
+            return [-24, -52, 100, 60];
         else
-            return [-56, -52, 80, 60]; 
+            return [-76, -52, 100, 60]; 
         
         // small castelhano
         // dps faz sentido ter isto aqui qnd houver mais classes
