@@ -6,8 +6,9 @@ var gameOver = false;
 var padeira;
 var cursors; 
 var spacebar;
-
+var score;
 var enemies;
+var scoreText;
 
 var config = {
     type: Phaser.CANVAS,
@@ -17,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
 
         }
     },
@@ -234,14 +235,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack0_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack0_R', { start: 0, end: 8 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack0_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack0_L', { start: 8, end: 0 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
@@ -262,28 +263,28 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'w_attack2_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 11 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack2_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 11, end: 0 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack3_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'w_attack3_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
-        frameRate: 20,
+        frameRate: 30,
         repeat: 0
     });
 }
@@ -293,15 +294,21 @@ function create(){
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
+    
+    score = 0;
+    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
     platforms = this.physics.add.staticGroup();
     enemies = this.add.group();
 
     platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
-    for (var i = 0; i < 50; i++) new Castelhano(100, 50, this, 400 + 30*i, 0, 'c_idle', enemies);
-    
-    padeira = new Padeira(100, 50, this, 0, 0, 'padeira_idle_R');
+    padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R');
+
+    this.physics.add.collider(padeira, platforms);
+    this.physics.add.collider(enemies, platforms);
+
+    for (var i = 0; i < 2; i++) new Castelhano(100, 50, this, 0 + i*2000, 0, 'c_s_idle_r', enemies);
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
@@ -310,9 +317,6 @@ function create(){
 
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-    this.physics.add.collider(padeira, platforms);
-    this.physics.add.collider(enemies, platforms);
 }
 
 
@@ -448,12 +452,14 @@ function updateEnemies(enemy, scene){
 
     if (!enemy.alive()){
         enemy.anims.play('c_s_death_r', true);
+        score += enemy.value;
+        scoreText.setText('Score: ' + score);
         enemy.once('animationcomplete', () => {enemy.destroy();});
     }
 
     else if (enemy.alive() && !enemy.attacking){
         
-        if (padeira.body.touching.down){
+        //if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
                 enemy.moveLeft();
                 enemy.anims.play('c_s_idle_r', true);
@@ -481,6 +487,6 @@ function updateEnemies(enemy, scene){
                     enemy.attacking = false;
                 });
             }
-        }
+        //}
     }
 }

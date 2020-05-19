@@ -8,7 +8,7 @@ class Padeira extends Pessoa{
         this.weapon = false;
         this.invulnerable = false; //ligar por 1s depois de levar porrada
         // ver one shot timers
-
+        this.setDepth(1);
         this.body.setSize(72, 104, true); 
         this.body.offset.y = 64;
     }
