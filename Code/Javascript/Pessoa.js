@@ -6,7 +6,7 @@ class Pessoa extends Phaser.GameObjects.Sprite{
         
         this.healthPoints = hp;
         this.damage = dmg;
-        this.attacking = false;
+        this.immobile = false;
         this.facingRight = true;
         
         scene.add.existing(this);
@@ -14,5 +14,9 @@ class Pessoa extends Phaser.GameObjects.Sprite{
         
         this.body.setBounce(0);
         this.body.setCollideWorldBounds(true);
+    }
+
+    pixelCollision(s1, s2){
+        
     }
 }

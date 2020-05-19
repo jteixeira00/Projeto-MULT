@@ -18,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
 
         }
     },
@@ -296,7 +296,8 @@ function create(){
     this.physics.world.setBounds(0, 0, 2400, 800);
     
     score = 0;
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
+    scoreText.setScrollFactor(0);
 
     platforms = this.physics.add.staticGroup();
     enemies = this.add.group();
@@ -333,41 +334,42 @@ function update (){
 
 function updatePadeira(scene){
 
-    if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.attacking){
+    if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.immobile){
     	
         if (padeira.weapon){
             
             var array = padeira.updateAttackingHitbox();
 
-            padeira.attacking = true;
+            padeira.immobile = true;
             padeira.anims.play(array[0], true);
             //scene.smash.play();
-            padeira.once('animationcomplete', () => {padeira.attacking = false;});
+            padeira.once('animationcomplete', () => {padeira.immobile = false;});
             padeira.updateAnimationCounter(); 
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
-                    elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
+                    if (padeira.pixelCollision(padeira, elementos[i].gameObject))
+                        elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
         }
         
         else if (!padeira.weapon){    
-            padeira.attacking = true;
+            padeira.immobile = true;
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('w_attack0_R', true);
-                padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
+                padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('w_attack0_L', true);
-                padeira.once('animationcomplete', () => {padeira.attacking = false;padeira.weapon = true;})
+                padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
     }
 
-    if (cursors.left.isDown && !padeira.attacking){
+    if (cursors.left.isDown && !padeira.immobile){
         padeira.body.setVelocityX(-350);
         padeira.facingRight = false
         if (padeira.body.touching.down)
@@ -378,7 +380,7 @@ function updatePadeira(scene){
 
     }
 
-    else if (cursors.right.isDown && !padeira.attacking){
+    else if (cursors.right.isDown && !padeira.immobile){
         padeira.body.setVelocityX(350);
         padeira.facingRight = true
         if (padeira.body.touching.down)
@@ -391,13 +393,13 @@ function updatePadeira(scene){
 
     else if (padeira.body.touching.down){
     	padeira.body.setVelocityX(0)
-        if (!padeira.weapon && !padeira.attacking){
+        if (!padeira.weapon && !padeira.immobile){
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('idle_R', true);
         	else
         		padeira.anims.play('idle_L', true);
         }
-        else if (padeira.weapon && !padeira.attacking){
+        else if (padeira.weapon && !padeira.immobile){
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('w_idle_R', true);
         	else
@@ -450,14 +452,17 @@ function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
 
-    if (!enemy.alive()){
+    if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_r', true);
-        score += enemy.value;
-        scoreText.setText('Score: ' + score);
-        enemy.once('animationcomplete', () => {enemy.destroy();});
+        enemy.immobile = true;
+        enemy.once('animationcomplete', () => {
+            score += enemy.value;
+            scoreText.setText('Pontuação: ' + score);
+            enemy.destroy();
+        });
     }
 
-    else if (enemy.alive() && !enemy.attacking){
+    else if (enemy.alive() && !enemy.immobile){
         
         //if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
@@ -465,13 +470,13 @@ function updateEnemies(enemy, scene){
                 enemy.anims.play('c_s_idle_r', true);
             }
 
-            else if (enemy.body.x < x_padeira - 100){
+            else if (enemy.body.x < x_padeira - 100){   
                 enemy.moveRight();
                 enemy.anims.play('c_s_idle_r', true); 
             }
 
             else{
-                enemy.attacking = true;
+                enemy.immobile = true;
                 enemy.body.setVelocityX(0)
                 enemy.anims.play('c_s_attack_r', true);
                 
@@ -481,10 +486,11 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
+                            if (padeira.pixelCollision(enemy, elementos[i].gameObject))    
+                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
                     }
-                    enemy.attacking = false;
+                    enemy.immobile = false;
                 });
             }
         //}
