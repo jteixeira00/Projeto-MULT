@@ -398,9 +398,6 @@ function create(){
     this.physics.add.collider(enemies, platforms);
    
 
-    for (var i = 0; i < 1; i++) new Castelhano(100, 50, this, 0 + i*20, 0, 'c_s_idle_r', enemies);
-  
-
 
  	portals_array = [[80,680],[80,680],[80,680],[2200,680],[2200,680],[2200,680]];
     var i = 0;
