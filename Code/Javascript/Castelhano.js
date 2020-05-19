@@ -29,12 +29,18 @@ class Castelhano extends Pessoa{
 
     moveRight(){
         this.body.setVelocityX(250);
+        this.body.offset.x = 32;
+        this.body.offset.y = 12;
         this.facingRight = true;
+        this.flipX = false;
     }
 
     moveLeft(){
         this.body.setVelocityX(-250);
+        this.body.offset.x = 60;
+        this.body.offset.y = 12;
         this.facingRight = false;
+        this.flipX = true;
     }
 
     alive(){
