@@ -84,7 +84,25 @@ function preload(){
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
+	var myObj, myJSON, text, obj;
+
+	// Storing data:
+	myObj = { name: "John", age: 31, city: "New York" };
+	myJSON = JSON.stringify(myObj);
+	localStorage.setItem("testJSON", myJSON);
+
+	// Retrieving data:
+	text = document.getElementById("sample")
+	obj = JSON.parse(text);
+	console.log(obj.name);
+	// var text = JSON.parse(json);
+	// alert(mydata[0].name);
+	// alert(mydata[0].age);
+	// alert(mydata[1].name);
+	// alert(mydata[1].age);
+
 }
+
 
 
 function loadAnim(scene){
