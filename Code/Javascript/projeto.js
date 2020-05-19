@@ -4,11 +4,18 @@
 var platforms;
 var gameOver = false;
 var padeira;
+var portal;
 var cursors; 
 var spacebar;
 var score;
 var enemies;
+var portals;
+var portals_array;
 var scoreText;
+var openP;
+var inicio;
+var fim;
+var endP;
 
 var config = {
     type: Phaser.CANVAS,
@@ -73,12 +80,40 @@ function preload(){
     this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('c_s_attack_l', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_L.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
+
+    this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
+    this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
+    this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
+
 }
 
 
 function loadAnim(scene){
 
     scene.smash = scene.sound.add('smash');
+
+
+    scene.anims.create({
+        key: 'portal',
+        frames: scene.anims.generateFrameNumbers('portal_anim', { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: 0
+    });
+
+        scene.anims.create({
+        key: 'portalO',
+        frames: scene.anims.generateFrameNumbers('portal_op', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: 0
+    });
+
+        scene.anims.create({
+        key: 'portalE',
+        frames: scene.anims.generateFrameNumbers('portal_ed', { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: 0
+    });
+
 
     scene.anims.create({
         key: 'c_s_attack_r',
@@ -307,10 +342,27 @@ function loadAnim(scene){
 }
 
 
+function sleep(ms) {
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
+
+
+function sleepFor( sleepDuration ){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
+}
+
+
+
 function create(){
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
+
+    
     
     score = 0;
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
@@ -318,6 +370,7 @@ function create(){
 
     platforms = this.physics.add.staticGroup();
     enemies = this.add.group();
+    portals = this.add.group();
 
     platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
@@ -325,8 +378,19 @@ function create(){
 
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
+   
 
     for (var i = 0; i < 1; i++) new Castelhano(100, 50, this, 0 + i*20, 0, 'c_s_idle_r', enemies);
+  
+
+
+ 	portals_array = [[80,680],[80,680],[80,680],[2200,680],[2200,680],[2200,680]];
+    var i = 0;
+    let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_r', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
+    	
+	
+
+    
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
@@ -342,7 +406,12 @@ function update (){
 
     if (gameOver) return;
 
-    updatePadeira(this);  
+    updatePadeira(this);
+
+
+    for (var i = 0; i < portals.getChildren().length; i++)
+    	updatePortal(portals.getChildren()[i],this);
+
     
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
@@ -470,6 +539,8 @@ function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
 
+    
+
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_r', true);
         enemy.immobile = true;
@@ -555,4 +626,23 @@ function pixelCollision(s1, s2, scene){
         }
     }
     return false;   
+}
+function updatePortal(portal, scene){
+
+	if(!openP){
+		portal.anims.play('portalO',true);
+			portal.once('animationcomplete', () => {openP = true; inicio = new Date().getTime(); endP = false;})
+	}
+	else if(openP && !endP){
+		fim = new Date().getTime();
+		portal.anims.play('portal',true);
+		if(fim - inicio > 3000){
+			endP = true;
+		} 
+	}
+	else{
+		portal.anims.play('portalE',true);
+		portal.once('animationcomplete', () => {portal.destroy();})
+	}
+
 }
