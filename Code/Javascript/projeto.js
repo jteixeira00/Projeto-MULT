@@ -4,10 +4,13 @@
 var platforms;
 var gameOver = false;
 var padeira;
+var portal;
 var cursors; 
 var spacebar;
 var score;
 var enemies;
+var portals;
+var portals_array;
 var scoreText;
 
 var config = {
@@ -72,12 +75,24 @@ function preload(){
     this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
+
+    this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
+
 }
 
 
 function loadAnim(scene){
 
     scene.smash = scene.sound.add('smash');
+
+
+    scene.anims.create({
+        key: 'portal',
+        frames: scene.anims.generateFrameNumbers('portal_anim', { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: 0
+    });
+
 
     scene.anims.create({
         key: 'c_s_attack_r',
@@ -303,6 +318,8 @@ function create(){
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
+
+    
     
     score = 0;
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
@@ -310,6 +327,7 @@ function create(){
 
     platforms = this.physics.add.staticGroup();
     enemies = this.add.group();
+    portals = this.add.group();
 
     platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
 
@@ -318,7 +336,15 @@ function create(){
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
 
-    for (var i = 0; i < 2; i++) new Castelhano(100, 50, this, 0 + i*2000, 0, 'c_s_idle_r', enemies);
+    portals_array = [1000,2040]
+
+    for (var i = 0; i < 2; i++) new Portal(this, portals_array[i], 680, 'portal', portals);
+
+    for (var i = 0; i < 2; i++) new Castelhano(100, 50, this, portals_array[i], 680, 'c_s_idle_r', enemies);
+
+    
+
+    
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
@@ -334,7 +360,12 @@ function update (){
 
     if (gameOver) return;
 
-    updatePadeira(this);  
+    updatePadeira(this);
+
+
+    for (var i = 0; i < portals.getChildren().length; i++)
+    	portals.getChildren()[i].anims.play('portal',true);
+
     
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
@@ -461,6 +492,8 @@ function updatePadeira(scene){
 function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
+
+    
 
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_r', true);

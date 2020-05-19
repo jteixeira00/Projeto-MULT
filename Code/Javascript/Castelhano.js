@@ -2,7 +2,7 @@ class Castelhano extends Pessoa{
 
     constructor(hp, dmg, scene, x, y, sprite, array){
 
-        super(hp, dmg, scene, x, y, sprite);~
+        super(hp, dmg, scene, x, y, sprite);
 
         this.setDepth(0);
         this.body.setSize(48, 104, true);
