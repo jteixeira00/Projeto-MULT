@@ -60,7 +60,7 @@ class Padeira extends Pessoa{
             else
                 this.body.setVelocityX(-200);
 
-            this.invulnerable = true;
+            // this.invulnerable = true;
             scene.time.delayedCall(1000, () => {this.invulnerable = false;}, null, this);
         }
     }

@@ -18,7 +18,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
 
         }
     },
@@ -358,6 +358,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
+                    console.log("antes pixel collision");
                     if (padeira.pixelCollision(padeira, elementos[i].gameObject))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -496,6 +497,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
+                            console.log("antes pixel collision");
                             if (padeira.pixelCollision(enemy, elementos[i].gameObject))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
