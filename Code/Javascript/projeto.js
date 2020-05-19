@@ -68,9 +68,10 @@ function preload(){
     this.load.spritesheet('padeira_attack3_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
 
-    this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 59, frameHeight: 104 });
-    this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 70, frameHeight: 104 });
+    this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('castelhano_S_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
 }
 
 
@@ -84,6 +85,14 @@ function loadAnim(scene){
         frameRate: 15,
         repeat: 0
     });
+
+    scene.anims.create({
+        key: 'c_s_walk_r',
+        frames: scene.anims.generateFrameNumbers('castelhano_S_walk_R', { start: 0, end: 9 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
 
 	scene.anims.create({
         key: 'c_s_idle_r',
@@ -462,19 +471,20 @@ function updateEnemies(enemy, scene){
         //if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
                 enemy.moveLeft();
-                enemy.anims.play('c_s_idle_r', true);
+                enemy.anims.play('c_s_walk_r', true);
             }
 
             else if (enemy.body.x < x_padeira - 100){
                 enemy.moveRight();
-                enemy.anims.play('c_s_idle_r', true); 
+                enemy.anims.play('c_s_walk_r', true); 
+                
             }
 
             else{
                 enemy.attacking = true;
                 enemy.body.setVelocityX(0)
                 enemy.anims.play('c_s_attack_r', true);
-                
+
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
                     // scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
