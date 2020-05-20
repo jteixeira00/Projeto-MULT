@@ -16,7 +16,8 @@ var openP;
 var inicio;
 var fim;
 var endP;
-
+var volume;
+var volumeFrame = 14;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -30,11 +31,28 @@ var config = {
         }
     },
     scene: {
+        key: "level",
         preload: preload,
         create: create,
         update: update
     }
 };
+
+var configMenu = {
+
+        key: 'PauseScene',
+        active: true,
+        visible: true
+        // pack: false,
+        // cameras: null,
+        // map: {},
+        // physics: {},
+        // loader: {},
+        // plugins: false,
+        // input: {}
+   
+}
+
 
 var game = new Phaser.Game(config);
 
@@ -44,6 +62,8 @@ function preload(){
     this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
+    this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
+
     
     this.load.spritesheet('idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -348,8 +368,11 @@ function create(){
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
-
     
+    var pause_btn = this.add.image(1120,60, 'pause_btn');
+    pause_btn.setScrollFactor(0)
+    pause_btn.setInteractive();
+    pause_btn.on("pointerdown", () => pause());
     
     score = 0;
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
@@ -373,7 +396,7 @@ function create(){
     let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_r', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
     	
 	
-
+    
     
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
@@ -383,6 +406,9 @@ function create(){
 
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    
+    game.scene.add("PauseScene", PauseScene, false);
+    
 }
 
 
@@ -402,7 +428,113 @@ function update (){
 }
 
 
+
+function pause(){
+    
+    if(game.scene.isPaused("default")){
+        game.scene.resume("default");
+
+    }
+    else{
+       
+        game.scene.start("PauseScene");
+        game.scene.resume("PauseScene");
+        game.scene.bringToTop("PauseScene");
+        game.scene.pause("level");
+        
+    }
+    
+    
+
+}
+
+class PauseScene extends Phaser.Scene{
+
+    constructor(configMenu){
+        super(configMenu);
+
+    }
+    preload(){
+        this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
+        this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
+        this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.spritesheet("soundbar", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+    }
+
+    create(){
+
+       
+        var btn = this.add.image(600, 400, "menu");
+        btn.setScrollFactor(0)
+        btn.setInteractive();
+        btn.on("pointerdown", () => hideMenu());
+
+
+        var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
+        volume = this.add.sprite(585,400+40, "soundbar");
+        gramMais.setInteractive();
+        gramMais.on("pointerdown", () => updateVolume(1));
+        var gramMenos = this.add.image(390, 380+40, "gram-");
+        gramMenos.setInteractive();
+        gramMenos.on("pointerdown", () => updateVolume(-1));
+            
+
+        this.anims.create({
+            key: "volume",
+            frames: this.anims.generateFrameNumbers("soundbar", {start:0, end: 14}),
+            frameRate:1,
+            repeat:-1
+    
+    
+        });
+        volume.anims.play("volume", true);
+        volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+
+    }
+
+}
+
+function updateVolume(change){
+    
+    if (change==1){
+        if(volumeFrame<14){
+            console.log("volume +");
+            volumeFrame = volumeFrame+1;
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+
+        }
+        
+        
+    }
+    if(change==-1){
+        if(volumeFrame>0){
+            console.log("volume -");
+            volumeFrame = volumeFrame-1;
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+
+        }
+      
+    }
+
+
+}
+
+
+function hideMenu(){
+    game.scene.resume("level");
+    game.scene.sendToBack("PauseScene");
+
+    game.scene.pause("PauseScene");
+    cursors.right.reset();
+    cursors.left.reset();
+    cursors.up.reset();
+    cursors.down.reset();
+}
+
 function updatePadeira(scene){
+    
 
     if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.immobile){
     	
@@ -419,7 +551,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
-                    console.log("antes pixel collision");
+                    
                     if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -559,7 +691,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            console.log("intersecao de hitboxes");
+                            
                             if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
@@ -600,7 +732,7 @@ function pixelCollision(s1, s2, scene){
             var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.index);
             var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.index - 1); 
 
-            console.log(a1, a2);
+            
             
             if (a1 != 0 && a2 != 0){
                 scene.add.rectangle(x + 4, y + 4, 8, 8, 0x00ff00);
@@ -629,3 +761,5 @@ function updatePortal(portal, scene){
 	}
 
 }
+
+

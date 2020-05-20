@@ -3,7 +3,7 @@ var volumeFrame = 14;
 var volume; 
 var masterW;
 var config = {
-    type: Phaser.canvas,
+    type: Phaser.CANVAS,
     width: 1200,
     height: 800,
     scene: {
@@ -36,7 +36,7 @@ function preload(){
 
 function create(){
     
-    this.add.image(600,400,"background");
+    var algo = this.add.image(600,400,"background");
     var gramMais = this.add.image(880, 335, "gram+");
     volume = this.add.sprite(600,400, "soundbar");
     gramMais.setInteractive();
@@ -59,7 +59,6 @@ function create(){
 
     });
     volume.anims.play("volume", true);
-    //volume.frame = 10;
     volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
     
