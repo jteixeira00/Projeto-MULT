@@ -85,22 +85,6 @@ function preload(){
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
-	var myObj, myJSON, text, obj;
-
-	// Storing data:
-	myObj = { name: "John", age: 31, city: "New York" };
-	myJSON = JSON.stringify(myObj);
-	localStorage.setItem("testJSON", myJSON);
-
-	// Retrieving data:
-	text = document.getElementById("sample")
-	obj = JSON.parse(text);
-	console.log(obj.name);
-	// var text = JSON.parse(json);
-	// alert(mydata[0].name);
-	// alert(mydata[0].age);
-	// alert(mydata[1].name);
-	// alert(mydata[1].age);
 
 }
 
@@ -360,21 +344,6 @@ function loadAnim(scene){
 }
 
 
-function sleep(ms) {
-  return new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
-}
-
-
-
-function sleepFor( sleepDuration ){
-    var now = new Date().getTime();
-    while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
-}
-
-
-
 function create(){
 
     this.add.image(1200, 400, 'sky');
@@ -399,7 +368,7 @@ function create(){
    
 
 
- 	portals_array = [[80,680],[80,680],[80,680],[2200,680],[2200,680],[2200,680]];
+ 	portals_array = [[80,0],[80,0],[80,0],[2200,0],[2200,0],[2200,0]];
     var i = 0;
     let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_r', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
     	
@@ -553,9 +522,8 @@ function updatePadeira(scene){
 function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
-
     
-
+	
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_r', true);
         enemy.immobile = true;
@@ -566,8 +534,8 @@ function updateEnemies(enemy, scene){
         });
     }
 
+
     else if (enemy.alive() && !enemy.immobile){
-        
         if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
                 enemy.moveLeft();

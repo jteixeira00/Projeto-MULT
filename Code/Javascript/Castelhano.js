@@ -6,9 +6,10 @@ class Castelhano extends Pessoa{
 
         this.setDepth(2);
         this.body.setSize(48, 104, true);
-        this.body.offset.y = 0;
+        this.body.offset.y = 40;
         this.body.offset.x = 8;
         this.value = 100;
+        this.anims.play(sprite,true);
         array.add(this);
     }
 
