@@ -1,7 +1,6 @@
 "use strict";
 
 
-var platforms;
 var gameOver = false;
 var padeira;
 var portal;
@@ -16,7 +15,8 @@ var openP;
 var inicio;
 var fim;
 var endP;
-
+var volume;
+var volumeFrame = 14;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -26,25 +26,41 @@ var config = {
         arcade: {
             gravity: { y: 1550 },
             debug: true
-
         }
     },
     scene: {
+        key: "level",
         preload: preload,
         create: create,
         update: update
     }
 };
 
-var game = new Phaser.Game(config);
+var configMenu = {
 
+        key: 'PauseScene',
+        active: true,
+        visible: true
+        // pack: false,
+        // cameras: null,
+        // map: {},
+        // physics: {},
+        // loader: {},
+        // plugins: false,
+        // input: {}
+  
+}
+
+var game = new Phaser.Game(config);
 
 function preload(){
     
     this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
+    this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
-    
+    this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
+
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -85,7 +101,6 @@ function preload(){
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 }
-
 
 
 function loadAnim(scene){
@@ -343,26 +358,34 @@ function create(){
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
-
+    
+    var pause_btn = this.add.image(1120,60, 'pause_btn');
+    pause_btn.setScrollFactor(0)
+    pause_btn.setInteractive();
+    pause_btn.on("pointerdown", () => pause());
+    
     score = 0;
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
     scoreText.setScrollFactor(0);
 
-    platforms = this.physics.add.staticGroup();
+    
     enemies = this.add.group();
     portals = this.add.group();
 
-    platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
+    var array = platformsDesign(this);
+    var platforms = array[0];
+    var portals_array = array[1];
+
+    const sizePortais = (portals_array.length);
 
     padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R');
 
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
    
- 	portals_array = [[80,0],[80,0],[80,0],[2200,0],[2200,0],[2200,0]];
     var i = 0;
-    let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_R', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
-
+    let castelaGenesis = setInterval(() => {var randIndex = Math.floor((sizePortais) * Math.random());new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_s_idle_r', enemies); i++; if(i == 4){clearInterval(castelaGenesis)}}, 1000);
+    	
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
 
@@ -370,6 +393,9 @@ function create(){
 
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    
+    game.scene.add("PauseScene", PauseScene, false);
+    
 }
 
 
@@ -378,7 +404,6 @@ function update (){
     if (gameOver) return;
 
     updatePadeira(this);
-
 
     for (var i = 0; i < portals.getChildren().length; i++)
     	updatePortal(portals.getChildren()[i],this);
@@ -389,8 +414,95 @@ function update (){
 }
 
 
-function updatePadeira(scene){
 
+function pause(){
+    
+    if(game.scene.isPaused("default")){
+        game.scene.resume("default");
+    }
+
+    else{ 
+        game.scene.start("PauseScene");
+        game.scene.resume("PauseScene");
+        game.scene.bringToTop("PauseScene");
+        game.scene.pause("level");  
+    }
+}
+
+class PauseScene extends Phaser.Scene{
+
+    constructor(configMenu){
+        super(configMenu);
+
+    }
+    preload(){
+        this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
+        this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
+        this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.spritesheet("soundbar", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+    }
+
+    create(){
+        var btn = this.add.image(600, 400, "menu");
+        btn.setScrollFactor(0)
+        btn.setInteractive();
+        btn.on("pointerdown", () => hideMenu());
+
+        var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
+        volume = this.add.sprite(585,400+40, "soundbar");
+        gramMais.setInteractive();
+        gramMais.on("pointerdown", () => updateVolume(1));
+        var gramMenos = this.add.image(390, 380+40, "gram-");
+        gramMenos.setInteractive();
+        gramMenos.on("pointerdown", () => updateVolume(-1));
+            
+        this.anims.create({
+            key: "volume",
+            frames: this.anims.generateFrameNumbers("soundbar", {start:0, end: 14}),
+            frameRate:1,
+            repeat:-1   
+        });
+        volume.anims.play("volume", true);
+        volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+    }
+}
+
+
+function updateVolume(change){
+    
+    if (change==1){
+        if(volumeFrame<14){
+            console.log("volume +");
+            volumeFrame = volumeFrame+1;
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+        }
+    }
+
+    if(change==-1){
+        if(volumeFrame>0){
+            console.log("volume -");
+            volumeFrame = volumeFrame-1;
+            volume.anims.play("volume", true);
+            volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+        }   
+    }
+}
+
+
+function hideMenu(){
+    game.scene.resume("level");
+    game.scene.sendToBack("PauseScene");
+
+    game.scene.pause("PauseScene");
+    cursors.right.reset();
+    cursors.left.reset();
+    cursors.up.reset();
+    cursors.down.reset();
+}
+
+function updatePadeira(scene){
+    
     if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.immobile){
     	
         if (padeira.weapon){
@@ -591,18 +703,21 @@ function updatePortal(portal, scene){
 
 	if(!openP){
 		portal.anims.play('portalO',true);
-			portal.once('animationcomplete', () => {openP = true; inicio = new Date().getTime(); endP = false;})
-	}
+		portal.once('animationcomplete', () => {openP = true; inicio = new Date().getTime(); endP = false;})
+    }
+    
 	else if(openP && !endP){
 		fim = new Date().getTime();
 		portal.anims.play('portal',true);
 		if(fim - inicio > 3000){
 			endP = true;
-		} 
-	}
+        } 
+    }
+    
 	else{
 		portal.anims.play('portalE',true);
 		portal.once('animationcomplete', () => {portal.destroy();})
 	}
-
 }
+
+
