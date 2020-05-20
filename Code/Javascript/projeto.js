@@ -1,7 +1,7 @@
 "use strict";
 
 
-var platforms;
+
 var gameOver = false;
 var padeira;
 var portal;
@@ -43,6 +43,7 @@ function preload(){
     
     this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
+    this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     
     this.load.spritesheet('idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
@@ -355,11 +356,17 @@ function create(){
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
     scoreText.setScrollFactor(0);
 
-    platforms = this.physics.add.staticGroup();
+    
     enemies = this.add.group();
     portals = this.add.group();
 
-    platforms.create(1200, 763, 'ground').setScale(1).refreshBody();
+    var array = platformsDesign(this);
+    var platforms = array[0];
+    var portals_array = array[1];
+
+    const sizePortais = (portals_array.length);
+
+
 
     padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R');
 
@@ -368,9 +375,8 @@ function create(){
    
 
 
- 	portals_array = [[80,0],[80,0],[80,0],[2200,0],[2200,0],[2200,0]];
     var i = 0;
-    let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_r', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
+    let castelaGenesis = setInterval(() => {var randIndex = Math.floor((sizePortais) * Math.random());new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_s_idle_r', enemies); i++; if(i == 4){clearInterval(castelaGenesis)}}, 1000);
     	
 	
 

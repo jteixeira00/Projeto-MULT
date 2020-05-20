@@ -1,1 +1,1 @@
-[{"name" : "Ashwin", "age" : "20"},{"name" : "Abhinandan", "age" : "20"}]
+data = '{"plat" : [{"x" : 1200, "y" : 763, "sprite": "ground"},{"x" : 400, "y" : 550, "sprite": "plataforma"},{"x" : 2000, "y" : 550, "sprite": "plataforma"}],"portais" : [{"x" : 400, "y" : 440},{"x" : 2000, "y" : 440},{"x" : 400, "y" : 660},{"x" : 2000, "y" : 660}]}';
