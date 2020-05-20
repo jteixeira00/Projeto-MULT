@@ -45,7 +45,7 @@ function preload(){
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     
-    this.load.spritesheet('idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
+    this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_L', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_L.png', { frameWidth: 72, frameHeight: 168 });
@@ -66,26 +66,24 @@ function preload(){
     this.load.spritesheet('padeira_weapon_fall_R', '../../Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_R.png', { frameWidth: 124, frameHeight: 168 });
     this.load.spritesheet('padeira_weapon_fall_L', '../../Resources/Sprite Sheets/Padeira/Padeira_weapon_fall_L.png', { frameWidth: 124, frameHeight: 168 });
  
-    this.load.spritesheet('padeira_attack1_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_R.png', { frameWidth: 164, frameHeight: 168 });
-    this.load.spritesheet('padeira_attack1_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_L.png', { frameWidth: 164, frameHeight: 168 });
     this.load.spritesheet('padeira_attack0_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack0_R.png', { frameWidth: 156, frameHeight: 168 });
     this.load.spritesheet('padeira_attack0_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack0_L.png', { frameWidth: 156, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_R.png', { frameWidth: 164, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_L.png', { frameWidth: 164, frameHeight: 168 });
     this.load.spritesheet('padeira_attack2_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack2_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack2_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack2_L.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
 
-    this.load.spritesheet('castelhano_S_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 148, frameHeight: 116 });
-    this.load.spritesheet('castelhano_S_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
-    this.load.spritesheet('castelhano_S_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
-    this.load.spritesheet('c_s_attack_l', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_L.png', { frameWidth: 148, frameHeight: 116 });
-    this.load.spritesheet('castelhano_S_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_attack_L', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_L.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
 
     this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
-
-
 }
 
 
@@ -93,7 +91,6 @@ function preload(){
 function loadAnim(scene){
 
     scene.smash = scene.sound.add('smash');
-
 
     scene.anims.create({
         key: 'portal',
@@ -116,227 +113,225 @@ function loadAnim(scene){
         repeat: 0
     });
 
-
     scene.anims.create({
-        key: 'c_s_attack_r',
-        frames: scene.anims.generateFrameNumbers('castelhano_S_attack_R', { start: 0, end: 5 }),
+        key: 'c_s_attack_R',
+        frames: scene.anims.generateFrameNumbers('c_s_attack_R', { start: 0, end: 5 }),
         frameRate: 2,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'c_s_attack_l',
-        frames: scene.anims.generateFrameNumbers('c_s_attack_l', { start: 9, end: 4 }),
+        key: 'c_s_attack_L',
+        frames: scene.anims.generateFrameNumbers('c_s_attack_L', { start: 9, end: 4 }),
         frameRate: 2,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'c_s_walk_r',
-        frames: scene.anims.generateFrameNumbers('castelhano_S_walk_R', { start: 0, end: 9 }),
+        key: 'c_s_walk_R',
+        frames: scene.anims.generateFrameNumbers('c_s_walk_R', { start: 0, end: 9 }),
         frameRate: 15,
         repeat: 0
     });
 
-
 	scene.anims.create({
-        key: 'c_s_idle_r',
-        frames: scene.anims.generateFrameNumbers('castelhano_S_idle_R', { start: 0, end: 3 }),
+        key: 'c_s_idle_R',
+        frames: scene.anims.generateFrameNumbers('c_s_idle_R', { start: 0, end: 3 }),
         frameRate: 7,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'c_s_death_r',
-        frames: scene.anims.generateFrameNumbers('castelhano_S_death_R', { start: 0, end: 7 }),
+        key: 'c_s_death_R',
+        frames: scene.anims.generateFrameNumbers('c_s_death_R', { start: 0, end: 7 }),
         frameRate: 5,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'left',
+        key: 'padeira_walk_L',
         frames: scene.anims.generateFrameNumbers('padeira_walk_L', { start: 0, end: 5 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'idle_L',
-        frames: scene.anims.generateFrameNumbers('idle_L', { start: 0, end: 3 }),
+        key: 'padeira_idle_L',
+        frames: scene.anims.generateFrameNumbers('padeira_idle_L', { start: 0, end: 3 }),
         frameRate: 7,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'idle_R',
+        key: 'padeira_idle_R',
         frames: scene.anims.generateFrameNumbers('padeira_idle_R', { start: 3, end: 0 }),
         frameRate: 7,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'right',
+        key: 'padeira_walk_R',
         frames: scene.anims.generateFrameNumbers('padeira_walk_R', { start: 0, end: 5 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'jump_R',
+        key: 'padeira_jump_R',
         frames: scene.anims.generateFrameNumbers('padeira_jump_R', { start: 0, end: 3 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'jump_L',
+        key: 'padeira_jump_L',
         frames: scene.anims.generateFrameNumbers('padeira_jump_L', { start: 3, end: 0 }),
         frameRate: 15   ,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'fall_R',
+        key: 'padeira_fall_R',
         frames: scene.anims.generateFrameNumbers('padeira_fall_R', { start: 0, end: 1 }),
         frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'fall_L',
+        key: 'padeira_fall_L',
         frames: scene.anims.generateFrameNumbers('padeira_fall_L', { start: 1, end: 0 }),
         frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'fall_P',
+        key: 'padeira_fall_P',
         frames: scene.anims.generateFrameNumbers('padeira_fall_P', { start: 0, end: 0 }),
         frameRate: 40,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_in_R',
+        key: 'padeira_weapon_in_R',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_in_R', { start: 14, end: 0 }),
         frameRate: 50,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_in_L',
+        key: 'padeira_weapon_in_L',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_in_L', { start: 0, end: 14 }),
         frameRate: 50,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_idle_R',
+        key: 'padeira_weapon_idle_R',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_idle_R', { start: 0, end: 3 }),
         frameRate: 7,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_idle_L',
+        key: 'padeira_weapon_idle_L',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_idle_L', { start: 3, end: 0 }),
         frameRate: 7,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_right',
+        key: 'padeira_weapon_walk_R',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_walk_R', { start: 0, end: 5 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_left',
+        key: 'padeira_weapon_walk_L',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_walk_L', { start: 0, end: 5 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_jump_R',
+        key: 'padeira_weapon_jump_R',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_jump_R', { start: 0, end: 3 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_jump_L',
+        key: 'padeira_weapon_jump_L',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_jump_L', { start: 3, end: 0 }),
         frameRate: 15,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_fall_R',
+        key: 'padeira_weapon_fall_R',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_fall_R', { start: 0, end: 1 }),
         frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_fall_L',
+        key: 'padeira_weapon_fall_L',
         frames: scene.anims.generateFrameNumbers('padeira_weapon_fall_L', { start: 0, end: 1 }),
         frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack0_R',
+        key: 'padeira_attack0_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack0_R', { start: 0, end: 8 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack0_L',
+        key: 'padeira_attack0_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack0_L', { start: 8, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack1_R',
+        key: 'padeira_attack1_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 7 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack1_L',
+        key: 'padeira_attack1_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack1_L', { start: 7, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack2_R',
+        key: 'padeira_attack2_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 11 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack2_L',
+        key: 'padeira_attack2_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 11, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack3_R',
+        key: 'padeira_attack3_R',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
-        key: 'w_attack3_L',
+        key: 'padeira_attack3_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
         frameRate: 30,
         repeat: 0
@@ -349,8 +344,6 @@ function create(){
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
 
-    
-    
     score = 0;
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
     scoreText.setScrollFactor(0);
@@ -366,15 +359,9 @@ function create(){
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
    
-
-
  	portals_array = [[80,0],[80,0],[80,0],[2200,0],[2200,0],[2200,0]];
     var i = 0;
-    let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_r', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
-    	
-	
-
-    
+    let castelaGenesis = setInterval(() => {new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[i][0], portals_array[i][1], 'c_s_idle_R', enemies); i++; if(i == 6){clearInterval(castelaGenesis)}}, 1000);
 
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
@@ -419,7 +406,6 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
-                    console.log("antes pixel collision");
                     if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -430,11 +416,11 @@ function updatePadeira(scene){
             padeira.immobile = true;
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
-                padeira.anims.play('w_attack0_R', true);
+                padeira.anims.play('padeira_attack0_R', true);
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
-                padeira.anims.play('w_attack0_L', true);
+                padeira.anims.play('padeira_attack0_L', true);
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -445,9 +431,9 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down)
             if (!padeira.weapon)
-                padeira.anims.play('left', true);
+                padeira.anims.play('padeira_walk_L', true);
             else
-                padeira.anims.play('w_left', true);
+                padeira.anims.play('padeira_weapon_walk_L', true);
 
     }
 
@@ -456,9 +442,9 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down)
             if (!padeira.weapon)
-                padeira.anims.play('right', true);
+                padeira.anims.play('padeira_walk_R', true);
             else
-                padeira.anims.play('w_right', true);
+                padeira.anims.play('padeira_weapon_walk_R', true);
 
     }
 
@@ -466,15 +452,15 @@ function updatePadeira(scene){
     	padeira.body.setVelocityX(0)
         if (!padeira.weapon && !padeira.immobile){
         	if(padeira.facingRight == true)
-        	  	padeira.anims.play('idle_R', true);
+        	  	padeira.anims.play('padeira_idle_R', true);
         	else
-        		padeira.anims.play('idle_L', true);
+        		padeira.anims.play('padeira_idle_L', true);
         }
         else if (padeira.weapon && !padeira.immobile){
         	if(padeira.facingRight == true)
-        	  	padeira.anims.play('w_idle_R', true);
+        	  	padeira.anims.play('padeira_weapon_idle_R', true);
         	else
-        		padeira.anims.play('w_idle_L', true);
+        		padeira.anims.play('padeira_weapon_idle_L', true);
         }
     }
     
@@ -483,18 +469,18 @@ function updatePadeira(scene){
         padeira.body.setVelocityY(-650);
         if (padeira.facingRight == true){
             if (!padeira.weapon){
-                padeira.anims.play('jump_R', true);
+                padeira.anims.play('padeira_jump_R', true);
             }
             else
-                padeira.anims.play('w_jump_R', true);
+                padeira.anims.play('padeira_weapon_jump_R', true);
         }
 
         else{
             if (!padeira.weapon){
-                padeira.anims.play('jump_L', true);
+                padeira.anims.play('padeira_jump_L', true);
             }
             else
-                padeira.anims.play('w_jump_L', true);
+                padeira.anims.play('padeira_weapon_jump_L', true);
         }
     }
     
@@ -503,16 +489,16 @@ function updatePadeira(scene){
         if (padeira.body.velocity.y >= 0){
             if (padeira.facingRight == true){
                 if (!padeira.weapon)
-                    padeira.anims.play('fall_R', true);
+                    padeira.anims.play('padeira_fall_R', true);
                 else
-                    padeira.anims.play('w_fall_R', true);
+                    padeira.anims.play('padeira_weapon_fall_R', true);
             }
 
             else
                 if (!padeira.weapon)
-                    padeira.anims.play('fall_L', true);
+                    padeira.anims.play('padeira_fall_L', true);
                 else
-                    padeira.anims.play('w_fall_L', true);
+                    padeira.anims.play('padeira_weapon_fall_L', true);
         }
     }
 }
@@ -525,7 +511,7 @@ function updateEnemies(enemy, scene){
     
 	
     if (!enemy.alive() && !enemy.immobile){
-        enemy.anims.play('c_s_death_r', true);
+        enemy.anims.play('c_s_death_R', true);
         enemy.immobile = true;
         enemy.once('animationcomplete', () => {
             score += enemy.value;
@@ -539,19 +525,19 @@ function updateEnemies(enemy, scene){
         if (enemy.body.touching.down){
             if (enemy.body.x > x_padeira + 100){
                 enemy.moveLeft();
-                enemy.anims.play('c_s_walk_r', true);
+                enemy.anims.play('c_s_walk_R', true);
             }
 
             else if (enemy.body.x < x_padeira - 100){   
                 enemy.moveRight();
-                enemy.anims.play('c_s_walk_r', true); 
+                enemy.anims.play('c_s_walk_R', true); 
                 
             }
 
             else{
                 enemy.immobile = true;
                 enemy.body.setVelocityX(0)
-                enemy.anims.play('c_s_attack_l', true);
+                enemy.anims.play('c_s_attack_L', true);
                 //enemy.anims.pause(enemy.anims.currentAnim.frames[5]);
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
@@ -559,7 +545,6 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            console.log("intersecao de hitboxes");
                             if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
@@ -583,11 +568,6 @@ function pixelCollision(s1, s2, scene){
     var yMin = Math.max(ys1, ys2);
     var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
 
-    scene.add.rectangle(xMin + 4, yMin + 4, 8, 8, 0xff0000);
-    scene.add.rectangle(xMax + 4, yMin + 4, 8, 8, 0xff0000);
-    scene.add.rectangle(xMin + 4, yMax + 4, 8, 8, 0x0000ff);
-    scene.add.rectangle(xMax + 4, yMax + 4, 8, 8, 0x0000ff);
-
     for (var y = yMin; y < yMax; y++){  
         for (var x = xMin; x < xMax; x++){
 
@@ -597,19 +577,16 @@ function pixelCollision(s1, s2, scene){
             var xlocalB = Math.round(x - xs2);
             var ylocalB = Math.round(y - ys2);
 
-            var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.index);
-            var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.index - 1); 
-
-            console.log(a1, a2);
+            var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
+            var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
             
-            if (a1 != 0 && a2 != 0){
-                scene.add.rectangle(x + 4, y + 4, 8, 8, 0x00ff00);
-                return true;
-            }   
+            if (a1 != 0 && a2 != 0) return true;           
         }
     }
     return false;   
 }
+
+
 function updatePortal(portal, scene){
 
 	if(!openP){
