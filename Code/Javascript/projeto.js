@@ -1,10 +1,11 @@
 "use strict";
 
 
-var gameOver = false;
 var padeira;
 var portal;
 var cursors; 
+var background;
+var objective;
 var spacebar;
 var score;
 var enemies;
@@ -56,12 +57,12 @@ var game = new Phaser.Game(config);
 
 function preload(){
     
-    this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
-
+    this.load.spritesheet('sky', '../../Resources/Sprites/Jogo/lvl1/background-sheet.png', { frameWidth: 2400, frameHeight: 800 });
+    
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -124,7 +125,6 @@ function preload(){
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
-
 
     this.load.audio('music', '../../Sounds/Medieval_tune.wav'); 
 }
@@ -214,14 +214,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_m_attack_R',
         frames: scene.anims.generateFrameNumbers('c_m_attack_R', { start: 0, end: 5 }),
-        frameRate: 2,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_m_attack_L',
         frames: scene.anims.generateFrameNumbers('c_m_attack_L', { start: 9, end: 4 }),
-        frameRate: 2,
+        frameRate: 20,
         repeat: 0
     });
 
@@ -270,14 +270,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_s_attack_R',
         frames: scene.anims.generateFrameNumbers('c_s_attack_R', { start: 0, end: 5 }),
-        frameRate: 2,
+        frameRate: 10,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_attack_L',
         frames: scene.anims.generateFrameNumbers('c_s_attack_L', { start: 9, end: 4 }),
-        frameRate: 2,
+        frameRate: 10,
         repeat: 0
     });
 
@@ -516,9 +516,34 @@ function loadAnim(scene){
 
 function create(){
 
-    this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
-    
+
+    background = this.add.sprite(1200, 400, 'sky');
+
+    this.anims.create({
+        key: "sky1",
+        frames: this.anims.generateFrameNumbers("sky", {start:0, end: 3}),
+        frameRate:3,
+        repeat:0   
+    });
+
+    this.anims.create({
+        key: "sky2",
+        frames: this.anims.generateFrameNumbers("sky", {start:4, end: 6}),
+        frameRate:3,
+        repeat:0  
+    });
+
+    this.anims.create({
+        key: "sky3",
+        frames: this.anims.generateFrameNumbers("sky", {start:7, end: 10}),
+        frameRate:3,
+        repeat:0   
+    });
+
+    background.anims.play("sky1", true);
+    background.anims.pause(background.anims.currentAnim.frames[0]);
+  
     healthMeter = this.add.sprite(150, 760, "health");
 
     this.anims.create({
@@ -551,8 +576,10 @@ function create(){
 
     const sizePortais = (portals_array.length);
 
+    objective = new Objective(1415, 673, this, 540, 145);
     padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R');
-
+    
+    this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
    
@@ -579,7 +606,7 @@ function create(){
 
 function update (){
 
-    if (padeira.healthPoints <= 0) return;
+    if (padeira.healthPoints <= 0 || objective.healthPoints <= 0) return;
 
     updatePadeira(this);
 
@@ -588,8 +615,9 @@ function update (){
     
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
+    
+    updateBackgroud(this);
 }
-
 
 
 function pause(){
@@ -605,6 +633,7 @@ function pause(){
         game.scene.pause("level");  
     }
 }
+
 
 class PauseScene extends Phaser.Scene{
 
@@ -698,8 +727,6 @@ function updatePadeira(scene){
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
                     //if (pixelCollision(padeira, elementos[i].gameObject, scene))
-                    console.log("antes da funcao");
-                    console.log(elementos[i].gameObject);
                     elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
@@ -801,7 +828,13 @@ function updatePadeira(scene){
 function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
-	
+    var x_objetivo = objective.body.x;
+
+    if (Math.abs(enemy.body.x - x_padeira) > Math.min(Math.abs(enemy.body.x - x_objetivo) , Math.abs(enemy.body.x - (x_objetivo + objective.body.width))))
+        var closer = objective;
+    else
+        var closer = padeira;
+        
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_R', true);
         enemy.immobile = true;
@@ -814,33 +847,35 @@ function updateEnemies(enemy, scene){
 
     else if (enemy.alive() && !enemy.immobile){
         if (enemy.body.touching.down){
-            if (enemy.body.x > x_padeira + 100){
+            if (enemy.body.x > closer.body.x + closer.body.width + enemy.range){
                 enemy.moveLeft();
                 enemy.anims.play('c_s_walk_R', true);
             }
 
-            else if (enemy.body.x < x_padeira - 100){   
+            else if (enemy.body.x < closer.body.x - enemy.range){   
                 enemy.moveRight();
-                enemy.anims.play('c_s_walk_R', true); 
-                
+                enemy.anims.play('c_s_walk_R', true);              
             }
 
             else{
                 enemy.immobile = true;
                 enemy.body.setVelocityX(0)
                 enemy.anims.play('c_s_attack_L', true);
-                //enemy.anims.pause(enemy.anims.currentAnim.frames[5]);
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
                     //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
-                        if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
+                        if (elementos[i].gameObject == padeira){
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                             elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
                         }
-                    } 
-                    enemy.immobile = false; });
+                        else if (elementos[i].gameObject == objective){
+                            elementos[i].gameObject.getHit(enemy.damage);
+                        }
+                    }
+                    enemy.immobile = false;
+                    });
             }
         }
     }
@@ -900,3 +935,11 @@ function updatePortal(portal, scene){
 }
 
 
+function updateBackgroud(scene){
+
+    if (objective.healthPoints / 50 >= 66) background.anims.play('sky1', true);
+
+    else if (objective.healthPoints / 50 >= 33) background.anims.play('sky2', true);
+
+    else background.anims.play('sky3', true);
+}

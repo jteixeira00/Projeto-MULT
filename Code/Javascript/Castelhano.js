@@ -1,11 +1,12 @@
 class Castelhano extends Pessoa{
 
-    constructor(hp, dmg, scene, x, y, movementSpeed, knockback, sprite, array){
+    constructor(hp, dmg, scene, x, y, movementSpeed, knockback, range, sprite, array){
 
         super(hp, dmg, scene, x, y, sprite);
 
         this.movementSpeed = movementSpeed;
         this.knockback = knockback;
+        this.range = range;
         this.setDepth(2);
         this.anims.play(sprite,true);
         array.add(this);
