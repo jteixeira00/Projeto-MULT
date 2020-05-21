@@ -15,6 +15,7 @@ var openP;
 var inicio;
 var fim;
 var endP;
+var healthMeter;
 var volume;
 var volumeFrame = 14;
 var config = {
@@ -100,12 +101,14 @@ function preload(){
     this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
+
+    this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 }
 
 
 function loadAnim(scene){
 
-    scene.smash = scene.sound.add('smash');
+    scene.smash = scene.sound.add('smash'); 
 
     scene.anims.create({
         key: 'portal',
@@ -359,6 +362,20 @@ function create(){
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);
     
+    healthMeter = this.add.sprite(150, 760, "health");
+
+    this.anims.create({
+        key: "health",
+        frames: this.anims.generateFrameNumbers("health", {start:0, end: 9}),
+        frameRate:1,
+        repeat:-1   
+    });
+
+    healthMeter.setScrollFactor(0);
+    healthMeter.anims.play("health", true);
+    healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[9]);
+    healthMeter.setScale(3);
+
     var pause_btn = this.add.image(1120,60, 'pause_btn');
     pause_btn.setScrollFactor(0)
     pause_btn.setInteractive();
@@ -377,7 +394,7 @@ function create(){
 
     const sizePortais = (portals_array.length);
 
-    padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R');
+    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R');
 
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
@@ -400,19 +417,17 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     game.scene.add("PauseScene", PauseScene, false);
-    
 }
 
 
 function update (){
 
-    if (gameOver) return;
+    if (padeira.healthPoints <= 0) return;
 
     updatePadeira(this);
 
     for (var i = 0; i < portals.getChildren().length; i++)
     	updatePortal(portals.getChildren()[i],this);
-
     
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
@@ -444,7 +459,7 @@ class PauseScene extends Phaser.Scene{
         this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
         this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
         this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
-        this.load.spritesheet("soundbar", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+        this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
     }
 
     create(){
@@ -454,19 +469,21 @@ class PauseScene extends Phaser.Scene{
         btn.on("pointerdown", () => hideMenu());
 
         var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
-        volume = this.add.sprite(585,400+40, "soundbar");
+        var gramMenos = this.add.image(390, 380+40, "gram-");
+        volume = this.add.sprite(585,400+40, "volume");
+
         gramMais.setInteractive();
         gramMais.on("pointerdown", () => updateVolume(1));
-        var gramMenos = this.add.image(390, 380+40, "gram-");
         gramMenos.setInteractive();
         gramMenos.on("pointerdown", () => updateVolume(-1));
             
         this.anims.create({
             key: "volume",
-            frames: this.anims.generateFrameNumbers("soundbar", {start:0, end: 14}),
+            frames: this.anims.generateFrameNumbers("volume", {start:0, end: 14}),
             frameRate:1,
             repeat:-1   
         });
+
         volume.anims.play("volume", true);
         volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
     }
@@ -523,8 +540,10 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
-                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
-                        elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
+                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    console.log("antes da funcao");
+                    console.log(elementos[i].gameObject);
+                    elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
         }
@@ -625,7 +644,6 @@ function updatePadeira(scene){
 function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
-    
 	
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_R', true);
@@ -636,7 +654,6 @@ function updateEnemies(enemy, scene){
             enemy.destroy();
         });
     }
-
 
     else if (enemy.alive() && !enemy.immobile){
         if (enemy.body.touching.down){
@@ -662,8 +679,8 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
-                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
+                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
                         }
                     } 
                     enemy.immobile = false; });

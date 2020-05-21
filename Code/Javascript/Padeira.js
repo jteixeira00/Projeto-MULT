@@ -6,8 +6,7 @@ class Padeira extends Pessoa{
 
         this.animationCounter = 0;
         this.weapon = false;
-        this.invulnerable = false; //ligar por 1s depois de levar porrada
-        // ver one shot timers
+        this.invulnerable = false;
         this.setDepth(1);
         this.body.setSize(72, 104, true); 
         this.body.offset.y = 64;
@@ -45,7 +44,7 @@ class Padeira extends Pessoa{
         }
     }
 
-    getHit(rightKnockback, damage, scene){
+    getHit(rightKnockback, damage, scene, healthMeter){
 
         if (!this.invulnerable){
             this.healthPoints -= damage;
@@ -58,7 +57,10 @@ class Padeira extends Pessoa{
             else
                 this.body.setVelocityX(-200);
 
-            // this.invulnerable = true;
+            healthMeter.anims.play("health", true);
+            healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[Math.round(this.healthPoints / 50) - 1]);
+            
+            this.invulnerable = true;
             scene.time.delayedCall(1000, () => {this.invulnerable = false;}, null, this);
         }
     }

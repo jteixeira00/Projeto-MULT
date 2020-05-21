@@ -2,7 +2,7 @@ class CastelhanoSmall extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
-        super(100, 25, scene, x, y, 250, 200, sprite, array);
+        super(100, 50, scene, x, y, 250, 200, sprite, array);
 
         this.body.setSize(48, 104, true);
         this.body.offset.y = 40;
