@@ -2,6 +2,7 @@
 
 
 var gameOver = false;
+var steps;
 var padeira;
 var portal;
 var cursors; 
@@ -13,8 +14,10 @@ var portals_array;
 var scoreText;
 var openP;
 var inicio;
+var falling;
 var fim;
 var endP;
+var stepsON;
 var volume;
 var volumeFrame = 14;
 var config = {
@@ -25,7 +28,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -124,7 +127,12 @@ function preload(){
 
 
 
-    this.load.audio('level1_music', '../../Sounds/level1_music.wav'); 
+    this.load.audio('level1_music', '../../Sounds/level1_music.wav');
+    this.load.audio('swoosh_0', '../../Sounds/swoosh_0.wav');  
+    this.load.audio('swoosh_1', '../../Sounds/swoosh_1.wav'); 
+    this.load.audio('swoosh_2', '../../Sounds/swoosh_2.wav'); 
+    this.load.audio('steps', '../../Sounds/audiosteps.wav'); 
+    this.load.audio('fall', '../../Sounds/fall.mp3');    
 }
 
 
@@ -518,7 +526,7 @@ function create(){
 	var config = {
     mute: false,
     volume: 1,
-    loop: true,
+    loop: true
 	}
 
 
@@ -545,7 +553,7 @@ function create(){
 
     const sizePortais = (portals_array.length);
 
-    padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R');
+    padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R',this);
 
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
@@ -675,8 +683,20 @@ function hideMenu(){
 }
 
 function updatePadeira(scene){
+
+
+	var config = {
+	    mute: false,
+	    volume: 3,
+	    rate: 2,
+	    loop: true
+	}    
     
     if (Phaser.Input.Keyboard.JustDown(spacebar) && padeira.body.touching.down && !padeira.immobile){
+       	if(stepsON){
+        	stepsON = false;
+        	steps.stop();
+        }
     	
         if (padeira.weapon){
             
@@ -691,21 +711,23 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (elementos[i].gameObject != padeira){
-                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
         }
         
-        else if (!padeira.weapon){    
+        else if (!padeira.weapon){
             padeira.immobile = true;
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
+                playSound(game,"swoosh_0",{volume: 2});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
+                playSound(game,"swoosh_0",{volume: 2});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -714,34 +736,76 @@ function updatePadeira(scene){
     if (cursors.left.isDown && !padeira.immobile){
         padeira.body.setVelocityX(-350);
         padeira.facingRight = false
-        if (padeira.body.touching.down)
-            if (!padeira.weapon)
+        if (padeira.body.touching.down){
+        	if(!falling){
+        		playSound(game,"fall",{volume: 1});
+        		falling = true;
+        	}
+            if (!padeira.weapon){
+            	if(!stepsON){
+            		steps = playSound(game,'steps',config);
+            		stepsON = true;
+            	}
                 padeira.anims.play('padeira_walk_L', true);
-            else
+            }
+            else{
+            	if(!stepsON){
+            		steps = playSound(game,'steps',config);
+            		stepsON = true;
+            	}
                 padeira.anims.play('padeira_weapon_walk_L', true);
+            }
+        }
 
     }
 
     else if (cursors.right.isDown && !padeira.immobile){
         padeira.body.setVelocityX(350);
         padeira.facingRight = true
-        if (padeira.body.touching.down)
-            if (!padeira.weapon)
+        if (padeira.body.touching.down){
+        	if(!falling){
+        		playSound(game,"fall",{volume: 1});
+        		falling = true;
+        	}
+            if (!padeira.weapon){
+            	if(!stepsON){
+            		steps = playSound(game,'steps',config);
+            		stepsON = true;
+            	}
                 padeira.anims.play('padeira_walk_R', true);
-            else
+            }
+            else{
+            	if(!stepsON){
+            		steps = playSound(game,'steps',config);
+            		stepsON = true;
+            	}
                 padeira.anims.play('padeira_weapon_walk_R', true);
+            }
+        }
 
     }
 
     else if (padeira.body.touching.down){
     	padeira.body.setVelocityX(0)
         if (!padeira.weapon && !padeira.immobile){
+        	if (stepsON){
+        		stepsON = false;
+        		steps.stop();
+        	}
+        	if(!falling){
+        		playSound(game,"fall",{volume: 1});
+        		falling = true;
+        	}
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('padeira_idle_R', true);
         	else
         		padeira.anims.play('padeira_idle_L', true);
         }
         else if (padeira.weapon && !padeira.immobile){
+        	if (stepsON){
+        		stepsON = false;
+        		steps.stop();
+        	}
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('padeira_weapon_idle_R', true);
         	else
@@ -750,7 +814,11 @@ function updatePadeira(scene){
     }
     
     if (cursors.up.isDown && padeira.body.touching.down){
-
+    	if (stepsON){
+        		stepsON = false;
+        		steps.stop();
+        }
+		falling = false;
         padeira.body.setVelocityY(-650);
         if (padeira.facingRight == true){
             if (!padeira.weapon){
@@ -770,7 +838,10 @@ function updatePadeira(scene){
     }
     
     else if (!padeira.body.touching.down){
-
+        if (stepsON){
+        		stepsON = false;
+        		steps.stop();
+        }
         if (padeira.body.velocity.y >= 0){
             if (padeira.facingRight == true){
                 if (!padeira.weapon)
@@ -830,7 +901,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
-                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
                         }
                     } 

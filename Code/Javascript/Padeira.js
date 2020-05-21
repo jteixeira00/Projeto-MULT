@@ -1,6 +1,6 @@
 class Padeira extends Pessoa{
 
-    constructor(hp, dmg, scene, x, y, sprite){
+    constructor(hp, dmg, scene, x, y, sprite,game){
 
         super(hp, dmg, scene, x, y, sprite);
 
@@ -21,27 +21,49 @@ class Padeira extends Pessoa{
     }
 
     updateAttackingHitbox(){
-        
+        var config = {
+            mute: false,
+            volume: 2,
+            loop: false
+        }
         var string = 'padeira_attack' + (this.animationCounter + 1);
 
         if (this.facingRight){
             string += '_R';
 
-            if (this.animationCounter == 0) return [string, -18, -20, 100, 104];
+            if (this.animationCounter == 0){
+                playSound(game,"swoosh_1",config);
+                return [string, -18, -20, 100, 104];
+            }
 
-            else if (this.animationCounter == 1) return [string, -18, -84, 100, 168];
+            else if (this.animationCounter == 1){
+                playSound(game,"swoosh_2",config);
+                return [string, -18, -84, 100, 168];
+            }
             
-            else return [string, -79, -84, 158, 168];
+            else{
+                playSound(game,"swoosh_2",config);
+                return [string, -79, -84, 158, 168];
+            }
         }
 
         else{
             string += '_L';
 
-            if (this.animationCounter == 0) return [string, -82, -20, 100, 104];
+            if (this.animationCounter == 0){
+                playSound(game,"swoosh_1",config);
+                return [string, -82, -20, 100, 104];
+            }
 
-            else if (this.animationCounter == 1) return [string, -82, -84, 100, 168];
+            else if (this.animationCounter == 1){
+                playSound(game,"swoosh_2",config);
+                return [string, -82, -84, 100, 168];
+            }
             
-            else return [string, -79, -84, 158, 168];
+            else{
+                playSound(game,"swoosh_2",config);
+                return [string, -79, -84, 158, 168];
+            }
         }
     }
 
