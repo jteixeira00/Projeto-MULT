@@ -9,6 +9,7 @@ var objective;
 var spacebar;
 var score;
 var enemies;
+var platforms;
 var portals;
 var portals_array;
 var scoreText;
@@ -19,6 +20,8 @@ var endP;
 var healthMeter;
 var volume;
 var volumeFrame = 14;
+var drop;
+var drops;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -123,6 +126,9 @@ function preload(){
     this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
+
+
+    this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
 
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
@@ -564,14 +570,14 @@ function create(){
     pause_btn.on("pointerdown", () => pause());
     
     score = 0;
-    scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
+    scoreText =  this.add.text(24, 36, '0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
     scoreText.setScrollFactor(0);
 
     enemies = this.add.group();
     portals = this.add.group();
-
+    
     var array = platformsDesign(this);
-    var platforms = array[0];
+    platforms = array[0];
     var portals_array = array[1];
 
     const sizePortais = (portals_array.length);
@@ -601,6 +607,13 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     game.scene.add("PauseScene", PauseScene, false);
+
+    
+    tempocarroca(this);
+    drops = this.add.group();
+    this.physics.add.collider(drops, platforms);
+    this.physics.add.overlap(padeira, drops, spawnCarroca);
+
 }
 
 
@@ -620,11 +633,34 @@ function update (){
 }
 
 
+function tempocarroca(scene){
+
+    scene.time.addEvent({
+        delay: 5000,
+        callback: ()=>{
+            dropcarroca(scene)
+        },
+        loop: true
+    })
+}
+
+
+function dropcarroca(scene){
+    
+    if(drops.getChildren().length == 0){
+        var x = Phaser.Math.Between(30, 2370);
+        drop = scene.add.sprite(x, 0, "minicarro");
+        scene.physics.world.enableBody(drop, 0);
+        drops.add(drop);
+    }
+
+    if(drops.getChildren().length == 1) drop.destroy();
+}
+
+
 function pause(){
     
-    if(game.scene.isPaused("default")){
-        game.scene.resume("default");
-    }
+    if(game.scene.isPaused("default")) game.scene.resume("default");
 
     else{ 
         game.scene.start("PauseScene");
@@ -821,6 +857,12 @@ function updatePadeira(scene){
                     padeira.anims.play('padeira_weapon_fall_L', true);
         }
     }
+    
+}
+
+function spawnCarroca(){
+    console.log("yay");
+    drop.destroy();
 }
 
 // Need armor getting spanked sound
@@ -840,7 +882,7 @@ function updateEnemies(enemy, scene){
         enemy.immobile = true;
         enemy.once('animationcomplete', () => {
             score += enemy.value;
-            scoreText.setText('Pontuação: ' + score);
+            scoreText.setText(score);
             enemy.destroy();
         });
     }
