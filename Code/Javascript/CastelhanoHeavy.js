@@ -5,8 +5,8 @@ class CastelhanoHeavy extends Castelhano{
         super(200, 100, scene, x, y, 250, 200, 50, sprite, array);
 
         this.body.setSize(96, 208, true);
-        this.body.offset.y = 48;
         this.body.offset.x = 80;
+        this.body.offset.y = 48;
         this.value = 200;
         this.movementSpeed = 50;
     }
@@ -14,7 +14,7 @@ class CastelhanoHeavy extends Castelhano{
     moveRight(){
         this.body.setVelocityX(this.movementSpeed);
         this.body.offset.x = 80;
-        this.body.offset.y = 40;
+        this.body.offset.y = 48;
         this.facingRight = true;
         this.range = 140;
     }
@@ -22,7 +22,7 @@ class CastelhanoHeavy extends Castelhano{
     moveLeft(){
         this.body.setVelocityX(-this.movementSpeed);
         this.body.offset.x = 80;
-        this.body.offset.y = 40;
+        this.body.offset.y = 48;
         this.facingRight = false;
         this.range = 0;
 
