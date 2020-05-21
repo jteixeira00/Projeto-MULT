@@ -2,12 +2,13 @@ class CastelhanoHeavy extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
-        super(100, 50, scene, x, y, 250, 200, 50, sprite, array);
+        super(200, 100, scene, x, y, 250, 200, 50, sprite, array);
 
         this.body.setSize(96, 208, true);
+        this.body.offset.y = 48;
         this.body.offset.x = 80;
-        this.body.offset.y = 40;
-        this.value = 100;
+        this.value = 200;
+        this.movementSpeed = 50;
     }
 
     moveRight(){
@@ -15,6 +16,7 @@ class CastelhanoHeavy extends Castelhano{
         this.body.offset.x = 80;
         this.body.offset.y = 40;
         this.facingRight = true;
+        this.range = 140;
     }
 
     moveLeft(){
@@ -22,6 +24,8 @@ class CastelhanoHeavy extends Castelhano{
         this.body.offset.x = 80;
         this.body.offset.y = 40;
         this.facingRight = false;
+        this.range = 0;
+
     }
 
     getAttackingHitbox(){

@@ -8,7 +8,6 @@ class CastelhanoSmall extends Castelhano{
         this.body.offset.y = 40;
         this.body.offset.x = 8;
         this.value = 100;
-
     }
 
     moveRight(){

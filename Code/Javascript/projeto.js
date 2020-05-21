@@ -157,42 +157,42 @@ function loadAnim(scene){
         scene.anims.create({
         key: 'portalO',
         frames: scene.anims.generateFrameNumbers('portal_op', { start: 0, end: 5 }),
-        frameRate: 10,
+        frameRate: 20,
         repeat: 0
     });
 
         scene.anims.create({
         key: 'portalE',
         frames: scene.anims.generateFrameNumbers('portal_ed', { start: 0, end: 7 }),
-        frameRate: 10,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_h_attack_R',
         frames: scene.anims.generateFrameNumbers('c_h_attack_R', { start: 0, end: 5 }),
-        frameRate: 2,
+        frameRate: 8,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_h_attack_L',
         frames: scene.anims.generateFrameNumbers('c_h_attack_L', { start: 9, end: 4 }),
-        frameRate: 2,
+        frameRate: 8,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_h_walk_R',
         frames: scene.anims.generateFrameNumbers('c_h_walk_R', { start: 0, end: 9 }),
-        frameRate: 15,
+        frameRate: 5,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_h_walk_L',
         frames: scene.anims.generateFrameNumbers('c_h_walk_L', { start: 9, end: 0 }),
-        frameRate: 15,
+        frameRate: 5,
         repeat: 0
     });
 
@@ -227,14 +227,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_m_attack_R',
         frames: scene.anims.generateFrameNumbers('c_m_attack_R', { start: 0, end: 5 }),
-        frameRate: 20,
+        frameRate: 10,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_m_attack_L',
         frames: scene.anims.generateFrameNumbers('c_m_attack_L', { start: 9, end: 4 }),
-        frameRate: 20,
+        frameRate: 10,
         repeat: 0
     });
 
@@ -611,12 +611,22 @@ function create(){
     this.physics.add.collider(enemies, platforms);
    
     var i = 0;
-    let castelaGenesis = setInterval(() => {
-        var randIndex = Math.floor((sizePortais) * Math.random());
-        new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);
-        new CastelhanoMedium(this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_m_idle_R', enemies);
+
+    let castelaGenesis = setInterval(() => { 
+        if(portals_array[i][2] == "S"){
+        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"S");
+            new CastelhanoSmall(this, portals_array[i][0], portals_array[i][1], 'c_s_idle_R', enemies);
+        }
+        if(portals_array[i][2] == "M"){
+        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"M");
+        	new CastelhanoMedium(this, portals_array[i][0], portals_array[i][1], 'c_m_idle_R', enemies);
+       	}
+        if(portals_array[i][2] == "H"){
+        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"H");
+        	new CastelhanoHeavy(this, portals_array[i][0], portals_array[i][1], 'c_h_idle_R', enemies);
+       	}
         i++;
-        if(i == 4) clearInterval(castelaGenesis)
+        if(i == sizePortais) clearInterval(castelaGenesis)
     }, 1000);
     	
     this.cameras.main.setBounds(0, 0, 2400, 800);
@@ -955,10 +965,12 @@ function updateEnemies(enemy, scene){
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
 
-    if (Math.abs(enemy.body.x - x_padeira) > Math.min(Math.abs(enemy.body.x - x_objetivo) , Math.abs(enemy.body.x - (x_objetivo + objective.body.width))))
+    if (Math.abs(enemy.body.x - x_padeira) > Math.min(Math.abs(enemy.body.x - x_objetivo) , Math.abs(enemy.body.x - (x_objetivo + objective.body.width)))){
         var closer = objective;
-    else
+    }
+    else{
         var closer = padeira;
+    }
         
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight)
@@ -1096,6 +1108,9 @@ function pixelCollision(s1, s2, scene){
 
 
 function updatePortal(portal, scene){
+
+	if(portal.enemy == "H")
+		portal.setScale(2);
 
 	if(!openP){
 		portal.anims.play('portalO',true);

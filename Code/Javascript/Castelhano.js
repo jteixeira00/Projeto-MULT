@@ -8,6 +8,7 @@ class Castelhano extends Pessoa{
         this.knockback = knockback;
         this.setDepth(2);
         array.add(this);
+        this.range = 0;
     }
 
     getHit(rightKnockback, damage){

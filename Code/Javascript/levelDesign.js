@@ -16,10 +16,8 @@ function platformsDesign(game){
 	}
 
 	for(var i = 0; i < portlCount; i++){
-		array.push([portals[i].x, portals[i].y]);
+		array.push([portals[i].x, portals[i].y,portals[i].enemie]);
 	}
-
-
 
 	output[0] = platforms;
 	output[1] = array;
