@@ -21,8 +21,8 @@ class Padeira extends Pessoa{
     }
 
     updateAttackingHitbox(){
-
-        var string = 'w_attack' + (this.animationCounter + 1);
+        
+        var string = 'padeira_attack' + (this.animationCounter + 1);
 
         if (this.facingRight){
             string += '_R';
@@ -49,8 +49,6 @@ class Padeira extends Pessoa{
 
         if (!this.invulnerable){
             this.healthPoints -= damage;
-
-            console.log("Padeira got hit");
 
             this.body.setDrag(300,50);
             this.body.setVelocityY(-200);
