@@ -368,7 +368,6 @@ function create(){
     scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
     scoreText.setScrollFactor(0);
 
-    
     enemies = this.add.group();
     portals = this.add.group();
 
@@ -384,7 +383,13 @@ function create(){
     this.physics.add.collider(enemies, platforms);
    
     var i = 0;
-    let castelaGenesis = setInterval(() => {var randIndex = Math.floor((sizePortais) * Math.random());new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);new Castelhano(100, 50, this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_s_idle_r', enemies); i++; if(i == 4){clearInterval(castelaGenesis)}}, 1000);
+    let castelaGenesis = setInterval(() => {
+        var randIndex = Math.floor((sizePortais) * Math.random());
+        new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);
+        new CastelhanoSmall(this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_s_idle_R', enemies);
+        i++;
+        if(i == 4) clearInterval(castelaGenesis)
+    }, 1000);
     	
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
