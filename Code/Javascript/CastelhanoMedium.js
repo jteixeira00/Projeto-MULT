@@ -1,20 +1,19 @@
-class CastelhanoSmall extends Castelhano{
+class CastelhanoMedium extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
         super(100, 50, scene, x, y, 250, 200, 50, sprite, array);
 
-        this.body.setSize(48, 104, true);
-        this.body.offset.y = 40;
+        this.body.setSize(48, 105, true);
         this.body.offset.x = 8;
+        this.body.offset.y = 20;
         this.value = 100;
-
     }
 
     moveRight(){
         this.body.setVelocityX(this.movementSpeed);
         this.body.offset.x = 32;
-        this.body.offset.y = 12;
+        this.body.offset.y = 20;
         this.facingRight = true;
         this.range = 60;
     }
@@ -22,7 +21,7 @@ class CastelhanoSmall extends Castelhano{
     moveLeft(){
         this.body.setVelocityX(-this.movementSpeed);
         this.body.offset.x = 60;
-        this.body.offset.y = 12;
+        this.body.offset.y = 20;
         this.facingRight = false;
         this.range = 8;
     }

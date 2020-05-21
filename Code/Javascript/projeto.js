@@ -66,7 +66,6 @@ function preload(){
     
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
-    this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
     this.load.spritesheet('sky', '../../Resources/Sprites/Jogo/lvl1/background-sheet.png', { frameWidth: 2400, frameHeight: 800 });
     
@@ -147,7 +146,6 @@ function preload(){
 
 function loadAnim(scene){
 
-    scene.smash = scene.sound.add('smash'); 
 
     scene.anims.create({
         key: 'portal',
@@ -616,7 +614,7 @@ function create(){
     let castelaGenesis = setInterval(() => {
         var randIndex = Math.floor((sizePortais) * Math.random());
         new Portal(this, portals_array[randIndex][0], portals_array[randIndex][1], 'portal',portals);
-        new CastelhanoSmall(this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_s_idle_R', enemies);
+        new CastelhanoMedium(this, portals_array[randIndex][0], portals_array[randIndex][1], 'c_m_idle_R', enemies);
         i++;
         if(i == 4) clearInterval(castelaGenesis)
     }, 1000);
@@ -790,7 +788,6 @@ function updatePadeira(scene){
 
             padeira.immobile = true;
             padeira.anims.play(array[0], true);
-            //scene.smash.play();
             padeira.once('animationcomplete', () => {padeira.immobile = false;});
             padeira.updateAnimationCounter(); 
             
@@ -964,7 +961,27 @@ function updateEnemies(enemy, scene){
         var closer = padeira;
         
     if (!enemy.alive() && !enemy.immobile){
-        enemy.anims.play('c_s_death_R', true);
+    	if (enemy.facingRight)
+    		if(enemy.body.height == 104){
+    	        enemy.anims.play('c_s_death_R', true);
+    	    }
+    	    else if(enemy.body.height == 105){
+    	        enemy.anims.play('c_m_death_R', true);
+    	    }
+    	    else{
+    	    	enemy.anims.play('c_h_death_R', true);
+    	    }
+    	else{
+    		if(enemy.body.height == 104){
+    			enemy.anims.play('c_s_death_L', false);
+    		}
+    		else if(enemy.body.height == 105){
+    	        enemy.anims.play('c_m_death_L', true);
+    	    }
+    	    else{
+    	    	enemy.anims.play('c_h_death_L', true);
+    	    }
+    	}
         enemy.immobile = true;
         enemy.once('animationcomplete', () => {
             score += enemy.value;
@@ -977,18 +994,55 @@ function updateEnemies(enemy, scene){
         if (enemy.body.touching.down){
             if (enemy.body.x > closer.body.x + closer.body.width + enemy.range){
                 enemy.moveLeft();
-                enemy.anims.play('c_s_walk_R', true);
+                if(enemy.body.height == 104){
+               		enemy.anims.play('c_s_walk_L', true);
+            	}
+            	else if(enemy.body.height == 105){
+               		enemy.anims.play('c_m_walk_L', true);
+            	}
+            	else{
+            		enemy.anims.play('c_h_walk_L', true);
+            	}
             }
 
             else if (enemy.body.x < closer.body.x - enemy.range){   
                 enemy.moveRight();
-                enemy.anims.play('c_s_walk_R', true);              
+                if(enemy.body.height == 104){
+                    enemy.anims.play('c_s_walk_R', true);
+                }
+                else if(enemy.body.height == 105){
+                    enemy.anims.play('c_m_walk_R', true);
+                } 
+                else{
+                	enemy.anims.play('c_h_walk_R', true);
+                }              
             }
 
             else{
                 enemy.immobile = true;
                 enemy.body.setVelocityX(0)
-                enemy.anims.play('c_s_attack_L', true);
+                if (enemy.facingRight){
+                	if(enemy.body.height == 104){
+                	    enemy.anims.play('c_s_attack_R', true);
+                	}
+                	else if(enemy.body.height == 105){
+                	    enemy.anims.play('c_m_attack_R', true);
+                	}
+                	else{
+                		enemy.anims.play('c_h_attack_R', true);
+                	}
+                }
+                else{
+                	if(enemy.body.height == 104){
+                	  	enemy.anims.play('c_s_attack_L', true);
+                	}
+                	else if(enemy.body.height == 105){
+                	  	enemy.anims.play('c_m_attack_L', true);
+                	}
+                	else{
+                		enemy.anims.play('c_h_attack_L', true);
+                	}
+                }
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
                     //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
@@ -997,8 +1051,6 @@ function updateEnemies(enemy, scene){
                         if (elementos[i].gameObject == padeira){ 
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
-
-
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);
