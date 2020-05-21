@@ -529,7 +529,7 @@ function create(){
     this.anims.create({
         key: "sky1",
         frames: this.anims.generateFrameNumbers("sky", {start:0, end: 3}),
-        frameRate:3,
+        frameRate:1,
         repeat:0   
     });
 
