@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+<span style="font-family:'font1'"></span>
 <html>
     <head>
         
@@ -7,7 +8,14 @@
         <title>Aljubarrota: The Game</title>
         <script src="../../phaser.js"></script>
         <link rel="stylesheet" type="text/css" href="../Css/jogo.css">
-        
+        <style media='screen' type='text/css'>
+            @font-face {
+              font-family: font1;
+              src: url('../../Resources/04B_03__.ttf');
+              
+            }
+        </style>
+        <div style="font-family:font1; position:absolute; left:-1000px; visibility:hidden;"></div>
         <script type="text/javascript" src="../Javascript/projeto.js"></script>
         <script type="text/javascript" src="../Javascript/Pessoa.js"></script>
         <script type="text/javascript" src="../Javascript/Padeira.js"></script>
@@ -17,7 +25,7 @@
         <script type="text/javascript" src="../Javascript/sample.json"></script>
         <script type="text/javascript" src="../Javascript/levelDesign.js"></script>
         <script type="text/javascript" src="../Javascript/sound.js"></script>
-        
+        <script type="text/javascript" src="../Javascript/Objective.js"></script>
     </head>
     
     <body>

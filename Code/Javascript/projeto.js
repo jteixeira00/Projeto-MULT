@@ -1,14 +1,16 @@
 "use strict";
 
 
-var gameOver = false;
 var steps;
 var padeira;
 var portal;
 var cursors; 
+var background;
+var objective;
 var spacebar;
 var score;
 var enemies;
+var platforms;
 var portals;
 var portals_array;
 var scoreText;
@@ -18,8 +20,11 @@ var falling;
 var fim;
 var endP;
 var stepsON;
+var healthMeter;
 var volume;
 var volumeFrame = 14;
+var drop;
+var drops;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -58,12 +63,12 @@ var game = new Phaser.Game(config);
 
 function preload(){
     
-    this.load.image('sky', '../../Resources/Sprites/Jogo/lvl1/background.png');
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
     this.load.audio('smash', ['../../Resources/Sound/pancada.ogg' , '../../Resources/Sound/pancada.mp3']);
     this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
-
+    this.load.spritesheet('sky', '../../Resources/Sprites/Jogo/lvl1/background-sheet.png', { frameWidth: 2400, frameHeight: 800 });
+    
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_walk_R', '../../Resources/Sprite Sheets/Padeira/Padeira_walk_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -126,6 +131,9 @@ function preload(){
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
 
+    this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
+
+    this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
     this.load.audio('level1_music', '../../Sounds/level1_music.wav');
     this.load.audio('swoosh_0', '../../Sounds/swoosh_0.wav');  
@@ -138,7 +146,7 @@ function preload(){
 
 function loadAnim(scene){
 
-    scene.smash = scene.sound.add('smash');
+    scene.smash = scene.sound.add('smash'); 
 
     scene.anims.create({
         key: 'portal',
@@ -220,14 +228,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_m_attack_R',
         frames: scene.anims.generateFrameNumbers('c_m_attack_R', { start: 0, end: 5 }),
-        frameRate: 2,
+        frameRate: 20,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_m_attack_L',
         frames: scene.anims.generateFrameNumbers('c_m_attack_L', { start: 9, end: 4 }),
-        frameRate: 2,
+        frameRate: 20,
         repeat: 0
     });
 
@@ -276,14 +284,14 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_s_attack_R',
         frames: scene.anims.generateFrameNumbers('c_s_attack_R', { start: 0, end: 5 }),
-        frameRate: 2,
+        frameRate: 10,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_attack_L',
         frames: scene.anims.generateFrameNumbers('c_s_attack_L', { start: 9, end: 4 }),
-        frameRate: 2,
+        frameRate: 10,
         repeat: 0
     });
 
@@ -523,6 +531,7 @@ function loadAnim(scene){
 function create(){
 
 
+
 	var config = {
     mute: false,
     volume: 1,
@@ -533,28 +542,72 @@ function create(){
 	playSound(this,"level1_music",config);
 
     this.add.image(1200, 400, 'sky');
+
     this.physics.world.setBounds(0, 0, 2400, 800);
-    
+
+    background = this.add.sprite(1200, 400, 'sky');
+
+    this.anims.create({
+        key: "sky1",
+        frames: this.anims.generateFrameNumbers("sky", {start:0, end: 3}),
+        frameRate:1,
+        repeat:0   
+    });
+
+    this.anims.create({
+        key: "sky2",
+        frames: this.anims.generateFrameNumbers("sky", {start:4, end: 6}),
+        frameRate:3,
+        repeat:0  
+    });
+
+    this.anims.create({
+        key: "sky3",
+        frames: this.anims.generateFrameNumbers("sky", {start:7, end: 10}),
+        frameRate:3,
+        repeat:0   
+    });
+
+    background.anims.play("sky1", true);
+    background.anims.pause(background.anims.currentAnim.frames[0]);
+  
+    healthMeter = this.add.sprite(150, 760, "health");
+
+    this.anims.create({
+        key: "health",
+        frames: this.anims.generateFrameNumbers("health", {start:0, end: 9}),
+        frameRate:1,
+        repeat:-1   
+    });
+
+    healthMeter.setScrollFactor(0);
+    healthMeter.anims.play("health", true);
+    healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[9]);
+    healthMeter.setScale(3);
+
     var pause_btn = this.add.image(1120,60, 'pause_btn');
     pause_btn.setScrollFactor(0)
     pause_btn.setInteractive();
     pause_btn.on("pointerdown", () => pause());
     
     score = 0;
-    scoreText = this.add.text(16, 16, 'Pontuação: 0', { fontSize: '32px', fill: '#000' });
+    scoreText =  this.add.text(24, 36, '0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
     scoreText.setScrollFactor(0);
 
     enemies = this.add.group();
     portals = this.add.group();
-
+    
     var array = platformsDesign(this);
-    var platforms = array[0];
+    platforms = array[0];
     var portals_array = array[1];
 
     const sizePortais = (portals_array.length);
 
-    padeira = new Padeira(100, 50, this, 1200, 0, 'padeira_idle_R',this);
 
+    objective = new Objective(1415, 673, this, 540, 145);
+    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R');
+    
+    this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
    
@@ -576,31 +629,60 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     game.scene.add("PauseScene", PauseScene, false);
+
     
+    tempocarroca(this);
+    drops = this.add.group();
+    this.physics.add.collider(drops, platforms);
+    this.physics.add.overlap(padeira, drops, spawnCarroca);
+
 }
 
 
 function update (){
 
-    if (gameOver) return;
+    if (padeira.healthPoints <= 0 || objective.healthPoints <= 0) return;
 
     updatePadeira(this);
 
     for (var i = 0; i < portals.getChildren().length; i++)
     	updatePortal(portals.getChildren()[i],this);
-
     
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
+    
+    updateBackgroud(this);
 }
 
+
+function tempocarroca(scene){
+
+    scene.time.addEvent({
+        delay: 5000,
+        callback: ()=>{
+            dropcarroca(scene)
+        },
+        loop: true
+    })
+}
+
+
+function dropcarroca(scene){
+    
+    if(drops.getChildren().length == 0){
+        var x = Phaser.Math.Between(30, 2370);
+        drop = scene.add.sprite(x, 0, "minicarro");
+        scene.physics.world.enableBody(drop, 0);
+        drops.add(drop);
+    }
+
+    if(drops.getChildren().length == 1) drop.destroy();
+}
 
 
 function pause(){
     
-    if(game.scene.isPaused("default")){
-        game.scene.resume("default");
-    }
+    if(game.scene.isPaused("default")) game.scene.resume("default");
 
     else{ 
         game.scene.start("PauseScene");
@@ -609,6 +691,7 @@ function pause(){
         game.scene.pause("level");  
     }
 }
+
 
 class PauseScene extends Phaser.Scene{
 
@@ -620,7 +703,7 @@ class PauseScene extends Phaser.Scene{
         this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
         this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
         this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
-        this.load.spritesheet("soundbar", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+        this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
     }
 
     create(){
@@ -630,19 +713,21 @@ class PauseScene extends Phaser.Scene{
         btn.on("pointerdown", () => hideMenu());
 
         var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
-        volume = this.add.sprite(585,400+40, "soundbar");
+        var gramMenos = this.add.image(390, 380+40, "gram-");
+        volume = this.add.sprite(585,400+40, "volume");
+
         gramMais.setInteractive();
         gramMais.on("pointerdown", () => updateVolume(1));
-        var gramMenos = this.add.image(390, 380+40, "gram-");
         gramMenos.setInteractive();
         gramMenos.on("pointerdown", () => updateVolume(-1));
             
         this.anims.create({
             key: "volume",
-            frames: this.anims.generateFrameNumbers("soundbar", {start:0, end: 14}),
+            frames: this.anims.generateFrameNumbers("volume", {start:0, end: 14}),
             frameRate:1,
             repeat:-1   
         });
+
         volume.anims.play("volume", true);
         volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
     }
@@ -857,6 +942,12 @@ function updatePadeira(scene){
                     padeira.anims.play('padeira_weapon_fall_L', true);
         }
     }
+    
+}
+
+function spawnCarroca(){
+    console.log("yay");
+    drop.destroy();
 }
 
 // Need armor getting spanked sound
@@ -864,48 +955,56 @@ function updatePadeira(scene){
 function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
-    
-	
+    var x_objetivo = objective.body.x;
+
+    if (Math.abs(enemy.body.x - x_padeira) > Math.min(Math.abs(enemy.body.x - x_objetivo) , Math.abs(enemy.body.x - (x_objetivo + objective.body.width))))
+        var closer = objective;
+    else
+        var closer = padeira;
+        
     if (!enemy.alive() && !enemy.immobile){
         enemy.anims.play('c_s_death_R', true);
         enemy.immobile = true;
         enemy.once('animationcomplete', () => {
             score += enemy.value;
-            scoreText.setText('Pontuação: ' + score);
+            scoreText.setText(score);
             enemy.destroy();
         });
     }
 
-
     else if (enemy.alive() && !enemy.immobile){
         if (enemy.body.touching.down){
-            if (enemy.body.x > x_padeira + 100){
+            if (enemy.body.x > closer.body.x + closer.body.width + enemy.range){
                 enemy.moveLeft();
                 enemy.anims.play('c_s_walk_R', true);
             }
 
-            else if (enemy.body.x < x_padeira - 100){   
+            else if (enemy.body.x < closer.body.x - enemy.range){   
                 enemy.moveRight();
-                enemy.anims.play('c_s_walk_R', true); 
-                
+                enemy.anims.play('c_s_walk_R', true);              
             }
 
             else{
                 enemy.immobile = true;
                 enemy.body.setVelocityX(0)
                 enemy.anims.play('c_s_attack_L', true);
-                //enemy.anims.pause(enemy.anims.currentAnim.frames[5]);
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
                     //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
-                        if (elementos[i].gameObject == padeira){ // ou se atacar a base, to do
+                        if (elementos[i].gameObject == padeira){ 
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
+
+
                         }
-                    } 
-                    enemy.immobile = false; });
+                        else if (elementos[i].gameObject == objective){
+                            elementos[i].gameObject.getHit(enemy.damage);
+                        }
+                    }
+                    enemy.immobile = false;
+                    });
             }
         }
     }
@@ -965,3 +1064,11 @@ function updatePortal(portal, scene){
 }
 
 
+function updateBackgroud(scene){
+
+    if (objective.healthPoints / 50 >= 66) background.anims.play('sky1', true);
+
+    else if (objective.healthPoints / 50 >= 33) background.anims.play('sky2', true);
+
+    else background.anims.play('sky3', true);
+}
