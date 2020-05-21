@@ -36,7 +36,7 @@ function preload(){
 
 function create(){
     
-    var algo = this.add.image(600,400,"background");
+    this.add.image(600,400,"background");
     var gramMais = this.add.image(880, 335, "gram+");
     volume = this.add.sprite(600,400, "soundbar");
     gramMais.setInteractive();
@@ -61,8 +61,11 @@ function create(){
     volume.anims.play("volume", true);
     volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
-    
 }
+
+
+
+
 function updateVolume(change){
     
     if (change==1){
