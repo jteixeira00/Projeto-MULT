@@ -124,7 +124,7 @@ function preload(){
 
 
 
-    this.load.audio('music', '../../Sounds/Medieval_tune.wav'); 
+    this.load.audio('level1_music', '../../Sounds/level1_music.wav'); 
 }
 
 
@@ -513,6 +513,16 @@ function loadAnim(scene){
 
 
 function create(){
+
+
+	var config = {
+    mute: false,
+    volume: 1,
+    loop: true,
+	}
+
+
+	playSound(this,"level1_music",config);
 
     this.add.image(1200, 400, 'sky');
     this.physics.world.setBounds(0, 0, 2400, 800);

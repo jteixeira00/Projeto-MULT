@@ -1,3 +1,6 @@
-function playSound(som){
-	
+function playSound(game,som,config){
+
+	var music = game.sound.add(som,config);
+	music.play();
+
 }
