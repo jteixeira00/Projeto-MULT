@@ -91,15 +91,40 @@ function preload(){
     this.load.spritesheet('padeira_attack3_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
 
+    this.load.spritesheet('c_h_idle_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_R.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_idle_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_L.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_death_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_death_R.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_death_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_death_L.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_attack_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_attack_R.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_attack_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_attack_L.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_walk_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_walk_R.png', { frameWidth: 322, frameHeight: 254 });
+    this.load.spritesheet('c_h_walk_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_walk_L.png', { frameWidth: 322, frameHeight: 254 });
+
+    this.load.spritesheet('c_m_idle_R', '../../Resources/Sprite Sheets/Castelhano_medium/knight_idle_R.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_idle_L', '../../Resources/Sprite Sheets/Castelhano_medium/knight_idle_L.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_death_R', '../../Resources/Sprite Sheets/Castelhano_medium/knight_death_R.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_death_L', '../../Resources/Sprite Sheets/Castelhano_medium/knight_death_L.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_attack_R', '../../Resources/Sprite Sheets/Castelhano_medium/knight_attack_R.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_attack_L', '../../Resources/Sprite Sheets/Castelhano_medium/knight_attack_L.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_walk_R', '../../Resources/Sprite Sheets/Castelhano_medium/knight_walk_R.png', { frameWidth: 153, frameHeight: 126 });
+    this.load.spritesheet('c_m_walk_L', '../../Resources/Sprite Sheets/Castelhano_medium/knight_walk_L.png', { frameWidth: 153, frameHeight: 126 });
+
     this.load.spritesheet('c_s_idle_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_idle_L', '../../Resources/Sprite Sheets/Castelhano_small/knight_idle_L.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('c_s_death_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_death_L', '../../Resources/Sprite Sheets/Castelhano_small/knight_death_L.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('c_s_attack_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_R.png', { frameWidth: 148, frameHeight: 116 });
     this.load.spritesheet('c_s_attack_L', '../../Resources/Sprite Sheets/Castelhano_small/knight_attack_L.png', { frameWidth: 148, frameHeight: 116 });
-    this.load.spritesheet('c_s_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_S.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_walk_R', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_R.png', { frameWidth: 148, frameHeight: 116 });
+    this.load.spritesheet('c_s_walk_L', '../../Resources/Sprite Sheets/Castelhano_small/knight_walk_L.png', { frameWidth: 148, frameHeight: 116 });
 
     this.load.spritesheet('portal_anim', '../../Resources/Sprite Sheets/Portal/portal.png',{ frameWidth: 217, frameHeight: 156 });
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
+
+
+
+    this.load.audio('music', '../../Sounds/Medieval_tune.wav'); 
 }
 
 
@@ -129,6 +154,118 @@ function loadAnim(scene){
     });
 
     scene.anims.create({
+        key: 'c_h_attack_R',
+        frames: scene.anims.generateFrameNumbers('c_h_attack_R', { start: 0, end: 5 }),
+        frameRate: 2,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_h_attack_L',
+        frames: scene.anims.generateFrameNumbers('c_h_attack_L', { start: 9, end: 4 }),
+        frameRate: 2,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_h_walk_R',
+        frames: scene.anims.generateFrameNumbers('c_h_walk_R', { start: 0, end: 9 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_h_walk_L',
+        frames: scene.anims.generateFrameNumbers('c_h_walk_L', { start: 9, end: 0 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
+	scene.anims.create({
+        key: 'c_h_idle_R',
+        frames: scene.anims.generateFrameNumbers('c_h_idle_R', { start: 0, end: 3 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+	scene.anims.create({
+        key: 'c_h_idle_L',
+        frames: scene.anims.generateFrameNumbers('c_h_idle_L', { start: 3, end: 0 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_h_death_R',
+        frames: scene.anims.generateFrameNumbers('c_h_death_R', { start: 0, end: 7 }),
+        frameRate: 5,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_h_death_L',
+        frames: scene.anims.generateFrameNumbers('c_h_death_L', { start: 7, end: 0 }),
+        frameRate: 5,
+        repeat: 0
+    });   
+
+    scene.anims.create({
+        key: 'c_m_attack_R',
+        frames: scene.anims.generateFrameNumbers('c_m_attack_R', { start: 0, end: 5 }),
+        frameRate: 2,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_m_attack_L',
+        frames: scene.anims.generateFrameNumbers('c_m_attack_L', { start: 9, end: 4 }),
+        frameRate: 2,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_m_walk_R',
+        frames: scene.anims.generateFrameNumbers('c_m_walk_R', { start: 0, end: 9 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_m_walk_L',
+        frames: scene.anims.generateFrameNumbers('c_m_walk_L', { start: 9, end: 0 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
+	scene.anims.create({
+        key: 'c_m_idle_R',
+        frames: scene.anims.generateFrameNumbers('c_m_idle_R', { start: 0, end: 3 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+	scene.anims.create({
+        key: 'c_m_idle_L',
+        frames: scene.anims.generateFrameNumbers('c_m_idle_L', { start: 3, end: 0 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_m_death_R',
+        frames: scene.anims.generateFrameNumbers('c_m_death_R', { start: 0, end: 7 }),
+        frameRate: 5,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_m_death_L',
+        frames: scene.anims.generateFrameNumbers('c_m_death_L', { start: 7, end: 0 }),
+        frameRate: 5,
+        repeat: 0
+    });        
+
+    scene.anims.create({
         key: 'c_s_attack_R',
         frames: scene.anims.generateFrameNumbers('c_s_attack_R', { start: 0, end: 5 }),
         frameRate: 2,
@@ -149,6 +286,13 @@ function loadAnim(scene){
         repeat: 0
     });
 
+    scene.anims.create({
+        key: 'c_s_walk_L',
+        frames: scene.anims.generateFrameNumbers('c_s_walk_L', { start: 9, end: 0 }),
+        frameRate: 15,
+        repeat: 0
+    });
+
 	scene.anims.create({
         key: 'c_s_idle_R',
         frames: scene.anims.generateFrameNumbers('c_s_idle_R', { start: 0, end: 3 }),
@@ -156,9 +300,23 @@ function loadAnim(scene){
         repeat: 0
     });
 
+	scene.anims.create({
+        key: 'c_s_idle_L',
+        frames: scene.anims.generateFrameNumbers('c_s_idle_L', { start: 3, end: 0 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
     scene.anims.create({
         key: 'c_s_death_R',
         frames: scene.anims.generateFrameNumbers('c_s_death_R', { start: 0, end: 7 }),
+        frameRate: 5,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'c_s_death_L',
+        frames: scene.anims.generateFrameNumbers('c_s_death_L', { start: 7, end: 0 }),
         frameRate: 5,
         repeat: 0
     });
