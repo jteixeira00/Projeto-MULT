@@ -25,6 +25,7 @@ var volume;
 var volumeFrame = 14;
 var drop;
 var drops;
+
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -995,7 +996,7 @@ function updateEnemies(enemy, scene){
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
-                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene);
+                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
 
 
                         }
