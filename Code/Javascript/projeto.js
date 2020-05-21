@@ -605,7 +605,7 @@ function create(){
 
 
     objective = new Objective(1415, 673, this, 540, 145);
-    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R');
+    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
     
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
