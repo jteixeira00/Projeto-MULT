@@ -25,7 +25,7 @@ var volume;
 var volumeFrame = 14;
 var drop;
 var drops;
-
+var masterW;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -61,6 +61,11 @@ var configMenu = {
 }
 
 var game = new Phaser.Game(config);
+window.addEventListener("message", messageHandler);
+function messageHandler(ev){
+    masterW = ev.source;
+
+}
 
 function preload(){
     
@@ -712,7 +717,10 @@ class PauseScene extends Phaser.Scene{
         this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
         this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
         this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.image("voltar","../../Resources/Sprites/Ajuda/voltar.png");
         this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+
+
     }
 
     create(){
@@ -724,7 +732,9 @@ class PauseScene extends Phaser.Scene{
         var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
         var gramMenos = this.add.image(390, 380+40, "gram-");
         volume = this.add.sprite(585,400+40, "volume");
-
+        var back = this.add.image(390, 530, "voltar"); 
+        back.setInteractive();
+        back.on("pointerdown", () => Voltar());
         gramMais.setInteractive();
         gramMais.on("pointerdown", () => updateVolume(1));
         gramMenos.setInteractive();
@@ -741,7 +751,10 @@ class PauseScene extends Phaser.Scene{
         volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
     }
 }
-
+function Voltar(){
+    console.log("voltar");
+    masterW.postMessage("voltar","*");
+}
 
 function updateVolume(change){
     
@@ -1066,6 +1079,10 @@ function updateEnemies(enemy, scene){
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);
+                            console.log(enemy.damage);
+                            if(enemy.damage>99){
+                                scene.cameras.main.shake(30);
+                            }
                         }
                     }
                     enemy.immobile = false;
@@ -1079,7 +1096,7 @@ function updateEnemies(enemy, scene){
 function pixelCollision(s1, s2, scene){
 
     var xs1 = s1.x - s1.width / 2;
-    var xs2 = s2.x - s2.width / 2
+    var xs2 = s2.x - s2.width / 2;
     var ys1 = s1.y - s1.height / 2;
     var ys2 = s2.y - s2.height / 2;
 
@@ -1090,16 +1107,12 @@ function pixelCollision(s1, s2, scene){
 
     for (var y = yMin; y < yMax; y++){  
         for (var x = xMin; x < xMax; x++){
-
             var xlocalA = Math.round(x - xs1);
             var ylocalA = Math.round(y - ys1);
-                
             var xlocalB = Math.round(x - xs2);
             var ylocalB = Math.round(y - ys2);
-
             var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
             var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
-            
             if (a1 != 0 && a2 != 0) return true;           
         }
     }

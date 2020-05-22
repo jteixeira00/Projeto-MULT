@@ -20,7 +20,7 @@ var config = {
 var opcoes = new Phaser.Game(config);
 
 
-window.addEventListener("message", messageHandler);
+
 
 
 function preload(){
@@ -72,6 +72,7 @@ function updateVolume(change){
         if(volumeFrame<14){
             console.log("volume +");
             volumeFrame = volumeFrame+1;
+            masterW.postMessage(volumeFrame, "*");
             volume.anims.play("volume", true);
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
 
