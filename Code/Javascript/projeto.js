@@ -62,6 +62,7 @@ var configMenu = {
 
 var game = new Phaser.Game(config);
 
+
 function preload(){
     
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
@@ -133,14 +134,14 @@ function preload(){
 
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
 
-    this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
+    this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
-    this.load.audio('level1_music', '../../Sounds/level1_music.wav');
-    this.load.audio('swoosh_0', '../../Sounds/swoosh_0.wav');  
-    this.load.audio('swoosh_1', '../../Sounds/swoosh_1.wav'); 
-    this.load.audio('swoosh_2', '../../Sounds/swoosh_2.wav'); 
-    this.load.audio('steps', '../../Sounds/audiosteps.wav'); 
-    this.load.audio('fall', '../../Sounds/fall.mp3');    
+    this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
+    this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
+    this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
+    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav'); 
+    this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
+    this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
 }
 
 
@@ -529,14 +530,11 @@ function loadAnim(scene){
 
 function create(){
 
-
-
 	var config = {
-    mute: false,
-    volume: 1,
-    loop: true
-	}
-
+        mute: false,
+        volume: 1,
+        loop: true
+    }
 
 	playSound(this,"level1_music",config);
 
