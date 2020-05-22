@@ -2,13 +2,13 @@ class CastelhanoHeavy extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
-        super(200, 100, scene, x, y, 250, 200, 50, sprite, array);
+        super(300, 100, scene, x, y, 25, 50, sprite, array);
 
         this.body.setSize(96, 208, true);
         this.body.offset.x = 80;
         this.body.offset.y = 48;
-        this.value = 200;
-        this.movementSpeed = 50;
+        this.value = 1000;
+        this.range = 0;
     }
 
     moveRight(){

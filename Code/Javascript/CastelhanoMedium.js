@@ -2,12 +2,13 @@ class CastelhanoMedium extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
-        super(150, 50, scene, x, y, 250, 200, 50, sprite, array);
+        super(100, 50, scene, x, y, 100, 200, sprite, array);
 
         this.body.setSize(48, 105, true);
         this.body.offset.y = 20;
         this.body.offset.x = 8;
-        this.value = 150;
+        this.value = 200;
+        this.range = 0;
     }
 
     moveRight(){

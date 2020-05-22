@@ -298,42 +298,42 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_s_walk_R',
         frames: scene.anims.generateFrameNumbers('c_s_walk_R', { start: 0, end: 9 }),
-        frameRate: 15,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_walk_L',
         frames: scene.anims.generateFrameNumbers('c_s_walk_L', { start: 9, end: 0 }),
-        frameRate: 15,
+        frameRate: 30,
         repeat: 0
     });
 
 	scene.anims.create({
         key: 'c_s_idle_R',
         frames: scene.anims.generateFrameNumbers('c_s_idle_R', { start: 0, end: 3 }),
-        frameRate: 7,
+        frameRate: 14,
         repeat: 0
     });
 
 	scene.anims.create({
         key: 'c_s_idle_L',
         frames: scene.anims.generateFrameNumbers('c_s_idle_L', { start: 3, end: 0 }),
-        frameRate: 7,
+        frameRate: 14,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_death_R',
         frames: scene.anims.generateFrameNumbers('c_s_death_R', { start: 0, end: 7 }),
-        frameRate: 5,
+        frameRate: 10,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_death_L',
         frames: scene.anims.generateFrameNumbers('c_s_death_L', { start: 7, end: 0 }),
-        frameRate: 5,
+        frameRate: 10,
         repeat: 0
     });
 
