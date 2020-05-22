@@ -897,6 +897,10 @@ function updatePadeira(scene){
         		stepsON = false;
         		steps.stop();
         	}
+        	if(!falling){
+        		playSound(game,"fall",{volume: 1});
+        		falling = true;
+        	}
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('padeira_weapon_idle_R', true);
         	else
@@ -933,6 +937,7 @@ function updatePadeira(scene){
         		stepsON = false;
         		steps.stop();
         }
+        falling = false;
         if (padeira.body.velocity.y >= 0){
             if (padeira.facingRight == true){
                 if (!padeira.weapon)
