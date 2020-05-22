@@ -26,7 +26,8 @@ var volume;
 var volumeFrame = 14;
 var drop;
 var drops;
-
+var masterW;
+var musicTrack;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -62,6 +63,13 @@ var configMenu = {
 }
 
 var game = new Phaser.Game(config);
+window.addEventListener("message", messageHandler);
+function messageHandler(ev){
+    masterW = ev.source;
+    volumeFrame = ev.data;
+    console.log(volumeFrame);
+    
+}
 
 
 function preload(){
@@ -537,13 +545,13 @@ function loadAnim(scene){
 
 function create(){
 
-	var config = {
+	var configLvlMusic = {
         mute: false,
-        volume: 1,
+        volume: 1*(volumeFrame/10),
         loop: true
     }
 
-	playSound(this,"level1_music",config);
+	musicTrack = playSound(this,"level1_music",configLvlMusic);
 
     this.add.image(1200, 400, 'sky');
 
@@ -682,6 +690,57 @@ function pause(){
 }
 
 
+
+class PauseScene extends Phaser.Scene{
+
+    constructor(configMenu){
+        super(configMenu);
+
+    }
+    preload(){
+        this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
+        this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
+        this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.image("voltar","../../Resources/Sprites/Ajuda/voltar.png");
+        this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+
+
+    }
+
+    create(){
+        var btn = this.add.image(600, 400, "menu");
+        btn.setScrollFactor(0)
+        btn.setInteractive();
+        btn.on("pointerdown", () => hideMenu());
+
+        var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
+        var gramMenos = this.add.image(390, 380+40, "gram-");
+        volume = this.add.sprite(585,400+40, "volume");
+        var back = this.add.image(390, 530, "voltar"); 
+        back.setInteractive();
+        back.on("pointerdown", () => Voltar());
+        gramMais.setInteractive();
+        gramMais.on("pointerdown", () => updateVolume(1));
+        gramMenos.setInteractive();
+        gramMenos.on("pointerdown", () => updateVolume(-1));
+            
+        this.anims.create({
+            key: "volume",
+            frames: this.anims.generateFrameNumbers("volume", {start:0, end: 14}),
+            frameRate:1,
+            repeat:-1   
+        });
+
+        volume.anims.play("volume", true);
+        volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
+    }
+}
+function Voltar(){
+    console.log("voltar");
+    masterW.postMessage("voltar","*");
+}
+
+
 function updateVolume(change){
     
     if (change==1){
@@ -701,6 +760,7 @@ function updateVolume(change){
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }   
     }
+    musicTrack.setVolume(1*(volumeFrame/10))
 }
 
 
@@ -720,7 +780,7 @@ function updatePadeira(scene){
 
 	var config = {
 	    mute: false,
-	    volume: 3,
+	    volume: 3*(volumeFrame/10),
 	    rate: 2,
 	    loop: true
 	}    
@@ -733,7 +793,7 @@ function updatePadeira(scene){
     	
         if (padeira.weapon){
             
-            var array = padeira.updateAttackingHitbox();
+            var array = padeira.updateAttackingHitbox(volumeFrame);
 
             padeira.immobile = true;
             padeira.anims.play(array[0], true);
@@ -754,12 +814,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -770,7 +830,7 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -795,7 +855,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -824,7 +884,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -838,7 +898,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -1056,6 +1116,10 @@ function updateEnemies(enemy, scene){
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);
+                            console.log(enemy.damage);
+                            if(enemy.damage>99){
+                                scene.cameras.main.shake(30);
+                            }
                         }
                     }
                     enemy.immobile = false;
@@ -1069,7 +1133,7 @@ function updateEnemies(enemy, scene){
 function pixelCollision(s1, s2, scene){
 
     var xs1 = s1.x - s1.width / 2;
-    var xs2 = s2.x - s2.width / 2
+    var xs2 = s2.x - s2.width / 2;
     var ys1 = s1.y - s1.height / 2;
     var ys2 = s2.y - s2.height / 2;
 
@@ -1080,16 +1144,12 @@ function pixelCollision(s1, s2, scene){
 
     for (var y = yMin; y < yMax; y++){  
         for (var x = xMin; x < xMax; x++){
-
             var xlocalA = Math.round(x - xs1);
             var ylocalA = Math.round(y - ys1);
-                
             var xlocalB = Math.round(x - xs2);
             var ylocalB = Math.round(y - ys2);
-
             var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
             var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
-            
             if (a1 != 0 && a2 != 0) return true;           
         }
     }

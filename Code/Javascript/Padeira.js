@@ -19,10 +19,10 @@ class Padeira extends Pessoa{
             padeira.animationCounter += 1
     }
 
-    updateAttackingHitbox(){
+    updateAttackingHitbox(volumeFrame){
         var config = {
             mute: false,
-            volume: 2,
+            volume: 2*(volumeFrame/10),
             loop: false
         }
         var string = 'padeira_attack' + (this.animationCounter + 1);
