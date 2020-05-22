@@ -774,6 +774,7 @@ function hideMenu(){
     cursors.down.reset();
 }
 
+
 function updatePadeira(scene){
 
 
@@ -1060,7 +1061,7 @@ function updateEnemies(enemy, scene){
                 }
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
-                    //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
+                    // scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 

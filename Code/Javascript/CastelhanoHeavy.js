@@ -30,9 +30,9 @@ class CastelhanoHeavy extends Castelhano{
 
     getAttackingHitbox(){
         if (this.facingRight == true){
-            return [44, 40, 100, 60];
+            return [0, -80, 140, 202];
         }
         else
-            return [-132, 40, 100, 60]; 
+            return [-184, -80, 140, 202]; 
     }
 }
