@@ -15,6 +15,7 @@ var portals;
 var portals_array;
 var scoreText;
 var openP;
+var carrinho;
 var inicio;
 var falling;
 var fim;
@@ -132,7 +133,8 @@ function preload(){
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
-
+    
+    this.load.spritesheet('carrinho', '../../Resources/Sprite Sheets/Carrinho/carrinho.png',{ frameWidth: 118, frameHeight: 108 });
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
@@ -146,6 +148,12 @@ function preload(){
 
 function loadAnim(scene){
 
+    scene.anims.create({
+        key: 'carrinho',
+        frames: scene.anims.generateFrameNumbers('carrinho', { start: 0, end: 19 }),
+        frameRate: 15,
+        repeat: 0
+    });
 
     scene.anims.create({
         key: 'portal',
@@ -599,7 +607,6 @@ function create(){
 
     const sizePortais = (portals_array.length);
 
-
     objective = new Objective(1415, 673, this, 540, 145);
     padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
     
@@ -636,12 +643,11 @@ function create(){
     
     game.scene.add("PauseScene", PauseScene, false);
 
-    
-    tempocarroca(this);
     drops = this.add.group();
     this.physics.add.collider(drops, platforms);
-    this.physics.add.overlap(padeira, drops, spawnCarroca);
+    this.physics.add.overlap(padeira, drops, () => { spawnCarroca(this)} );
 
+    tempocarroca(this);
 }
 
 
@@ -657,32 +663,9 @@ function update (){
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
     
-    updateBackgroud(this);
-}
-
-
-function tempocarroca(scene){
-
-    scene.time.addEvent({
-        delay: 5000,
-        callback: ()=>{
-            dropcarroca(scene)
-        },
-        loop: true
-    })
-}
-
-
-function dropcarroca(scene){
+    if (carrinho) updateCarro()
     
-    if(drops.getChildren().length == 0){
-        var x = Phaser.Math.Between(30, 2370);
-        drop = scene.add.sprite(x, 0, "minicarro");
-        scene.physics.world.enableBody(drop, 0);
-        drops.add(drop);
-    }
-
-    if(drops.getChildren().length == 1) drop.destroy();
+    updateBackgroud(this);
 }
 
 
@@ -735,7 +718,6 @@ function hideMenu(){
 
 function updatePadeira(scene){
 
-
 	var config = {
 	    mute: false,
 	    volume: 3,
@@ -760,7 +742,7 @@ function updatePadeira(scene){
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
-                if (elementos[i].gameObject != padeira){
+                if (elementos[i].gameObject != padeira && elementos[i].gameObject != carrinho && elementos[i].gameObject != objective){
                     //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -904,22 +886,69 @@ function updatePadeira(scene){
                     padeira.anims.play('padeira_weapon_fall_R', true);
             }
 
-            else
+            else{
                 if (!padeira.weapon)
                     padeira.anims.play('padeira_fall_L', true);
                 else
                     padeira.anims.play('padeira_weapon_fall_L', true);
+            }
         }
     }
     
 }
 
-function spawnCarroca(){
-    console.log("yay");
-    drop.destroy();
+
+function tempocarroca(scene){
+
+    scene.time.addEvent({
+        delay: 5000,
+        callback: ()=>{
+            dropcarroca(scene)
+        },
+        loop: true
+    })
 }
 
-// Need armor getting spanked sound
+
+function dropcarroca(scene){
+
+    if(drops.getChildren().length == 0){
+        var x = Phaser.Math.Between(30, 2370);
+        drop = scene.add.sprite(x, 0, "minicarro");
+        scene.physics.world.enableBody(drop, 0);
+        drop.setDepth(1);
+        drops.add(drop);
+    }
+
+    else if(drops.getChildren().length == 1) drop.destroy();
+}
+
+
+function spawnCarroca(scene){
+    drop.destroy();
+    //tocar powerup sound
+    carrinho = scene.add.sprite(0, 600, "carrinho");
+    scene.physics.world.enableBody(carrinho, 0);
+    scene.physics.add.collider(carrinho, platforms);
+    scene.physics.add.overlap(enemies, carrinho, atropelar, null, scene);
+}
+
+
+function atropelar(enemy, carro){
+    enemy.getHit(true, 1000);
+}
+
+
+function updateCarro(){
+    carrinho.anims.play("carrinho", true);
+    carrinho.body.setVelocityX(1000);
+
+    if (carrinho.body.x > 2400) {
+        carrinho.destroy();
+        carrinho = null;
+    }
+}
+
 
 function updateEnemies(enemy, scene){
 
