@@ -1,10 +1,9 @@
-
 function platformsDesign(game){
 
 	var array = [];
 	var output = []
 	var platforms = game.physics.add.staticGroup();
-	var mydata = JSON.parse(data);
+	var mydata = JSON.parse(lvl1);
 	var plat = mydata.plat;
 	var portals = mydata.portais;
 

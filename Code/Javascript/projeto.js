@@ -67,6 +67,7 @@ function messageHandler(ev){
 
 }
 
+
 function preload(){
     
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
@@ -135,17 +136,16 @@ function preload(){
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
-
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
 
-    this.load.spritesheet('health', '../../Resources/Sprite Sheets/health bread.png',{ frameWidth: 88, frameHeight: 16 });
+    this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
-    this.load.audio('level1_music', '../../Sounds/level1_music.wav');
-    this.load.audio('swoosh_0', '../../Sounds/swoosh_0.wav');  
-    this.load.audio('swoosh_1', '../../Sounds/swoosh_1.wav'); 
-    this.load.audio('swoosh_2', '../../Sounds/swoosh_2.wav'); 
-    this.load.audio('steps', '../../Sounds/audiosteps.wav'); 
-    this.load.audio('fall', '../../Sounds/fall.mp3');    
+    this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
+    this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
+    this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
+    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav'); 
+    this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
+    this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
 }
 
 
@@ -302,42 +302,42 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'c_s_walk_R',
         frames: scene.anims.generateFrameNumbers('c_s_walk_R', { start: 0, end: 9 }),
-        frameRate: 15,
+        frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_walk_L',
         frames: scene.anims.generateFrameNumbers('c_s_walk_L', { start: 9, end: 0 }),
-        frameRate: 15,
+        frameRate: 30,
         repeat: 0
     });
 
 	scene.anims.create({
         key: 'c_s_idle_R',
         frames: scene.anims.generateFrameNumbers('c_s_idle_R', { start: 0, end: 3 }),
-        frameRate: 7,
+        frameRate: 14,
         repeat: 0
     });
 
 	scene.anims.create({
         key: 'c_s_idle_L',
         frames: scene.anims.generateFrameNumbers('c_s_idle_L', { start: 3, end: 0 }),
-        frameRate: 7,
+        frameRate: 14,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_death_R',
         frames: scene.anims.generateFrameNumbers('c_s_death_R', { start: 0, end: 7 }),
-        frameRate: 5,
+        frameRate: 10,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'c_s_death_L',
         frames: scene.anims.generateFrameNumbers('c_s_death_L', { start: 7, end: 0 }),
-        frameRate: 5,
+        frameRate: 10,
         repeat: 0
     });
 
@@ -534,14 +534,11 @@ function loadAnim(scene){
 
 function create(){
 
-
-
 	var config = {
-    mute: false,
-    volume: 1,
-    loop: true
-	}
-
+        mute: false,
+        volume: 1,
+        loop: true
+    }
 
 	playSound(this,"level1_music",config);
 
@@ -707,6 +704,7 @@ function pause(){
 }
 
 
+
 class PauseScene extends Phaser.Scene{
 
     constructor(configMenu){
@@ -756,6 +754,7 @@ function Voltar(){
     masterW.postMessage("voltar","*");
 }
 
+
 function updateVolume(change){
     
     if (change==1){
@@ -788,6 +787,7 @@ function hideMenu(){
     cursors.up.reset();
     cursors.down.reset();
 }
+
 
 function updatePadeira(scene){
 
@@ -862,7 +862,6 @@ function updatePadeira(scene){
                 padeira.anims.play('padeira_weapon_walk_L', true);
             }
         }
-
     }
 
     else if (cursors.right.isDown && !padeira.immobile){
@@ -912,6 +911,10 @@ function updatePadeira(scene){
         		stepsON = false;
         		steps.stop();
         	}
+        	if(!falling){
+        		playSound(game,"fall",{volume: 1});
+        		falling = true;
+        	}
         	if(padeira.facingRight == true)
         	  	padeira.anims.play('padeira_weapon_idle_R', true);
         	else
@@ -948,6 +951,7 @@ function updatePadeira(scene){
         		stepsON = false;
         		steps.stop();
         }
+        falling = false;
         if (padeira.body.velocity.y >= 0){
             if (padeira.facingRight == true){
                 if (!padeira.weapon)
@@ -1070,7 +1074,7 @@ function updateEnemies(enemy, scene){
                 }
                 enemy.once('animationcomplete', () => {
                     var array = enemy.getAttackingHitbox(); 
-                    //scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
+                    // scene.add.rectangle(Math.round(enemy.x) + array[0] + Math.round(array[2]/2), enemy.y + array[1] + Math.round(array[3]/2), array[2], array[3], 0xff0000);
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 

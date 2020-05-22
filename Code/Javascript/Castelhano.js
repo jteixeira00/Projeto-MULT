@@ -1,6 +1,6 @@
 class Castelhano extends Pessoa{
 
-    constructor(hp, dmg, scene, x, y, movementSpeed, knockback, range, sprite, array){
+    constructor(hp, dmg, scene, x, y, movementSpeed, knockback, sprite, array){
 
         super(hp, dmg, scene, x, y, sprite);
 
@@ -8,7 +8,6 @@ class Castelhano extends Pessoa{
         this.knockback = knockback;
         this.setDepth(2);
         array.add(this);
-        this.range = 0;
     }
 
     getHit(rightKnockback, damage){
@@ -16,8 +15,8 @@ class Castelhano extends Pessoa{
         this.healthPoints -= damage;
 
         if (this.alive()){
-            this.body.setDrag(300,50);
-            this.body.setVelocityY(-this.knockback);
+            this.body.setDrag(150,50);
+            this.body.setVelocityY(-this.knockback / 4);
 
             if(rightKnockback)
                 this.body.setVelocityX(this.knockback);
