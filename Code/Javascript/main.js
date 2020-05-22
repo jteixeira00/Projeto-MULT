@@ -2,7 +2,8 @@
 
 const totPages = 5;
 const htmldir = "Code/HTML/";
-
+var volume = 14;
+var frm;
 (function(){
     window.addEventListener("load", main);
 
@@ -13,7 +14,7 @@ function main(){
     showPage(startPage);
     
     window.addEventListener("message", messageHandler);
-    var frm = document.getElementsByTagName("iframe")[0];
+    frm = document.getElementsByTagName("iframe")[0];
     frm.addEventListener("load", iframeHandler);
     
 }
@@ -22,7 +23,6 @@ function main(){
 function showPage(pageNum){
 
     var frm = document.getElementsByTagName("iframe")[0];
-    var dir;
     if (pageNum == 1){
         frm.src = htmldir+"main menu.html"
 
@@ -64,11 +64,17 @@ function messageHandler(ev){
     if(ev.data == "creditos"){
         
     }
+    if(ev.data>=0 && ev.data<15){
+        
+        showPage(1);
+        volume = ev.data;
+
+    }
 }
 
 function iframeHandler(ev){
 
     var frm = ev.target;
     
-	frm.contentWindow.postMessage("start", "*");
+	frm.contentWindow.postMessage(volume, "*");
 }

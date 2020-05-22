@@ -26,6 +26,7 @@ var volumeFrame = 14;
 var drop;
 var drops;
 var masterW;
+var musicTrack;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -64,7 +65,9 @@ var game = new Phaser.Game(config);
 window.addEventListener("message", messageHandler);
 function messageHandler(ev){
     masterW = ev.source;
-
+    volumeFrame = ev.data;
+    console.log(volumeFrame);
+    
 }
 
 
@@ -534,13 +537,13 @@ function loadAnim(scene){
 
 function create(){
 
-	var config = {
+	var configLvlMusic = {
         mute: false,
-        volume: 1,
+        volume: 1*(volumeFrame/10),
         loop: true
     }
 
-	playSound(this,"level1_music",config);
+	musicTrack = playSound(this,"level1_music",configLvlMusic);
 
     this.add.image(1200, 400, 'sky');
 
@@ -774,6 +777,7 @@ function updateVolume(change){
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }   
     }
+    musicTrack.setVolume(1*(volumeFrame/10))
 }
 
 
@@ -790,11 +794,11 @@ function hideMenu(){
 
 
 function updatePadeira(scene){
-
+    
 
 	var config = {
 	    mute: false,
-	    volume: 3,
+	    volume: 3*(volumeFrame/10),
 	    rate: 2,
 	    loop: true
 	}    
@@ -807,7 +811,7 @@ function updatePadeira(scene){
     	
         if (padeira.weapon){
             
-            var array = padeira.updateAttackingHitbox();
+            var array = padeira.updateAttackingHitbox(volumeFrame);
 
             padeira.immobile = true;
             padeira.anims.play(array[0], true);
@@ -828,12 +832,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -844,7 +848,7 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -869,7 +873,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -898,7 +902,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -912,7 +916,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)

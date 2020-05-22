@@ -64,7 +64,7 @@ function updateVolume(change){
             console.log("volume +");
 
             volumeFrame = volumeFrame+1;
-            masterW.postMessage(volumeFrame, "*");
+            
 
             volume.anims.play("volume", true);
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
@@ -75,6 +75,7 @@ function updateVolume(change){
         if(volumeFrame > 0){
             console.log("volume -");
             volumeFrame = volumeFrame - 1;
+            
             volume.anims.play("volume", true);
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }     
@@ -85,11 +86,11 @@ function updateVolume(change){
 function messageHandler(ev){
     
     masterW = ev.source;
+    volumeFrame = ev.data;
 }
  
 
 function voltar(){
-
-    console.log("voltar");
-    masterW.postMessage("voltar","*");
+    masterW.postMessage(volumeFrame, "*");
+    
 }
