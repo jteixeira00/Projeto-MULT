@@ -68,6 +68,12 @@ var configMenu = {
   
 }
 
+var gameOver ={
+    key: 'GameOver',
+    active: true,
+    visible: true
+}
+
 var game = new Phaser.Game(config);
 window.addEventListener("message", messageHandler);
 
@@ -643,6 +649,7 @@ function create(){
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     game.scene.add("PauseScene", PauseScene, false);
+    game.scene.add("GameOver", GameOver, false);
     
     drops = this.add.group();
     this.physics.add.collider(drops, platforms);
@@ -740,12 +747,29 @@ function dificuldade(start,growth,arrayPortais){
 }
 
 
+function GameOverS(){
+    game.scene.pause("level"); 
 
+    console.log("gameover");
+
+    game.scene.start("GameOver");
+    game.scene.resume("GameOver");
+    game.scene.bringToTop("GameOver");
+
+     
+}
 
 
 function update (){
 
-    if (padeira.healthPoints <= 0 || objective.healthPoints <= 0) return;
+    if (padeira.healthPoints <= 0 || objective.healthPoints <= 0){
+        console.log("end");
+        //game over
+        GameOverS();
+    }
+
+
+  
    
     updatePadeira(this);
 
@@ -755,7 +779,7 @@ function update (){
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this);
     
-    if (carrinho) updateCarro()
+    if (carrinho) updateCarro();
     
     updateBackgroud(this);
 }
@@ -806,7 +830,6 @@ function updateVolume(change){
 function hideMenu(){
     game.scene.resume("level");
     game.scene.sendToBack("PauseScene");
-
     game.scene.pause("PauseScene");
     cursors.right.reset();
     cursors.left.reset();
