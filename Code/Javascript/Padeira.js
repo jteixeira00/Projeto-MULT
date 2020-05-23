@@ -80,11 +80,15 @@ class Padeira extends Pessoa{
             else
                 this.body.setVelocityX(-200);
 
-            healthMeter.anims.play("health", true);
-            healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[Math.round(this.healthPoints / 50) - 1]);
+            this.updateHealth(healthMeter);
             
             this.invulnerable = true;
             scene.time.delayedCall(1000, () => {this.invulnerable = false;}, null, this);
         }
+    }
+
+    updateHealth(healthMeter){
+        healthMeter.anims.play("health", true);
+        healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[Math.round(this.healthPoints / 50) - 1]);
     }
 }

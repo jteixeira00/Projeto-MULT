@@ -1,4 +1,4 @@
-var volumeFrame = 14;
+var volumeFrame = 7;
 var volume; 
 var masterW;
 

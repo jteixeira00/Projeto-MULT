@@ -2,7 +2,7 @@ class CastelhanoHeavy extends Castelhano{
 
     constructor(scene, x, y, sprite, array){
 
-        super(300, 100, scene, x, y, 25, 50, sprite, array);
+        super(500, 100, scene, x, y, 25, 50, sprite, array);
 
         this.body.setSize(96, 208, true);
         this.body.offset.x = 80;

@@ -1,1 +1,1 @@
-lvl1 = '{"plat" : [{"x" : 1200, "y" : 763, "sprite": "ground"}],"portais" : [{"x" : 400, "y" : 664},{"x" : 200, "y" : 664}], "dStart" : 1, "dGrowth" : 1, "waveNumber": 5}';
+lvl1 = '{"plat" : [{"x" : 1200, "y" : 763, "sprite": "ground"},{"x" : 1200, "y" : 500, "sprite": "plataforma"}],"portais" : [{"x" : 400, "y" : 664},{"x" : 200, "y" : 664},{"x" : 2000, "y" : 664},{"x" : 2400, "y" : 664}], "dStart" : 1, "dGrowth" : 1.2, "waveNumber": 5, "Objx": 1415, "Objy" : 673, "Objw" : 540, "Objh" : 145,"background" : "../../Resources/Sprites/Jogo/lvl1/background-sheet.png"}';

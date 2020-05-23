@@ -1,9 +1,8 @@
 function platformsDesign(game){
 
 	var array = [];
-	
-	var output = []
-	var platforms = game.physics.add.staticGroup();
+	var output = [];
+	var platforms = [];
 	var mydata = JSON.parse(lvl1);
 	var plat = mydata.plat;
 	var portals = mydata.portais;
@@ -12,7 +11,7 @@ function platformsDesign(game){
 	const portlCount = Object.keys(portals).length;
 
 	for(var i = 0; i < platCount; i++){
-		platforms.create(plat[i].x, plat[i].y, plat[i].sprite);
+		platforms.push([plat[i].x, plat[i].y, plat[i].sprite]);
 	}
 
 	for(var i = 0; i < portlCount; i++){
@@ -26,6 +25,11 @@ function platformsDesign(game){
 	output[2] = mydata.dStart;
 	output[3] = mydata.dGrowth;
 	output[4] = mydata.waveNumber;
+	output[5] = mydata.Objx;
+	output[6] = mydata.Objy;
+	output[7] = mydata.Objw;
+	output[8] = mydata.Objh;
+	output[9] = mydata.background;
 
 	
 
