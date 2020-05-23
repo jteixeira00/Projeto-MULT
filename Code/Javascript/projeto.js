@@ -171,6 +171,7 @@ function preload(){
     this.load.audio('metal_3', '../../Resources/Sounds/metal_3.mp3');  
     this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
     this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
+    this.load.audio('bigWoosh', '../../Resources/Sounds/bigWoosh.mp3'); 
     this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
     this.load.audio('slash_1', '../../Resources/Sounds/slash_1.mp3');  
     this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
@@ -180,7 +181,8 @@ function preload(){
     this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
-    this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
+    this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');    
 }
 
 
@@ -875,26 +877,22 @@ function damageCastelaSound(height){
 }
 
 function castelaAttack(height){
-    var config = {
-        delay: 2000,
-        volume: 1.2*(volumeFrame/10),
+    var configS = {
+        volume: 1.2*(volumeFrame/10)
     }    
 
     if(height != 208){
         var num = randInt(1,4)
         if(num == 1)
-            playSound(game,"slash_1",config);
+            playSound(game,"slash_1",configS);
         if(num == 2)
-            playSound(game,"slash_2",config);
+            playSound(game,"slash_2",configS);
         if(num == 3)
-            playSound(game,"slash_3",config);
+            playSound(game,"slash_3",configS);
     }
     else{
-        var num = randInt(1,3)
-        if(num == 1)
-            playSound(game,"slash_1",config);
-        if(num == 2)
-            playSound(game,"slash_2",config);
+        playSound(game,"bigWoosh",configS);
+
     }
 }
 
@@ -1110,7 +1108,7 @@ function dropcarroca(scene){
 
 function spawnCarroca(scene){
     drop.destroy();
-    //tocar powerup sound
+    playSound(game,"cartGet",{volume: 0.8*(volumeFrame/10)});
     carrinho = scene.add.sprite(0, 600, "carrinho");
     scene.physics.world.enableBody(carrinho, 0);
     scene.physics.add.collider(carrinho, platforms);
