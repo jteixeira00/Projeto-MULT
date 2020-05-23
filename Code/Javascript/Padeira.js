@@ -1,6 +1,6 @@
 class Padeira extends Pessoa{
 
-    constructor(hp, dmg, scene, x, y, sprite,game){
+    constructor(hp, dmg, scene, x, y, sprite, game){
 
         super(hp, dmg, scene, x, y, sprite);
 
@@ -10,6 +10,7 @@ class Padeira extends Pessoa{
         this.setDepth(1);
         this.body.setSize(72, 104, true); 
         this.body.offset.y = 64;
+        this.game = game;
     }
 
     updateAnimationCounter(){
@@ -31,17 +32,17 @@ class Padeira extends Pessoa{
             string += '_R';
 
             if (this.animationCounter == 0){
-                playSound(game,"swoosh_1",config);
+                playSound(this.game,"swoosh_1",config);
                 return [string, -18, -20, 100, 104];
             }
 
             else if (this.animationCounter == 1){
-                playSound(game,"swoosh_2",config);
+                playSound(this.game,"swoosh_2",config);
                 return [string, -18, -84, 100, 168];
             }
             
             else{
-                playSound(game,"swoosh_2",config);
+                playSound(this.game,"swoosh_2",config);
                 return [string, -79, -84, 158, 168];
             }
         }
@@ -50,17 +51,17 @@ class Padeira extends Pessoa{
             string += '_L';
 
             if (this.animationCounter == 0){
-                playSound(game,"swoosh_1",config);
+                playSound(this.game,"swoosh_1",config);
                 return [string, -82, -20, 100, 104];
             }
 
             else if (this.animationCounter == 1){
-                playSound(game,"swoosh_2",config);
+                playSound(this.game,"swoosh_2",config);
                 return [string, -82, -84, 100, 168];
             }
             
             else{
-                playSound(game,"swoosh_2",config);
+                playSound(this.game,"swoosh_2",config);
                 return [string, -79, -84, 158, 168];
             }
         }

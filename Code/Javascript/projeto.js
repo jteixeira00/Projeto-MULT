@@ -626,7 +626,8 @@ function create(){
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-    
+    this.physics.add.collider(enemies, enemies);
+
     this.time.delayedCall(4000, () => {genesis(this);}, null, this);
     
     this.cameras.main.setBounds(0, 0, 2400, 800);
@@ -813,7 +814,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
-                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
@@ -1129,7 +1130,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
@@ -1149,25 +1150,55 @@ function updateEnemies(enemy, scene){
 
 function pixelCollision(s1, s2, scene){
 
-    var xs1 = s1.x - s1.width / 2;
-    var xs2 = s2.x - s2.width / 2;
-    var ys1 = s1.y - s1.height / 2;
-    var ys2 = s2.y - s2.height / 2;
+    var sprite1 = scene.textures.getFrame(s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
+    var sprite2 = scene.textures.getFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame);
+    var datas1 = sprite1.data.cut;
+    var datas2 = sprite2.data.cut;
 
-    var xMin = Math.max(xs1, xs2);
-    var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
-    var yMin = Math.max(ys1, ys2);
-    var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
+    var ctx = scene.textures._tempContext;
 
-    for (var y = yMin; y < yMax; y++){  
-        for (var x = xMin; x < xMax; x++){
-            var xlocalA = Math.round(x - xs1);
-            var ylocalA = Math.round(y - ys1);
-            var xlocalB = Math.round(x - xs2);
-            var ylocalB = Math.round(y - ys2);
-            var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
-            var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
-            if (a1 != 0 && a2 != 0) return true;           
+    if (sprite1 && sprite2){
+        
+        var xs1 = s1.x - s1.width / 2;
+        var xs2 = s2.x - s2.width / 2;
+        var ys1 = s1.y - s1.height / 2;
+        var ys2 = s2.y - s2.height / 2;
+
+        var xMin = Math.max(xs1, xs2);
+        var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
+        var yMin = Math.max(ys1, ys2);
+        var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
+
+        ctx.drawImage(sprite1.source.image, datas1.x, datas1.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
+        var imageDataS1 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
+        
+        ctx.clearRect(0, 0, s2.width, s2.height);   
+        ctx.drawImage(sprite2.source.image, datas2.x, datas2.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
+        var imageDataS2 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
+
+        for (var y = yMin; y < yMax; y++){  
+            for (var x = xMin; x < xMax; x++){
+                var xlocalA = Math.round(x - xs1);
+                var ylocalA = Math.round(y - ys1);
+                var xlocalB = Math.round(x - xs2);
+                var ylocalB = Math.round(y - ys2);
+
+                xlocalA += datas1.x - sprite1.x
+                ylocalA += datas1.y - sprite1.y
+                var pixelNumS1 = xlocalA + ylocalA * s1.width;
+
+                xlocalB += datas2.x - sprite2.x
+                ylocalB += datas2.y - sprite2.y
+                var pixelNumS2 = xlocalB + ylocalB * s2.width;
+                
+                var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
+                var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
+
+                var a1 = imageDataS1.data[pixelPostAlphaS1];
+                var a2 = imageDataS2.data[pixelPostAlphaS2];
+
+                if (a1 != 0 && a2 != 0) return true;           
+            }
         }
     }
     return false;   
