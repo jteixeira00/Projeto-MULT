@@ -706,7 +706,7 @@ function endWave(){
     }
     else{
         objective.healthPoints = vidaCasa;
-        objective.updateHealth();
+        objective.updateHealth(healthMeter,0);
     }
 }
 
@@ -798,10 +798,7 @@ function update (){
         console.log("end");
         //game over
         GameOverS();
-    }
-
-
-  
+    }  
    
     updatePadeira(this);
 
@@ -938,7 +935,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
-                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         damageCastelaSound(elementos[i].gameObject.body.height);
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -1279,7 +1276,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
