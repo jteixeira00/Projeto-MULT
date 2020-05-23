@@ -165,7 +165,9 @@ function preload(){
     this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
     this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
     this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
-    this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');  
+    this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');
+    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3'); 
+    this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
@@ -727,7 +729,6 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
-    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
@@ -844,6 +845,7 @@ function damageCastelaSound(height){
             playSound(game,"HeavyHit_2",{volume: 0.6*(volumeFrame/10)});
     }
 }
+
 
 function updatePadeira(scene){
 
@@ -1105,17 +1107,21 @@ function updateEnemies(enemy, scene){
         
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight){
+
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
             
     		if(enemy.body.height == 104){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_s_death_R', true);
     	    }
     	    else if(enemy.body.height == 105){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_m_death_R', true);
     	    }
     	    else{
+                playSound(game,"HeavyDeath",{volume: (volumeFrame/10)});
     	    	enemy.anims.play('c_h_death_R', true);
     	    }
         }
@@ -1124,12 +1130,15 @@ function updateEnemies(enemy, scene){
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
     		if(enemy.body.height == 104){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     			enemy.anims.play('c_s_death_L', false);
     		}
     		else if(enemy.body.height == 105){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_m_death_L', true);
     	    }
     	    else{
+                playSound(game,"HeavyDeath",{volume: (volumeFrame/10)});
     	    	enemy.anims.play('c_h_death_L', true);
     	    }
     	}
@@ -1201,6 +1210,7 @@ function updateEnemies(enemy, scene){
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))
+                                playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
