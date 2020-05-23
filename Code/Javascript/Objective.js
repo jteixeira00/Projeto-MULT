@@ -7,12 +7,18 @@ class Objective extends Phaser.GameObjects.Rectangle{
         scene.physics.world.enableBody(this, 0);
     }
 
-    getHit(damage){
+    getHit(damage, healthMeter){
+        this.updateHealth(healthMeter, damage);
         this.healthPoints = this.healthPoints - damage;
     }
 
-    updateHealth(){
-    	
-    }
+    updateHealth(healthMeter, dano){
 
+        var counter = 2 * (22 - Math.round((this.healthPoints - dano) / 227));
+        
+        if (counter <= 44) 
+            healthMeter.anims.play("healthBarCasa", true);
+            healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[counter]);      
+
+    }
 }
