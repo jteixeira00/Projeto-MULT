@@ -3,7 +3,7 @@ function platformsDesign(game){
 	var array = [];
 	var output = [];
 	var platforms = [];
-	var mydata = JSON.parse(lvl1);
+	var mydata = JSON.parse(lvl2);
 	var plat = mydata.plat;
 	var portals = mydata.portais;
 
