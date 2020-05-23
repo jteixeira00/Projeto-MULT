@@ -35,7 +35,7 @@ var WaveCount = 0;
 var growth;
 var cart = false;
 
-
+var level;
 
 var config = {
     type: Phaser.CANVAS,
@@ -79,11 +79,20 @@ var gameOver ={
 
 var game = new Phaser.Game(config);
 window.addEventListener("message", messageHandler);
-
+window.addEventListener("message", messageHandler);
 function messageHandler(ev){
     masterW = ev.source;
-    volumeFrame = ev.data;
-    console.log(volumeFrame);
+    var aux = ev.data;
+    console.log(aux);
+    if(aux>=0 || aux<=15){
+        volumeFrame = ev.data;
+    }
+    if(aux == "a" || aux == "b"){
+        level = aux;
+
+    }
+    
+    console.log(aux);
     
 }
 
