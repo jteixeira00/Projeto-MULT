@@ -715,7 +715,7 @@ function endWave(){
     }
     else{
         objective.healthPoints = vidaCasa;
-        objective.updateHealth(healthMeter,0);
+        objective.updateHealth(objectiveHealthMeter);
     }
 }
 
@@ -808,8 +808,8 @@ function update (){
         console.log("end");
         //game over
         GameOverS();
-    }  
-   
+    }
+
     updatePadeira(this);
 
     for (var i = 0; i < portals.getChildren().length; i++)
@@ -1288,7 +1288,7 @@ function updateEnemies(enemy, scene){
                         if (elementos[i].gameObject == padeira){ 
                             //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
-                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
+                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage, objectiveHealthMeter);  
@@ -1323,35 +1323,40 @@ function pixelCollision(s1, s2, scene){
         var yMin = Math.max(ys1, ys2);
         var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
 
-        ctx.drawImage(sprite1.source.image, datas1.x, datas1.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
-        var imageDataS1 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
-        
-        ctx.clearRect(0, 0, s2.width, s2.height);   
-        ctx.drawImage(sprite2.source.image, datas2.x, datas2.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
-        var imageDataS2 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
+        if (xMax - xMin > 0 && yMax - yMin > 0){
 
-        for (var y = yMin; y < yMax; y++){  
-            for (var x = xMin; x < xMax; x++){
-                var xlocalA = Math.round(x - xs1);
-                var ylocalA = Math.round(y - ys1);
-                var xlocalB = Math.round(x - xs2);
-                var ylocalB = Math.round(y - ys2);
+            ctx.clearRect(0, 0, sprite1.source.image.width, sprite1.source.image.height);
+            ctx.drawImage(sprite2.source.image, 0, 0, sprite1.source.image.width, sprite1.source.image.height);
+            var imageDataS1 = ctx.getImageData(0, 0, sprite1.source.image.width, sprite1.source.image.height);
+            
+            ctx.clearRect(0, 0, sprite2.source.image.width, sprite2.source.image.height);
+            ctx.drawImage(sprite2.source.image, 0, 0, sprite2.source.image.width, sprite2.source.image.height);
+            var imageDataS2 = ctx.getImageData(0, 0, sprite2.source.image.width, sprite2.source.image.height);
 
-                xlocalA += datas1.x - sprite1.x
-                ylocalA += datas1.y - sprite1.y
-                var pixelNumS1 = xlocalA + ylocalA * s1.width;
+            for (var y = 0; y < yMax - yMin; y++){  
+                for (var x = 0; x < xMax - xMin; x++){
 
-                xlocalB += datas2.x - sprite2.x
-                ylocalB += datas2.y - sprite2.y
-                var pixelNumS2 = xlocalB + ylocalB * s2.width;
-                
-                var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
-                var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
+                    var xlocalA = Math.round(x - xs1);
+                    var ylocalA = Math.round(y - ys1);
+                    var xlocalB = Math.round(x - xs2);
+                    var ylocalB = Math.round(y - ys2);
 
-                var a1 = imageDataS1.data[pixelPostAlphaS1];
-                var a2 = imageDataS2.data[pixelPostAlphaS2];
+                    xlocalA += datas1.x - sprite1.x
+                    ylocalA += datas1.y - sprite1.y
+                    var pixelNumS1 = xlocalA + ylocalA * s1.width;
 
-                if (a1 != 0 && a2 != 0) return true;           
+                    xlocalB += datas2.x - sprite2.x
+                    ylocalB += datas2.y - sprite2.y
+                    var pixelNumS2 = xlocalB + ylocalB * s2.width;
+                    
+                    var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
+                    var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
+
+                    var a1 = imageDataS1.data[pixelPostAlphaS1];
+                    var a2 = imageDataS2.data[pixelPostAlphaS2];
+
+                    if (a1 != 0 && a2 != 0) return true;           
+                }
             }
         }
     }
