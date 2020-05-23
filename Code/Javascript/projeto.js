@@ -29,6 +29,8 @@ var drops;
 var enemyCount = 0;
 var masterW;
 var musicTrack;
+var mapElements;
+
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -65,6 +67,7 @@ var configMenu = {
 
 var game = new Phaser.Game(config);
 window.addEventListener("message", messageHandler);
+
 function messageHandler(ev){
     masterW = ev.source;
     volumeFrame = ev.data;
@@ -583,21 +586,21 @@ function create(){
 
     background.anims.play("sky1", true);
     background.anims.pause(background.anims.currentAnim.frames[0]);
-  
+    
     healthMeter = this.add.sprite(150, 760, "health");
-
+    
     this.anims.create({
         key: "health",
         frames: this.anims.generateFrameNumbers("health", {start:0, end: 9}),
         frameRate:1,
         repeat:-1   
     });
-
+    
     healthMeter.setScrollFactor(0);
     healthMeter.anims.play("health", true);
     healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[9]);
     healthMeter.setScale(3);
-
+    
     var pause_btn = this.add.image(1120,60, 'pause_btn');
     pause_btn.setScrollFactor(0)
     pause_btn.setInteractive();
@@ -606,58 +609,45 @@ function create(){
     score = 0;
     scoreText =  this.add.text(24, 36, '0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
     scoreText.setScrollFactor(0);
-
+    
     enemies = this.add.group();
     portals = this.add.group();
     
-    var array = platformsDesign(this);
-    platforms = array[0];
+    mapElements = platformsDesign(this);
+    platforms = mapElements[0];
     
-
-
     objective = new Objective(1415, 673, this, 540, 145);
     padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
     
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-
-
-    this.time.delayedCall(4000, () => {genesis(array,this);}, null, this);
-
-  
-
-
-
-
     
-
+    this.time.delayedCall(4000, () => {genesis(this);}, null, this);
+    
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
-
+    
     loadAnim(this);
-
+    
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     game.scene.add("PauseScene", PauseScene, false);
-
+    
     drops = this.add.group();
     this.physics.add.collider(drops, platforms);
     this.physics.add.overlap(padeira, drops, () => { spawnCarroca(this)} );
-
+    
     tempocarroca(this);
 }
 
 
-
-
-
-function genesis(array,game){
-    var portals_array = array[1];
-    var waveNumber = array[4];    
+function genesis(game){
+    var portals_array = mapElements[1];
+    var waveNumber = mapElements[4];    
     if(enemyCount == 0){
-        var wave = dificuldade(array[2],array[3],portals_array,0);
+        var wave = dificuldade(mapElements[2],mapElements[3],portals_array,0);
         const sizeWave = wave.length;
         var i = 0;
         
@@ -689,6 +679,7 @@ function randInt(min,max){
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
 
 function dificuldade(start,growth,arrayPortais,currentWave){
     var array = [];
@@ -724,17 +715,14 @@ function dificuldade(start,growth,arrayPortais,currentWave){
 function update (){
 
     if (padeira.healthPoints <= 0 || objective.healthPoints <= 0) return;
-
-    var array = platformsDesign(this);
    
-
     updatePadeira(this);
 
     for (var i = 0; i < portals.getChildren().length; i++)
-    	updatePortal(portals.getChildren()[i],this);
+    	updatePortal(portals.getChildren()[i], this);
     
     for (var i = 0; i < enemies.getChildren().length; i++)
-        updateEnemies(enemies.getChildren()[i], this,array);
+        updateEnemies(enemies.getChildren()[i], this);
     
     if (carrinho) updateCarro()
     
@@ -755,51 +743,6 @@ function pause(){
 }
 
 
-
-class PauseScene extends Phaser.Scene{
-
-    constructor(configMenu){
-        super(configMenu);
-
-    }
-    preload(){
-        this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
-        this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
-        this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
-        this.load.image("voltar","../../Resources/Sprites/Ajuda/voltar.png");
-        this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
-
-
-    }
-
-    create(){
-        var btn = this.add.image(600, 400, "menu");
-        btn.setScrollFactor(0)
-        btn.setInteractive();
-        btn.on("pointerdown", () => hideMenu());
-
-        var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
-        var gramMenos = this.add.image(390, 380+40, "gram-");
-        volume = this.add.sprite(585,400+40, "volume");
-        var back = this.add.image(390, 530, "voltar"); 
-        back.setInteractive();
-        back.on("pointerdown", () => Voltar());
-        gramMais.setInteractive();
-        gramMais.on("pointerdown", () => updateVolume(1));
-        gramMenos.setInteractive();
-        gramMenos.on("pointerdown", () => updateVolume(-1));
-            
-        this.anims.create({
-            key: "volume",
-            frames: this.anims.generateFrameNumbers("volume", {start:0, end: 14}),
-            frameRate:1,
-            repeat:-1   
-        });
-
-        volume.anims.play("volume", true);
-        volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
-    }
-}
 function Voltar(){
     console.log("voltar");
     masterW.postMessage("voltar","*");
@@ -867,7 +810,7 @@ function updatePadeira(scene){
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
-                if (elementos[i].gameObject != padeira && elementos[i].gameObject != carrinho && elementos[i].gameObject != objective){
+                if (enemies.contains(elementos[i].gameObject)){
                     //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -1075,7 +1018,7 @@ function updateCarro(){
 }
 
 
-function updateEnemies(enemy, scene,array){
+function updateEnemies(enemy, scene){
 
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
@@ -1091,7 +1034,7 @@ function updateEnemies(enemy, scene,array){
     	if (enemy.facingRight){
             enemyCount -= 1;
             if(enemyCount == 0)
-                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
+                scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
             
     		if(enemy.body.height == 104){
     	        enemy.anims.play('c_s_death_R', true);
@@ -1106,7 +1049,7 @@ function updateEnemies(enemy, scene,array){
     	else{
             enemyCount -= 1;
             if(enemyCount == 0)
-                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
+                scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
     		if(enemy.body.height == 104){
     			enemy.anims.play('c_s_death_L', false);
     		}
@@ -1188,8 +1131,7 @@ function updateEnemies(enemy, scene,array){
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
-                            elementos[i].gameObject.getHit(enemy.damage);
-                            console.log(enemy.damage);
+                            elementos[i].gameObject.getHit(enemy.damage);  
                             if(enemy.damage>99){
                                 scene.cameras.main.shake(30);
                             }
