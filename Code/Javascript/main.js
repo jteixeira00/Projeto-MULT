@@ -52,6 +52,7 @@ function messageHandler(ev){
 
     }
     if(ev.data== "jogar"){
+        frm.contentWindow.postMessage("a", "*");
         showPage(2);
     }
 
@@ -76,5 +77,5 @@ function iframeHandler(ev){
 
     var frm = ev.target;
     
-	frm.contentWindow.postMessage(volume, "*");
+    frm.contentWindow.postMessage(volume, "*")
 }
