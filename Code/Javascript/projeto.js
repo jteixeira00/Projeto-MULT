@@ -15,6 +15,7 @@ var portals;
 var portals_array;
 var scoreText;
 var openP;
+var carrinho;
 var inicio;
 var falling;
 var fim;
@@ -26,8 +27,8 @@ var volumeFrame = 14;
 var drop;
 var drops;
 var enemyCount = 0;
-var SEMAFORO = false;
-
+var masterW;
+var musicTrack;
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -63,6 +64,13 @@ var configMenu = {
 }
 
 var game = new Phaser.Game(config);
+window.addEventListener("message", messageHandler);
+function messageHandler(ev){
+    masterW = ev.source;
+    volumeFrame = ev.data;
+    console.log(volumeFrame);
+    
+}
 
 
 function preload(){
@@ -133,9 +141,9 @@ function preload(){
     this.load.spritesheet('portal_op', '../../Resources/Sprite Sheets/Portal/portal_open.png',{ frameWidth: 232, frameHeight: 156 });
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
-
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
-
+    
+    this.load.spritesheet('carrinho', '../../Resources/Sprite Sheets/Carrinho/carrinho.png',{ frameWidth: 118, frameHeight: 108 });
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
 
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
@@ -149,6 +157,12 @@ function preload(){
 
 function loadAnim(scene){
 
+    scene.anims.create({
+        key: 'carrinho',
+        frames: scene.anims.generateFrameNumbers('carrinho', { start: 0, end: 19 }),
+        frameRate: 15,
+        repeat: 0
+    });
 
     scene.anims.create({
         key: 'portal',
@@ -532,13 +546,13 @@ function loadAnim(scene){
 
 function create(){
 
-	var config = {
+	var configLvlMusic = {
         mute: false,
-        volume: 1,
+        volume: 1*(volumeFrame/10),
         loop: true
     }
 
-	playSound(this,"level1_music",config);
+	musicTrack = playSound(this,"level1_music",configLvlMusic);
 
     this.add.image(1200, 400, 'sky');
 
@@ -601,7 +615,6 @@ function create(){
     
 
 
-
     objective = new Objective(1415, 673, this, 540, 145);
     padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
     
@@ -629,13 +642,11 @@ function create(){
     
     game.scene.add("PauseScene", PauseScene, false);
 
-    
-    tempocarroca(this);
     drops = this.add.group();
     this.physics.add.collider(drops, platforms);
-    this.physics.add.overlap(padeira, drops, spawnCarroca);
+    this.physics.add.overlap(padeira, drops, () => { spawnCarroca(this)} );
 
-
+    tempocarroca(this);
 }
 
 
@@ -725,32 +736,9 @@ function update (){
     for (var i = 0; i < enemies.getChildren().length; i++)
         updateEnemies(enemies.getChildren()[i], this,array);
     
-    updateBackgroud(this);
-}
-
-
-function tempocarroca(scene){
-
-    scene.time.addEvent({
-        delay: 5000,
-        callback: ()=>{
-            dropcarroca(scene)
-        },
-        loop: true
-    })
-}
-
-
-function dropcarroca(scene){
+    if (carrinho) updateCarro()
     
-    if(drops.getChildren().length == 0){
-        var x = Phaser.Math.Between(30, 2370);
-        drop = scene.add.sprite(x, 0, "minicarro");
-        scene.physics.world.enableBody(drop, 0);
-        drops.add(drop);
-    }
-
-    if(drops.getChildren().length == 1) drop.destroy();
+    updateBackgroud(this);
 }
 
 
@@ -767,6 +755,7 @@ function pause(){
 }
 
 
+
 class PauseScene extends Phaser.Scene{
 
     constructor(configMenu){
@@ -777,7 +766,10 @@ class PauseScene extends Phaser.Scene{
         this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
         this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
         this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.image("voltar","../../Resources/Sprites/Ajuda/voltar.png");
         this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
+
+
     }
 
     create(){
@@ -789,7 +781,9 @@ class PauseScene extends Phaser.Scene{
         var gramMais = this.add.image(805, 350+40, "gram+").setScale(0.8);
         var gramMenos = this.add.image(390, 380+40, "gram-");
         volume = this.add.sprite(585,400+40, "volume");
-
+        var back = this.add.image(390, 530, "voltar"); 
+        back.setInteractive();
+        back.on("pointerdown", () => Voltar());
         gramMais.setInteractive();
         gramMais.on("pointerdown", () => updateVolume(1));
         gramMenos.setInteractive();
@@ -805,6 +799,10 @@ class PauseScene extends Phaser.Scene{
         volume.anims.play("volume", true);
         volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
     }
+}
+function Voltar(){
+    console.log("voltar");
+    masterW.postMessage("voltar","*");
 }
 
 
@@ -827,6 +825,7 @@ function updateVolume(change){
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }   
     }
+    musicTrack.setVolume(1*(volumeFrame/10))
 }
 
 
@@ -846,7 +845,7 @@ function updatePadeira(scene){
 
 	var config = {
 	    mute: false,
-	    volume: 3,
+	    volume: 3*(volumeFrame/10),
 	    rate: 2,
 	    loop: true
 	}    
@@ -859,7 +858,7 @@ function updatePadeira(scene){
     	
         if (padeira.weapon){
             
-            var array = padeira.updateAttackingHitbox();
+            var array = padeira.updateAttackingHitbox(volumeFrame);
 
             padeira.immobile = true;
             padeira.anims.play(array[0], true);
@@ -868,7 +867,7 @@ function updatePadeira(scene){
             
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
-                if (elementos[i].gameObject != padeira){
+                if (elementos[i].gameObject != padeira && elementos[i].gameObject != carrinho && elementos[i].gameObject != objective){
                     //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -880,12 +879,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2});
+                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -896,7 +895,7 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -914,7 +913,6 @@ function updatePadeira(scene){
                 padeira.anims.play('padeira_weapon_walk_L', true);
             }
         }
-
     }
 
     else if (cursors.right.isDown && !padeira.immobile){
@@ -922,7 +920,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -951,7 +949,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -965,7 +963,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1});
+        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -1013,22 +1011,69 @@ function updatePadeira(scene){
                     padeira.anims.play('padeira_weapon_fall_R', true);
             }
 
-            else
+            else{
                 if (!padeira.weapon)
                     padeira.anims.play('padeira_fall_L', true);
                 else
                     padeira.anims.play('padeira_weapon_fall_L', true);
+            }
         }
     }
     
 }
 
-function spawnCarroca(){
-    console.log("yay");
-    drop.destroy();
+
+function tempocarroca(scene){
+
+    scene.time.addEvent({
+        delay: 5000,
+        callback: ()=>{
+            dropcarroca(scene)
+        },
+        loop: true
+    })
 }
 
-// Need armor getting spanked sound
+
+function dropcarroca(scene){
+
+    if(drops.getChildren().length == 0){
+        var x = Phaser.Math.Between(30, 2370);
+        drop = scene.add.sprite(x, 0, "minicarro");
+        scene.physics.world.enableBody(drop, 0);
+        drop.setDepth(1);
+        drops.add(drop);
+    }
+
+    else if(drops.getChildren().length == 1) drop.destroy();
+}
+
+
+function spawnCarroca(scene){
+    drop.destroy();
+    //tocar powerup sound
+    carrinho = scene.add.sprite(0, 600, "carrinho");
+    scene.physics.world.enableBody(carrinho, 0);
+    scene.physics.add.collider(carrinho, platforms);
+    scene.physics.add.overlap(enemies, carrinho, atropelar, null, scene);
+}
+
+
+function atropelar(enemy, carro){
+    enemy.getHit(true, 1000);
+}
+
+
+function updateCarro(){
+    carrinho.anims.play("carrinho", true);
+    carrinho.body.setVelocityX(1000);
+
+    if (carrinho.body.x > 2400) {
+        carrinho.destroy();
+        carrinho = null;
+    }
+}
+
 
 function updateEnemies(enemy, scene,array){
 
@@ -1144,6 +1189,10 @@ function updateEnemies(enemy, scene,array){
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);
+                            console.log(enemy.damage);
+                            if(enemy.damage>99){
+                                scene.cameras.main.shake(30);
+                            }
                         }
                     }
                     enemy.immobile = false;
@@ -1157,7 +1206,7 @@ function updateEnemies(enemy, scene,array){
 function pixelCollision(s1, s2, scene){
 
     var xs1 = s1.x - s1.width / 2;
-    var xs2 = s2.x - s2.width / 2
+    var xs2 = s2.x - s2.width / 2;
     var ys1 = s1.y - s1.height / 2;
     var ys2 = s2.y - s2.height / 2;
 
@@ -1168,16 +1217,12 @@ function pixelCollision(s1, s2, scene){
 
     for (var y = yMin; y < yMax; y++){  
         for (var x = xMin; x < xMax; x++){
-
             var xlocalA = Math.round(x - xs1);
             var ylocalA = Math.round(y - ys1);
-                
             var xlocalB = Math.round(x - xs2);
             var ylocalB = Math.round(y - ys2);
-
             var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
             var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
-            
             if (a1 != 0 && a2 != 0) return true;           
         }
     }

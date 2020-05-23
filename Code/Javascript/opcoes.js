@@ -13,7 +13,9 @@ var config = {
 };
 
 var opcoes = new Phaser.Game(config);
+
 window.addEventListener("message", messageHandler);
+
 
 
 function preload(){
@@ -60,7 +62,10 @@ function updateVolume(change){
     if (change == 1){
         if(volumeFrame < 14){
             console.log("volume +");
-            volumeFrame = volumeFrame + 1;
+
+            volumeFrame = volumeFrame+1;
+            
+
             volume.anims.play("volume", true);
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }
@@ -70,6 +75,7 @@ function updateVolume(change){
         if(volumeFrame > 0){
             console.log("volume -");
             volumeFrame = volumeFrame - 1;
+            
             volume.anims.play("volume", true);
             volume.anims.pause(volume.anims.currentAnim.frames[volumeFrame]);
         }     
@@ -80,11 +86,11 @@ function updateVolume(change){
 function messageHandler(ev){
     
     masterW = ev.source;
+    volumeFrame = ev.data;
 }
  
 
 function voltar(){
-
-    console.log("voltar");
-    masterW.postMessage("voltar","*");
+    masterW.postMessage(volumeFrame, "*");
+    
 }
