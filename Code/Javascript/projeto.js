@@ -1035,7 +1035,7 @@ function updateEnemies(enemy, scene){
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight){
             enemyCount -= 1;
-            if(enemyCount == 0 && WaveCount != array[4])
+            if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
             
     		if(enemy.body.height == 104){
@@ -1050,7 +1050,7 @@ function updateEnemies(enemy, scene){
         }
     	else{
             enemyCount -= 1;
-            if(enemyCount == 0 && WaveCount != array[4])
+            if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
     		if(enemy.body.height == 104){
     			enemy.anims.play('c_s_death_L', false);
