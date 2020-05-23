@@ -742,7 +742,7 @@ function genesis(game){
             }
             if(wave[i][2] == "H"){
                 new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"H");
-                new CastelhanoHeavy(game, wave[i][0], wave[i][1], 'c_h_idle_R', enemies);
+                new CastelhanoHeavy(game, wave[i][0], wave[i][1] - 72, 'c_h_idle_R', enemies);
                 enemyCount += 1;
             }
             i++;
@@ -772,9 +772,9 @@ function dificuldade(start,growth,arrayPortais){
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
         const enemyProb = randInt(0,100);
-        if(enemyProb % 10 == 0){
+        if(enemyProb % 10 == 0 || true){
             enemyType = "H";
-            index[1] = index[1] - 60;
+            index[1] = index[1];
         }
         else if(enemyProb % 5 == 0){
             enemyType = "M";
@@ -1362,7 +1362,7 @@ function pixelCollision(s1, s2, scene){
 function updatePortal(portal, scene){
 
 	if(portal.enemy == "H")
-		portal.setScale(2);
+		portal.setScale(1.5);
 
 	if(!openP){
 		portal.anims.play('portalO',true);
