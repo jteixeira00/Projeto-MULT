@@ -35,6 +35,7 @@ var growth;
 var cart = false;
 
 
+
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -165,6 +166,9 @@ function preload(){
     this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
     this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
     this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
+    this.load.audio('slash_1', '../../Resources/Sounds/slash_1.mp3');  
+    this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
+    this.load.audio('slash_3', '../../Resources/Sounds/slash_3.mp3'); 
     this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');
     this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3'); 
     this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
@@ -729,6 +733,7 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
+    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
@@ -843,6 +848,30 @@ function damageCastelaSound(height){
             playSound(game,"HeavyHit_1",{volume: 0.6*(volumeFrame/10)});
         if(num == 2)
             playSound(game,"HeavyHit_2",{volume: 0.6*(volumeFrame/10)});
+    }
+}
+
+function castelaAttack(height){
+    var config = {
+        delay: 2000,
+        volume: 1.2*(volumeFrame/10),
+    }    
+
+    if(height != 208){
+        var num = randInt(1,4)
+        if(num == 1)
+            playSound(game,"slash_1",config);
+        if(num == 2)
+            playSound(game,"slash_2",config);
+        if(num == 3)
+            playSound(game,"slash_3",config);
+    }
+    else{
+        var num = randInt(1,3)
+        if(num == 1)
+            playSound(game,"slash_1",config);
+        if(num == 2)
+            playSound(game,"slash_2",config);
     }
 }
 
@@ -1095,6 +1124,7 @@ function updateCarro(){
 
 function updateEnemies(enemy, scene){
 
+
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
 
@@ -1183,23 +1213,29 @@ function updateEnemies(enemy, scene){
                 enemy.body.setVelocityX(0)
                 if (enemy.facingRight && enemy.body.touching.down){
                 	if(enemy.body.height == 104){
+                        castelaAttack(enemy.body.body);
                 	    enemy.anims.play('c_s_attack_R', true);
                 	}
                 	else if(enemy.body.height == 105){
+                        castelaAttack(enemy.body.body);
                 	    enemy.anims.play('c_m_attack_R', true);
                 	}
                 	else{
+                        castelaAttack(enemy.body.body);
                 		enemy.anims.play('c_h_attack_R', true);
                 	}
                 }
                 else{
                 	if(enemy.body.height == 104){
+                        castelaAttack(enemy.body.body);
                 	  	enemy.anims.play('c_s_attack_L', true);
                 	}
                 	else if(enemy.body.height == 105){
+                        castelaAttack(enemy.body.body);
                 	  	enemy.anims.play('c_m_attack_L', true);
                 	}
                 	else{
+                        castelaAttack(enemy.body.body);
                 		enemy.anims.play('c_h_attack_L', true);
                 	}
                 }
