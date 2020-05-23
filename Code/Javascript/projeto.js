@@ -35,7 +35,7 @@ var WaveCount = 0;
 var growth;
 var cart = false;
 
-
+var level;
 
 var config = {
     type: Phaser.CANVAS,
@@ -79,11 +79,20 @@ var gameOver ={
 
 var game = new Phaser.Game(config);
 window.addEventListener("message", messageHandler);
-
+window.addEventListener("message", messageHandler);
 function messageHandler(ev){
     masterW = ev.source;
-    volumeFrame = ev.data;
-    console.log(volumeFrame);
+    var aux = ev.data;
+    console.log(aux);
+    if(aux>=0 || aux<=15){
+        volumeFrame = ev.data;
+    }
+    if(aux == "a" || aux == "b"){
+        level = aux;
+
+    }
+    
+    console.log(aux);
     
 }
 
@@ -172,6 +181,7 @@ function preload(){
     this.load.audio('metal_3', '../../Resources/Sounds/metal_3.mp3');  
     this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
     this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
+    this.load.audio('bigWoosh', '../../Resources/Sounds/bigWoosh.mp3'); 
     this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
     this.load.audio('slash_1', '../../Resources/Sounds/slash_1.mp3');  
     this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
@@ -181,7 +191,8 @@ function preload(){
     this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
-    this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
+    this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');    
 }
 
 
@@ -755,6 +766,7 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
+    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
@@ -886,26 +898,22 @@ function damageCastelaSound(height){
 }
 
 function castelaAttack(height){
-    var config = {
-        delay: 2000,
-        volume: 1.2*(volumeFrame/10),
+    var configS = {
+        volume: 1.2*(volumeFrame/10)
     }    
 
     if(height != 208){
         var num = randInt(1,4)
         if(num == 1)
-            playSound(game,"slash_1",config);
+            playSound(game,"slash_1",configS);
         if(num == 2)
-            playSound(game,"slash_2",config);
+            playSound(game,"slash_2",configS);
         if(num == 3)
-            playSound(game,"slash_3",config);
+            playSound(game,"slash_3",configS);
     }
     else{
-        var num = randInt(1,3)
-        if(num == 1)
-            playSound(game,"slash_1",config);
-        if(num == 2)
-            playSound(game,"slash_2",config);
+        playSound(game,"bigWoosh",configS);
+
     }
 }
 
@@ -937,7 +945,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
-                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         damageCastelaSound(elementos[i].gameObject.body.height);
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -1121,7 +1129,7 @@ function dropcarroca(scene){
 
 function spawnCarroca(scene){
     drop.destroy();
-    //tocar powerup sound
+    playSound(game,"cartGet",{volume: 0.8*(volumeFrame/10)});
     carrinho = scene.add.sprite(0, 600, "carrinho");
     scene.physics.world.enableBody(carrinho, 0);
     scene.physics.add.collider(carrinho, platforms);
@@ -1278,7 +1286,7 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
                                 playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
                         }
