@@ -4,7 +4,6 @@ const totPages = 5;
 const htmldir = "Code/HTML/";
 var volume = 7;
 var frm;
-var aux;
 (function(){
     window.addEventListener("load", main);
 
@@ -17,8 +16,7 @@ function main(){
     window.addEventListener("message", messageHandler);
     frm = document.getElementsByTagName("iframe")[0];
     frm.addEventListener("load", iframeHandler);
-    
-    
+
 }
 
 
@@ -57,7 +55,6 @@ function messageHandler(ev){
 
     }
     if(ev.data== "jogar"){
-        ///window.postMessage(4, "*");
         showPage(2);
         
     }
@@ -82,10 +79,8 @@ function messageHandler(ev){
 function iframeHandler(ev){
 
     var frm = ev.target;
-    aux = frm;
+    
     frm.contentWindow.postMessage(volume, "*");
-
-
 
 }
 

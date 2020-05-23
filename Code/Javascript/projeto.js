@@ -34,8 +34,8 @@ var mapElements;
 var WaveCount = 0;
 var growth;
 var cart = false;
+var currentLevel;
 
-var level;
 
 var config = {
     type: Phaser.CANVAS,
@@ -68,7 +68,6 @@ var configMenu = {
         // loader: {},
         // plugins: false,
         // input: {}
-  
 }
 
 var gameOver ={
@@ -77,8 +76,70 @@ var gameOver ={
     visible: true
 }
 
-var game = new Phaser.Game(config);
-window.addEventListener("message", messageHandler);
+var selectLevel = {
+    key: 'LevelSelect',
+    active: true,
+    visible: true
+}
+
+
+
+class LevelSelection extends Phaser.Scene{
+
+    constructor(configMenu){
+        super(configMenu);
+
+    }
+    preload(){
+        this.load.image("background", '../../Resources/Sprites/Level Select/background.png');
+        this.load.image("1", '../../Resources/Sprites/Level Select/1.png');
+        this.load.image("2", '../../Resources/Sprites/Level Select/2.png');
+    }
+
+    create(){
+        var background = this.add.image(600,400,"background");
+        var lvl1 = this.add.image(400, 400, "1");
+        var lvl2 = this.add.image(800,400, "2");
+        lvl1.setInteractive();
+        lvl2.setInteractive();
+       
+        lvl1.on("pointerdown", () => setlevel(1));
+        lvl2.on("pointerdown",() => setlevel(2));
+    }
+
+
+    
+    
+}
+
+
+function setlevel(level){
+    currentLevel = level;
+    
+    lvlselect.destroy(true);
+    game = new Phaser.Game(config);
+    
+
+}
+
+
+var LevelSelectionScene = new LevelSelection();
+var lvlselectConfig = {
+    type: Phaser.CANVAS,
+    width: 1200,
+    height: 800,
+    scene: LevelSelectionScene
+}
+
+
+
+var lvlselect = new Phaser.Game(lvlselectConfig);
+var game;  
+
+
+
+
+
 window.addEventListener("message", messageHandler);
 function messageHandler(ev){
     masterW = ev.source;
@@ -87,10 +148,7 @@ function messageHandler(ev){
     if(aux>=0 || aux<=15){
         volumeFrame = ev.data;
     }
-    if(aux == "a" || aux == "b"){
-        level = aux;
-
-    }
+    
     
     console.log(aux);
     
@@ -586,7 +644,7 @@ function loadAnim(scene){
 
 
 function create(){
-
+    
 	var configLvlMusic = {
         mute: false,
         volume: 1*(volumeFrame/10),
@@ -768,13 +826,12 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
-    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
         const enemyProb = randInt(0,100);
-        if(enemyProb % 10 == 0 || true){
+        if(enemyProb % 10 == 0){
             enemyType = "H";
             index[1] = index[1];
         }

@@ -8,13 +8,15 @@ class PauseScene extends Phaser.Scene{
         this.load.image("menu", '../../Resources/Sprites/Jogo/Pause/menu.png')
         this.load.image("gram+","../../Resources/Sprites/Jogo/Pause/gramof +.png" );
         this.load.image("gram-","../../Resources/Sprites/Jogo/Pause/gramof -.png" );
+        this.load.image("resume", "../../Resources/Sprites/Jogo/Pause/resume.png");
         this.load.spritesheet("volume", "../../Resources/Sprites/Jogo/Pause/volume-sheet.png", {frameWidth: 277, frameHeight: 64});
-        this.load.image("voltar","../../Resources/Sprites/Ajuda/voltar.png");
+        this.load.image("voltar","../../Resources/Sprites/Jogo/Pause/voltar.png");
     }
 
     create(){
-        var btn = this.add.image(600, 400, "menu");
-        btn.setScrollFactor(0)
+        this.add.image(600, 400, "menu");
+        var btn = this.add.image(810, 530, "resume");
+        btn.setScrollFactor(0);
         btn.setInteractive();
         btn.on("pointerdown", () => hideMenu());
         var back = this.add.image(390, 530, "voltar"); 
