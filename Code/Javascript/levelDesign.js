@@ -1,6 +1,7 @@
 function platformsDesign(game){
 
 	var array = [];
+	
 	var output = []
 	var platforms = game.physics.add.staticGroup();
 	var mydata = JSON.parse(lvl1);
@@ -15,11 +16,18 @@ function platformsDesign(game){
 	}
 
 	for(var i = 0; i < portlCount; i++){
-		array.push([portals[i].x, portals[i].y,portals[i].enemie]);
+		array.push([portals[i].x, portals[i].y]);
 	}
+
+
 
 	output[0] = platforms;
 	output[1] = array;
+	output[2] = mydata.dStart;
+	output[3] = mydata.dGrowth;
+	output[4] = mydata.waveNumber;
+
+	
 
     return output;
 }

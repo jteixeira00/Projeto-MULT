@@ -1,0 +1,1 @@
+lvl1 = '{"plat" : [{"x" : 1200, "y" : 763, "sprite": "ground"}],"portais" : [{"x" : 400, "y" : 664},{"x" : 200, "y" : 664}], "dStart" : 1, "dGrowth" : 1, "waveNumber": 5}';
