@@ -10,4 +10,9 @@ class Objective extends Phaser.GameObjects.Rectangle{
     getHit(damage){
         this.healthPoints = this.healthPoints - damage;
     }
+
+    updateHealth(){
+    	
+    }
+
 }
