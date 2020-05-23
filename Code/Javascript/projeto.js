@@ -30,6 +30,9 @@ var enemyCount = 0;
 var masterW;
 var musicTrack;
 var mapElements;
+var WaveCount = 0;
+var growth;
+
 
 var config = {
     type: Phaser.CANVAS,
@@ -615,6 +618,7 @@ function create(){
     
     mapElements = platformsDesign(this);
     platforms = mapElements[0];
+    growth = mapElements[3];
     
     objective = new Objective(1415, 673, this, 540, 145);
     padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
@@ -680,14 +684,12 @@ function randInt(min,max){
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
-function dificuldade(start,growth,arrayPortais,currentWave){
+function dificuldade(start,growth,arrayPortais){
     var array = [];
     var aux = [];
     var enemyType;
-    var enemyNumber = start * 10 + (growth * 2) * currentWave
-
-    enemyNumber = 1;
+    var enemyNumber = start * 10 + (growth * 2) * WaveCount
+    growth += growth;
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -1033,7 +1035,7 @@ function updateEnemies(enemy, scene){
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight){
             enemyCount -= 1;
-            if(enemyCount == 0)
+            if(enemyCount == 0 && WaveCount != array[4])
                 scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
             
     		if(enemy.body.height == 104){
@@ -1048,7 +1050,7 @@ function updateEnemies(enemy, scene){
         }
     	else{
             enemyCount -= 1;
-            if(enemyCount == 0)
+            if(enemyCount == 0 && WaveCount != array[4])
                 scene.time.delayedCall(4000, () => {genesis(scene);}, null, this);
     		if(enemy.body.height == 104){
     			enemy.anims.play('c_s_death_L', false);
