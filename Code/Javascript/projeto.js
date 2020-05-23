@@ -23,7 +23,7 @@ var endP;
 var stepsON;
 var healthMeter;
 var volume;
-var volumeFrame = 14;
+var volumeFrame = 7;
 var drop;
 var drops;
 var enemyCount = 0;
@@ -157,7 +157,14 @@ function preload(){
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
     this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
     this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
-    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav'); 
+    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav');
+    this.load.audio('metal_1', '../../Resources/Sounds/metal_1.mp3');  
+    this.load.audio('metal_2', '../../Resources/Sounds/metal_2.mp3'); 
+    this.load.audio('metal_3', '../../Resources/Sounds/metal_3.mp3');  
+    this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
+    this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
+    this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
+    this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
 }
@@ -815,6 +822,26 @@ function hideMenu(){
 }
 
 
+function damageCastelaSound(height){
+
+    if(height != 208){
+        var num = randInt(1,4)
+        if(num == 1)
+            playSound(game,"metal_1",{volume: 0.2*(volumeFrame/10)});
+        if(num == 2)
+            playSound(game,"metal_2",{volume: 0.2*(volumeFrame/10)});
+        if(num == 3)
+            playSound(game,"metal_3",{volume: 0.2*(volumeFrame/10)});
+    }
+    else{
+        var num = randInt(1,3)
+        if(num == 1)
+            playSound(game,"HeavyHit_1",{volume: 0.6*(volumeFrame/10)});
+        if(num == 2)
+            playSound(game,"HeavyHit_2",{volume: 0.6*(volumeFrame/10)});
+    }
+}
+
 function updatePadeira(scene){
 
 	var config = {
@@ -843,6 +870,7 @@ function updatePadeira(scene){
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
                     //if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                        damageCastelaSound(elementos[i].gameObject.body.height);
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
@@ -894,7 +922,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.7*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1158,14 +1186,11 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);  
-                            if(enemy.damage>99){
-                                scene.cameras.main.shake(30);
-                            }
                         }
                     }
                     enemy.immobile = false;

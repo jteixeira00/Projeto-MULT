@@ -12,6 +12,7 @@ class Castelhano extends Pessoa{
 
     getHit(rightKnockback, damage){
 
+        game.play.sound()
         this.healthPoints -= damage;
 
         if (this.alive()){
