@@ -164,7 +164,7 @@ function messageHandler(ev){
 
 function preload(){
 
-    mapElements = platformsDesign(this);
+    mapElements = platformsDesign(this,currentLevel);
     this.load.spritesheet('sky', mapElements[9], { frameWidth: 2400, frameHeight: 800 });
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
