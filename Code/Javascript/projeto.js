@@ -25,6 +25,8 @@ var volume;
 var volumeFrame = 14;
 var drop;
 var drops;
+var enemyCount = 0;
+var SEMAFORO = false;
 
 var config = {
     type: Phaser.CANVAS,
@@ -596,9 +598,8 @@ function create(){
     
     var array = platformsDesign(this);
     platforms = array[0];
-    var portals_array = array[1];
+    
 
-    const sizePortais = (portals_array.length);
 
 
     objective = new Objective(1415, 673, this, 540, 145);
@@ -607,26 +608,17 @@ function create(){
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-   
-    var i = 0;
 
-    let castelaGenesis = setInterval(() => { 
-        if(portals_array[i][2] == "S"){
-        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"S");
-            new CastelhanoSmall(this, portals_array[i][0], portals_array[i][1], 'c_s_idle_R', enemies);
-        }
-        if(portals_array[i][2] == "M"){
-        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"M");
-        	new CastelhanoMedium(this, portals_array[i][0], portals_array[i][1], 'c_m_idle_R', enemies);
-       	}
-        if(portals_array[i][2] == "H"){
-        	new Portal(this, portals_array[i][0], portals_array[i][1], 'portal',portals,"H");
-        	new CastelhanoHeavy(this, portals_array[i][0], portals_array[i][1], 'c_h_idle_R', enemies);
-       	}
-        i++;
-        if(i == sizePortais) clearInterval(castelaGenesis)
-    }, 1000);
-    	
+
+    this.time.delayedCall(4000, () => {genesis(array,this);}, null, this);
+
+  
+
+
+
+
+    
+
     this.cameras.main.setBounds(0, 0, 2400, 800);
     this.cameras.main.startFollow(padeira);
 
@@ -643,12 +635,87 @@ function create(){
     this.physics.add.collider(drops, platforms);
     this.physics.add.overlap(padeira, drops, spawnCarroca);
 
+
 }
+
+
+
+
+
+function genesis(array,game){
+    var portals_array = array[1];
+    var waveNumber = array[4];    
+    if(enemyCount == 0){
+        var wave = dificuldade(array[2],array[3],portals_array,0);
+        const sizeWave = wave.length;
+        var i = 0;
+        
+        let waveGenesis = setInterval(() => { 
+            if(wave[i][2] == "S"){
+                new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"S");
+                new CastelhanoSmall(game, wave[i][0], wave[i][1], 'c_s_idle_R', enemies);
+                enemyCount += 1;
+            }
+            if(wave[i][2] == "M"){
+                new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"M");
+                new CastelhanoMedium(game, wave[i][0], wave[i][1], 'c_m_idle_R', enemies);
+                enemyCount += 1;
+            }
+            if(wave[i][2] == "H"){
+                new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"H");
+                new CastelhanoHeavy(game, wave[i][0], wave[i][1], 'c_h_idle_R', enemies);
+                enemyCount += 1;
+            }
+            i++;
+            if(i == sizeWave) clearInterval(waveGenesis);
+        }, 1000);
+    }     
+}
+
+
+function randInt(min,max){
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function dificuldade(start,growth,arrayPortais,currentWave){
+    var array = [];
+    var aux = [];
+    var enemyType;
+    var enemyNumber = start * 10 + (growth * 2) * currentWave
+
+    enemyNumber = 1;
+
+    for(var i = 0; i < enemyNumber;i++){
+        const index = arrayPortais[randInt(0,arrayPortais.length)];
+        const enemyProb = randInt(0,100);
+        if(enemyProb % 10 == 0){
+            enemyType = "H";
+            index[1] = index[1] - 60;
+        }
+        else if(enemyProb % 5 == 0){
+            enemyType = "M";
+        }
+        else
+            enemyType = "S";
+
+        array.push([index[0],index[1],enemyType]);
+    }
+
+    return array;
+}
+
+
+
 
 
 function update (){
 
     if (padeira.healthPoints <= 0 || objective.healthPoints <= 0) return;
+
+    var array = platformsDesign(this);
+   
 
     updatePadeira(this);
 
@@ -656,7 +723,7 @@ function update (){
     	updatePortal(portals.getChildren()[i],this);
     
     for (var i = 0; i < enemies.getChildren().length; i++)
-        updateEnemies(enemies.getChildren()[i], this);
+        updateEnemies(enemies.getChildren()[i], this,array);
     
     updateBackgroud(this);
 }
@@ -776,7 +843,6 @@ function hideMenu(){
 
 
 function updatePadeira(scene){
-
 
 	var config = {
 	    mute: false,
@@ -964,7 +1030,7 @@ function spawnCarroca(){
 
 // Need armor getting spanked sound
 
-function updateEnemies(enemy, scene){
+function updateEnemies(enemy, scene,array){
 
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
@@ -977,7 +1043,11 @@ function updateEnemies(enemy, scene){
     }
         
     if (!enemy.alive() && !enemy.immobile){
-    	if (enemy.facingRight)
+    	if (enemy.facingRight){
+            enemyCount -= 1;
+            if(enemyCount == 0)
+                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
+            
     		if(enemy.body.height == 104){
     	        enemy.anims.play('c_s_death_R', true);
     	    }
@@ -987,7 +1057,11 @@ function updateEnemies(enemy, scene){
     	    else{
     	    	enemy.anims.play('c_h_death_R', true);
     	    }
+        }
     	else{
+            enemyCount -= 1;
+            if(enemyCount == 0)
+                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
     		if(enemy.body.height == 104){
     			enemy.anims.play('c_s_death_L', false);
     		}

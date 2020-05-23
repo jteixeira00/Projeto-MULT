@@ -1,1 +1,0 @@
-lvl1 = '{"plat" : [{"x" : 1200, "y" : 763, "sprite": "ground"}],"portais" : [{"x" : 400, "y" : 664, "enemie" : "S"},{"x" : 2000, "y" : 664, "enemie" : "S"},{"x" : 300, "y" : 664, "enemie" : "M"},{"x" : 2100, "y" : 664, "enemie" : "M"},{"x" : 200, "y" : 600, "enemie" : "H"},{"x" : 2200, "y" : 600, "enemie" : "H"}]}';
