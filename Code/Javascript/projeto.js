@@ -32,6 +32,7 @@ var musicTrack;
 var mapElements;
 var WaveCount = 0;
 var growth;
+var cart = false;
 
 
 var config = {
@@ -166,6 +167,7 @@ function preload(){
     this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
     this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
+    this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
 }
 
@@ -725,6 +727,7 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
+    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
@@ -1063,16 +1066,27 @@ function spawnCarroca(scene){
 
 function atropelar(enemy, carro){
     enemy.getHit(true, 1000);
+    damageCastelaSound(enemy.body.height);
 }
 
 
 function updateCarro(){
+    var config = {
+        volume: 0.7*(volumeFrame/10),
+        rate: 2,
+        loop: false
+    } 
     carrinho.anims.play("carrinho", true);
     carrinho.body.setVelocityX(1000);
+    if(!cart){
+        playSound(game,'cart',config);
+        cart = true;
+    }
 
     if (carrinho.body.x > 2400) {
         carrinho.destroy();
         carrinho = null;
+        cart = false;
     }
 }
 
