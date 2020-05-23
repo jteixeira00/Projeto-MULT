@@ -22,6 +22,7 @@ var fim;
 var endP;
 var stepsON;
 var healthMeter;
+var objectiveHealthMeter;
 var volume;
 var volumeFrame = 7;
 var drop;
@@ -44,7 +45,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -94,7 +95,6 @@ function preload(){
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
     this.load.image('pause_btn', '../../Resources/Sprites/Jogo/Pause/Pausar.png');
-    
     
     this.load.spritesheet('padeira_idle_L', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_L.png', { frameWidth: 72, frameHeight: 168 });
     this.load.spritesheet('padeira_idle_R', '../../Resources/Sprite Sheets/Padeira/Padeira_idle_R.png', { frameWidth: 72, frameHeight: 168 });
@@ -161,6 +161,7 @@ function preload(){
     
     this.load.spritesheet('carrinho', '../../Resources/Sprite Sheets/Carrinho/carrinho.png',{ frameWidth: 118, frameHeight: 108 });
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
+    this.load.spritesheet('healthBarCasa', '../../Resources/Sprites/Jogo/lvl1/healthbar.png',{ frameWidth: 120, frameHeight: 40 });
 
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
     this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
@@ -616,7 +617,8 @@ function create(){
     background.anims.pause(background.anims.currentAnim.frames[0]);
     
     healthMeter = this.add.sprite(150, 760, "health");
-    
+    objectiveHealthMeter = this.add.sprite( 1050, 760, 'healthBarCasa');
+
     this.anims.create({
         key: "health",
         frames: this.anims.generateFrameNumbers("health", {start:0, end: 9}),
@@ -624,10 +626,22 @@ function create(){
         repeat:-1   
     });
     
+    this.anims.create({
+        key: "healthBarCasa",
+        frames: this.anims.generateFrameNumbers("healthBarCasa", {start:0, end: 44}),
+        frameRate:1,
+        repeat:-1   
+    });
+
     healthMeter.setScrollFactor(0);
     healthMeter.anims.play("health", true);
     healthMeter.anims.pause(healthMeter.anims.currentAnim.frames[9]);
     healthMeter.setScale(3);
+
+    objectiveHealthMeter.setScrollFactor(0);
+    objectiveHealthMeter.anims.play("healthBarCasa", true);
+    objectiveHealthMeter.anims.pause(objectiveHealthMeter.anims.currentAnim.frames[0]);
+    objectiveHealthMeter.setScale(3);
     
     var pause_btn = this.add.image(1120,60, 'pause_btn');
     pause_btn.setScrollFactor(0)
@@ -1145,7 +1159,6 @@ function updateCarro(){
 
 function updateEnemies(enemy, scene){
 
-
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
 
@@ -1271,7 +1284,7 @@ function updateEnemies(enemy, scene){
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
-                            elementos[i].gameObject.getHit(enemy.damage);  
+                            elementos[i].gameObject.getHit(enemy.damage, objectiveHealthMeter);  
                         }
                     }
                     enemy.immobile = false;
