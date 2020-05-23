@@ -45,7 +45,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
         }
     },
     scene: {
@@ -741,7 +741,7 @@ function genesis(game){
                 enemyCount += 1;
             }
             if(wave[i][2] == "H"){
-                new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"H");
+                new Portal(game, wave[i][0], wave[i][1] - 20, 'portal',portals,"H");
                 new CastelhanoHeavy(game, wave[i][0], wave[i][1] - 72, 'c_h_idle_R', enemies);
                 enemyCount += 1;
             }
