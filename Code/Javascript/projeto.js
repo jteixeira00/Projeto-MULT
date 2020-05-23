@@ -34,7 +34,14 @@ var mapElements;
 var WaveCount = 0;
 var growth;
 var cart = false;
+
 var currentLevel;
+
+var softBurn;
+var hardBurn;
+var waitsoftBurn = false;
+var waithardBurn = false;
+
 
 
 var config = {
@@ -245,7 +252,10 @@ function preload(){
     this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
     this.load.audio('slash_3', '../../Resources/Sounds/slash_3.mp3'); 
     this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');
-    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3'); 
+    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3');
+    this.load.audio('hitWood', '../../Resources/Sounds/hitWood.wav');
+    this.load.audio('softBurn', '../../Resources/Sounds/softBurn.wav');
+    this.load.audio('hardBurn', '../../Resources/Sounds/hardBurn.wav');
     this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
@@ -735,7 +745,7 @@ function create(){
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-    this.physics.add.collider(enemies, enemies);
+    //this.physics.add.collider(enemies, enemies);
 
     this.time.delayedCall(4000, () => {genesis(this);}, null, this);
     
@@ -799,9 +809,7 @@ function genesis(game){
                 enemyCount += 1;
             }
             if(wave[i][2] == "H"){
-
                 new Portal(game, wave[i][0], wave[i][1] - 20, 'portal',portals,"H");
-
                 new CastelhanoHeavy(game, wave[i][0], wave[i][1] - 72, 'c_h_idle_R', enemies);
                 enemyCount += 1;
             }
@@ -826,7 +834,6 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
-
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -1016,12 +1023,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -1350,6 +1357,7 @@ function updateEnemies(enemy, scene){
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
+                            playSound(game,"hitWood",{volume: 0.4*(volumeFrame/10)});
                             elementos[i].gameObject.getHit(enemy.damage, objectiveHealthMeter);  
                         }
                     }
@@ -1450,9 +1458,31 @@ function updatePortal(portal, scene){
 
 function updateBackgroud(scene){
 
-    if (objective.healthPoints / 50 >= 66) background.anims.play('sky1', true);
+    if (objective.healthPoints / 50 >= 66){
+        background.anims.play('sky1', true);
+    }
 
-    else if (objective.healthPoints / 50 >= 33) background.anims.play('sky2', true);
+    else if (objective.healthPoints / 50 >= 33){
+        if(!waitsoftBurn){
+            softBurn = playSound(game,"softBurn",{volume: 4*(volumeFrame/10),loop:true});
+            waitsoftBurn = true;
+            if(waithardBurn){
+                hardBurn.stop();
+                waithardBurn = false;
+            }
+        }
+        background.anims.play('sky2', true);
+    }
 
-    else background.anims.play('sky3', true);
+    else{
+        if(!waithardBurn){
+            hardBurn = playSound(game,"hardBurn",{volume: 3*(volumeFrame/10),loop:true});
+            waithardBurn = true;
+            if(waitsoftBurn){
+                softBurn.stop();
+                waitsoftBurn = false;
+            }
+        }
+        background.anims.play('sky3', true);
+    }
 }
