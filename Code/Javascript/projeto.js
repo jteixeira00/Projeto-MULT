@@ -23,7 +23,7 @@ var endP;
 var stepsON;
 var healthMeter;
 var volume;
-var volumeFrame = 14;
+var volumeFrame = 7;
 var drop;
 var drops;
 var enemyCount = 0;
@@ -32,6 +32,8 @@ var musicTrack;
 var mapElements;
 var WaveCount = 0;
 var growth;
+var cart = false;
+
 
 
 var config = {
@@ -163,8 +165,21 @@ function preload(){
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
     this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
     this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
-    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav'); 
+    this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav');
+    this.load.audio('metal_1', '../../Resources/Sounds/metal_1.mp3');  
+    this.load.audio('metal_2', '../../Resources/Sounds/metal_2.mp3'); 
+    this.load.audio('metal_3', '../../Resources/Sounds/metal_3.mp3');  
+    this.load.audio('HeavyHit_1', '../../Resources/Sounds/HeavyHit_1.mp3');  
+    this.load.audio('HeavyHit_2', '../../Resources/Sounds/HeavyHit_2.mp3'); 
+    this.load.audio('HeavyDeath', '../../Resources/Sounds/HeavyDeath.mp3'); 
+    this.load.audio('slash_1', '../../Resources/Sounds/slash_1.mp3');  
+    this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
+    this.load.audio('slash_3', '../../Resources/Sounds/slash_3.mp3'); 
+    this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');
+    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3'); 
+    this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
+    this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3');    
 }
 
@@ -637,7 +652,8 @@ function create(){
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-    
+    this.physics.add.collider(enemies, enemies);
+
     this.time.delayedCall(4000, () => {genesis(this);}, null, this);
     
     this.cameras.main.setBounds(0, 0, 2400, 800);
@@ -838,6 +854,51 @@ function hideMenu(){
 }
 
 
+function damageCastelaSound(height){
+
+    if(height != 208){
+        var num = randInt(1,4)
+        if(num == 1)
+            playSound(game,"metal_1",{volume: 0.2*(volumeFrame/10)});
+        if(num == 2)
+            playSound(game,"metal_2",{volume: 0.2*(volumeFrame/10)});
+        if(num == 3)
+            playSound(game,"metal_3",{volume: 0.2*(volumeFrame/10)});
+    }
+    else{
+        var num = randInt(1,3)
+        if(num == 1)
+            playSound(game,"HeavyHit_1",{volume: 0.6*(volumeFrame/10)});
+        if(num == 2)
+            playSound(game,"HeavyHit_2",{volume: 0.6*(volumeFrame/10)});
+    }
+}
+
+function castelaAttack(height){
+    var config = {
+        delay: 2000,
+        volume: 1.2*(volumeFrame/10),
+    }    
+
+    if(height != 208){
+        var num = randInt(1,4)
+        if(num == 1)
+            playSound(game,"slash_1",config);
+        if(num == 2)
+            playSound(game,"slash_2",config);
+        if(num == 3)
+            playSound(game,"slash_3",config);
+    }
+    else{
+        var num = randInt(1,3)
+        if(num == 1)
+            playSound(game,"slash_1",config);
+        if(num == 2)
+            playSound(game,"slash_2",config);
+    }
+}
+
+
 function updatePadeira(scene){
 
 	var config = {
@@ -865,7 +926,8 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
-                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                        damageCastelaSound(elementos[i].gameObject.body.height);
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
             }
@@ -917,7 +979,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.7*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1058,21 +1120,33 @@ function spawnCarroca(scene){
 
 function atropelar(enemy, carro){
     enemy.getHit(true, 1000);
+    damageCastelaSound(enemy.body.height);
 }
 
 
 function updateCarro(){
+    var config = {
+        volume: 0.7*(volumeFrame/10),
+        rate: 2,
+        loop: false
+    } 
     carrinho.anims.play("carrinho", true);
     carrinho.body.setVelocityX(1000);
+    if(!cart){
+        playSound(game,'cart',config);
+        cart = true;
+    }
 
     if (carrinho.body.x > 2400) {
         carrinho.destroy();
         carrinho = null;
+        cart = false;
     }
 }
 
 
 function updateEnemies(enemy, scene){
+
 
     var x_padeira = padeira.body.x;
     var x_objetivo = objective.body.x;
@@ -1086,17 +1160,21 @@ function updateEnemies(enemy, scene){
         
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight){
+
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
             
     		if(enemy.body.height == 104){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_s_death_R', true);
     	    }
     	    else if(enemy.body.height == 105){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_m_death_R', true);
     	    }
     	    else{
+                playSound(game,"HeavyDeath",{volume: (volumeFrame/10)});
     	    	enemy.anims.play('c_h_death_R', true);
     	    }
         }
@@ -1105,12 +1183,15 @@ function updateEnemies(enemy, scene){
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
     		if(enemy.body.height == 104){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     			enemy.anims.play('c_s_death_L', false);
     		}
     		else if(enemy.body.height == 105){
+                playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_m_death_L', true);
     	    }
     	    else{
+                playSound(game,"HeavyDeath",{volume: (volumeFrame/10)});
     	    	enemy.anims.play('c_h_death_L', true);
     	    }
     	}
@@ -1155,23 +1236,29 @@ function updateEnemies(enemy, scene){
                 enemy.body.setVelocityX(0)
                 if (enemy.facingRight && enemy.body.touching.down){
                 	if(enemy.body.height == 104){
+                        castelaAttack(enemy.body.body);
                 	    enemy.anims.play('c_s_attack_R', true);
                 	}
                 	else if(enemy.body.height == 105){
+                        castelaAttack(enemy.body.body);
                 	    enemy.anims.play('c_m_attack_R', true);
                 	}
                 	else{
+                        castelaAttack(enemy.body.body);
                 		enemy.anims.play('c_h_attack_R', true);
                 	}
                 }
                 else{
                 	if(enemy.body.height == 104){
+                        castelaAttack(enemy.body.body);
                 	  	enemy.anims.play('c_s_attack_L', true);
                 	}
                 	else if(enemy.body.height == 105){
+                        castelaAttack(enemy.body.body);
                 	  	enemy.anims.play('c_m_attack_L', true);
                 	}
                 	else{
+                        castelaAttack(enemy.body.body);
                 		enemy.anims.play('c_h_attack_L', true);
                 	}
                 }
@@ -1181,14 +1268,12 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                                playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene,healthMeter);
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage);  
-                            if(enemy.damage>99){
-                                scene.cameras.main.shake(30);
-                            }
                         }
                     }
                     enemy.immobile = false;
@@ -1201,25 +1286,55 @@ function updateEnemies(enemy, scene){
 
 function pixelCollision(s1, s2, scene){
 
-    var xs1 = s1.x - s1.width / 2;
-    var xs2 = s2.x - s2.width / 2;
-    var ys1 = s1.y - s1.height / 2;
-    var ys2 = s2.y - s2.height / 2;
+    var sprite1 = scene.textures.getFrame(s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
+    var sprite2 = scene.textures.getFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame);
+    var datas1 = sprite1.data.cut;
+    var datas2 = sprite2.data.cut;
 
-    var xMin = Math.max(xs1, xs2);
-    var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
-    var yMin = Math.max(ys1, ys2);
-    var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
+    var ctx = scene.textures._tempContext;
 
-    for (var y = yMin; y < yMax; y++){  
-        for (var x = xMin; x < xMax; x++){
-            var xlocalA = Math.round(x - xs1);
-            var ylocalA = Math.round(y - ys1);
-            var xlocalB = Math.round(x - xs2);
-            var ylocalB = Math.round(y - ys2);
-            var a1 = scene.textures.getPixelAlpha(Math.round(xlocalA), Math.round(ylocalA), s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame);
-            var a2 = scene.textures.getPixelAlpha(Math.round(xlocalB), Math.round(ylocalB), s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame); 
-            if (a1 != 0 && a2 != 0) return true;           
+    if (sprite1 && sprite2){
+        
+        var xs1 = s1.x - s1.width / 2;
+        var xs2 = s2.x - s2.width / 2;
+        var ys1 = s1.y - s1.height / 2;
+        var ys2 = s2.y - s2.height / 2;
+
+        var xMin = Math.max(xs1, xs2);
+        var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
+        var yMin = Math.max(ys1, ys2);
+        var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
+
+        ctx.drawImage(sprite1.source.image, datas1.x, datas1.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
+        var imageDataS1 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
+        
+        ctx.clearRect(0, 0, s2.width, s2.height);   
+        ctx.drawImage(sprite2.source.image, datas2.x, datas2.y, xMax - xMin, yMax - yMin, 0, 0, xMax - xMin, yMax - yMin);
+        var imageDataS2 = ctx.getImageData(0, 0, xMax - xMin, yMax - yMin);
+
+        for (var y = yMin; y < yMax; y++){  
+            for (var x = xMin; x < xMax; x++){
+                var xlocalA = Math.round(x - xs1);
+                var ylocalA = Math.round(y - ys1);
+                var xlocalB = Math.round(x - xs2);
+                var ylocalB = Math.round(y - ys2);
+
+                xlocalA += datas1.x - sprite1.x
+                ylocalA += datas1.y - sprite1.y
+                var pixelNumS1 = xlocalA + ylocalA * s1.width;
+
+                xlocalB += datas2.x - sprite2.x
+                ylocalB += datas2.y - sprite2.y
+                var pixelNumS2 = xlocalB + ylocalB * s2.width;
+                
+                var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
+                var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
+
+                var a1 = imageDataS1.data[pixelPostAlphaS1];
+                var a2 = imageDataS2.data[pixelPostAlphaS2];
+
+                if (a1 != 0 && a2 != 0) return true;           
+            }
         }
     }
     return false;   

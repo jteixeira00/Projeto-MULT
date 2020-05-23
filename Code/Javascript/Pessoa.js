@@ -15,6 +15,4 @@ class Pessoa extends Phaser.GameObjects.Sprite{
         this.body.setBounce(0);
         this.body.setCollideWorldBounds(true);
     }
-
-    
 }
