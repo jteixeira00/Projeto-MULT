@@ -29,6 +29,10 @@ var drops;
 var enemyCount = 0;
 var masterW;
 var musicTrack;
+var WaveCount = 0;
+var growth;
+
+
 var config = {
     type: Phaser.CANVAS,
     width: 1200,
@@ -612,7 +616,7 @@ function create(){
     
     var array = platformsDesign(this);
     platforms = array[0];
-    
+    growth = array[3];
 
 
     objective = new Objective(1415, 673, this, 540, 145);
@@ -623,7 +627,8 @@ function create(){
     this.physics.add.collider(enemies, platforms);
 
 
-    this.time.delayedCall(4000, () => {genesis(array,this);}, null, this);
+    if(WaveCount != array[4])
+        this.time.delayedCall(4000, () => {genesis(array,this);WaveCount++;}, null, this);
 
   
 
@@ -657,7 +662,7 @@ function genesis(array,game){
     var portals_array = array[1];
     var waveNumber = array[4];    
     if(enemyCount == 0){
-        var wave = dificuldade(array[2],array[3],portals_array,0);
+        var wave = dificuldade(array[2],growth,portals_array,0);
         const sizeWave = wave.length;
         var i = 0;
         
@@ -690,13 +695,12 @@ function randInt(min,max){
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function dificuldade(start,growth,arrayPortais,currentWave){
+function dificuldade(start,growth,arrayPortais){
     var array = [];
     var aux = [];
     var enemyType;
-    var enemyNumber = start * 10 + (growth * 2) * currentWave
-
-    enemyNumber = 1;
+    var enemyNumber = start * 10 + (growth * 2) * WaveCount
+    growth += growth;
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -1090,8 +1094,8 @@ function updateEnemies(enemy, scene,array){
     if (!enemy.alive() && !enemy.immobile){
     	if (enemy.facingRight){
             enemyCount -= 1;
-            if(enemyCount == 0)
-                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
+            if(enemyCount == 0 && WaveCount != array[4])
+                scene.time.delayedCall(4000, () => {genesis(array,scene);WaveCount++;}, null, this);
             
     		if(enemy.body.height == 104){
     	        enemy.anims.play('c_s_death_R', true);
@@ -1105,8 +1109,8 @@ function updateEnemies(enemy, scene,array){
         }
     	else{
             enemyCount -= 1;
-            if(enemyCount == 0)
-                scene.time.delayedCall(4000, () => {genesis(array,scene);}, null, this);
+            if(enemyCount == 0 && WaveCount != array[4])
+                scene.time.delayedCall(4000, () => {genesis(array,scene);WaveCount++;}, null, this);
     		if(enemy.body.height == 104){
     			enemy.anims.play('c_s_death_L', false);
     		}
