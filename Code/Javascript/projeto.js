@@ -733,7 +733,6 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
-    enemyNumber = 1;
 
 
     for(var i = 0; i < enemyNumber;i++){
