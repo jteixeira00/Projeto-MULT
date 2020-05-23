@@ -962,12 +962,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
