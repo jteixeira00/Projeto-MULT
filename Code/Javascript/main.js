@@ -4,6 +4,7 @@ const totPages = 5;
 const htmldir = "Code/HTML/";
 var volume = 7;
 var frm;
+var aux;
 (function(){
     window.addEventListener("load", main);
 
@@ -17,6 +18,7 @@ function main(){
     frm = document.getElementsByTagName("iframe")[0];
     frm.addEventListener("load", iframeHandler);
     
+    
 }
 
 
@@ -29,6 +31,7 @@ function showPage(pageNum){
     }
 
     if (pageNum == 2){
+        
         frm.src = htmldir+"jogo.html"
 
     }
@@ -47,13 +50,16 @@ function showPage(pageNum){
 }
 
 function messageHandler(ev){
+   
+    
     if(ev.data == "voltar"){
         showPage(1);
 
     }
     if(ev.data== "jogar"){
-        frm.contentWindow.postMessage("a", "*");
+        ///window.postMessage(4, "*");
         showPage(2);
+        
     }
 
     if(ev.data == "opcoes"){
@@ -76,6 +82,11 @@ function messageHandler(ev){
 function iframeHandler(ev){
 
     var frm = ev.target;
-    
-    frm.contentWindow.postMessage(volume, "*")
+    aux = frm;
+    frm.contentWindow.postMessage(volume, "*");
+
+
+
 }
+
+
