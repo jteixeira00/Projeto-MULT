@@ -27,6 +27,7 @@ var stepsON;
 var healthMeter;
 var objectiveHealthMeter;
 var volume;
+var carroSound;
 var volumeFrame = 7;
 var drop;
 var drops;
@@ -219,6 +220,8 @@ function preload(){
     this.load.spritesheet('padeira_attack3_R_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R_windup.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L_windup.png', { frameWidth: 160, frameHeight: 168 });
 
+    this.load.spritesheet('padeira_death', '../../Resources/Sprite Sheets/Padeira/padeira_death.png', { frameWidth: 200, frameHeight: 220 });
+
     this.load.spritesheet('c_h_idle_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_R.png', { frameWidth: 322, frameHeight: 254 });
     this.load.spritesheet('c_h_idle_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_L.png', { frameWidth: 322, frameHeight: 254 });
     this.load.spritesheet('c_h_death_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_death_R.png', { frameWidth: 322, frameHeight: 254 });
@@ -251,6 +254,9 @@ function preload(){
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
+
+    this.load.spritesheet('pepe', '../../Resources/Sprite Sheets/Pepe/pepe.png',{ frameWidth: 96, frameHeight: 51 });
+    this.load.spritesheet('pepehands', '../../Resources/Sprite Sheets/Pepe/pepehands.png',{ frameWidth: 207, frameHeight: 128 });
     
     this.load.spritesheet('carrinho', '../../Resources/Sprite Sheets/Carrinho/carrinho.png',{ frameWidth: 118, frameHeight: 108 });
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
@@ -287,6 +293,28 @@ function preload(){
 
 
 function loadAnim(scene){
+
+    scene.anims.create({
+        key: 'padeira_death',
+        frames: scene.anims.generateFrameNumbers('padeira_death', { start: 0, end: 6 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'pepehands',
+        frames: scene.anims.generateFrameNumbers('pepehands', { start: 0, end: 27 }),
+        frameRate: 20,
+        repeat: -1
+    });
+
+    scene.anims.create({
+        key: 'pepe',
+        frames: scene.anims.generateFrameNumbers('pepe', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
 
     scene.anims.create({
         key: 'carrinho',
@@ -821,7 +849,7 @@ function create(){
     growth = mapElements[3];
     
     objective = new Objective(mapElements[5], mapElements[6], this, mapElements[7], mapElements[8]);
-    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
+    padeira = new Padeira(500, 50, this, 1200, 667, 'padeira_idle_R',game);
     
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
@@ -929,7 +957,6 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
 
     growth *= growth;
-    enemyNumber = 1;
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -953,7 +980,10 @@ function dificuldade(start,growth,arrayPortais){
 
 function GameOverS(){
     game.scene.pause("level"); 
+    steps.stop();
     musicTrack.stop();
+    if(carroSound)
+        carroSound.stop();
     if(waithardBurn)
         hardBurn.stop();
     if(waitsoftBurn)
@@ -962,7 +992,6 @@ function GameOverS(){
     game.scene.start("GameOver");
     game.scene.resume("GameOver");
     game.scene.bringToTop("GameOver");
-
      
 }
 
@@ -974,6 +1003,10 @@ function WinScreenS(){
     if(waitsoftBurn)
         softBurn.stop();
 
+    steps.stop();
+    musicTrack.stop();
+    if(carroSound)
+        carroSound.stop();
     playSound(game,"victory",{volume: 1.2*(volumeFrame/10)});
     game.scene.pause("level");
     musicTrack.stop();
@@ -1293,7 +1326,7 @@ function updatePadeira(scene){
 function tempocarroca(scene){
 
     scene.time.addEvent({
-        delay: 5000,
+        delay: 20000,
         callback: ()=>{
             dropcarroca(scene)
         },
@@ -1327,7 +1360,7 @@ function spawnCarroca(scene){
 
 
 function atropelar(enemy, carro){
-    enemy.getHit(true, 1000);
+    enemy.getHit(true, 300);
     damageCastelaSound(enemy.body.height);
 }
 
@@ -1341,7 +1374,7 @@ function updateCarro(){
     carrinho.anims.play("carrinho", true);
     carrinho.body.setVelocityX(1000);
     if(!cart){
-        playSound(game,'cart',config);
+        carroSound = playSound(game,'cart',config);
         cart = true;
     }
 
@@ -1371,8 +1404,7 @@ function updateEnemies(enemy, scene){
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
-            else if(WaveCount == mapElements[4]){
-                console.log("ganhador");
+            else if(WaveCount == mapElements[4] && enemyCount == 0){
                 WinScreenS();
             }
     		if(enemy.body.height == 104){
@@ -1393,7 +1425,7 @@ function updateEnemies(enemy, scene){
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
-            else if(WaveCount == mapElements[4]){
+            else if(WaveCount == mapElements[4] && enemyCount == 0){
                 console.log("ganhador");
                 WinScreenS();
             }
@@ -1414,7 +1446,8 @@ function updateEnemies(enemy, scene){
             score += enemy.value;
             scoreText.setText("SCORE: " + score);
             scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
-            enemy.destroy();
+            enemy.once('animationcomplete', () => {enemy.destroy();});
+            
     }
 
     else if (enemy.alive() && !enemy.immobile){
