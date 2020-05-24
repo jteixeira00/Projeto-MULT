@@ -10,6 +10,8 @@ var background;
 var objective;
 var spacebar;
 var score;
+var showWave;
+var waveText;
 var enemies;
 var platforms;
 var portals;
@@ -783,8 +785,15 @@ function create(){
     
     score = 0;
     scoreText =  this.add.text(24, 36, '0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
+    scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     scoreText.setScrollFactor(0);
     
+    waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    waveText.setBackgroundColor(null);
+    waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
+    waveText.setScrollFactor(0);
+
+
     enemies = this.add.group();
     portals = this.add.group();
     
@@ -848,6 +857,11 @@ function endWave(){
 
 function genesis(game){
     WaveCount++;
+    waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
+    waveText.setBackgroundColor(null);
+    waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
+    waveText.setScrollFactor(0);
+
     var portals_array = mapElements[1];
     var waveNumber = mapElements[4];    
     if(enemyCount == 0){
@@ -890,7 +904,6 @@ function dificuldade(start,growth,arrayPortais){
     var aux = [];
     var enemyType;
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
-    alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
 
     for(var i = 0; i < enemyNumber;i++){
@@ -1348,6 +1361,7 @@ function updateEnemies(enemy, scene){
         enemy.once('animationcomplete', () => {
             score += enemy.value;
             scoreText.setText(score);
+            scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
             enemy.destroy();
         });
     }
