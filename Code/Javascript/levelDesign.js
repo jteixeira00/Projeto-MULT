@@ -1,9 +1,12 @@
-function platformsDesign(game){
+function platformsDesign(game,level){
 
 	var array = [];
 	var output = [];
 	var platforms = [];
-	var mydata = JSON.parse(lvl2);
+	if(level == 1)
+		var mydata = JSON.parse(lvl1);
+	else if(level == 2)
+		var mydata = JSON.parse(lvl2);
 	var plat = mydata.plat;
 	var portals = mydata.portais;
 

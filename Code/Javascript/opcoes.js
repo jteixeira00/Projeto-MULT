@@ -82,6 +82,10 @@ function updateVolume(change){
     }
 }
 
+function returnSound(){
+    return volumeFrame;
+}
+
 
 function messageHandler(ev){
     

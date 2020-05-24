@@ -9,6 +9,8 @@ var frm;
 
 }());
 
+
+
 function main(){
     var startPage = 1;
     showPage(startPage);
@@ -16,7 +18,6 @@ function main(){
     window.addEventListener("message", messageHandler);
     frm = document.getElementsByTagName("iframe")[0];
     frm.addEventListener("load", iframeHandler);
-    
 }
 
 
@@ -29,6 +30,7 @@ function showPage(pageNum){
     }
 
     if (pageNum == 2){
+        
         frm.src = htmldir+"jogo.html"
 
     }
@@ -47,13 +49,15 @@ function showPage(pageNum){
 }
 
 function messageHandler(ev){
+   
+    
     if(ev.data == "voltar"){
         showPage(1);
 
     }
     if(ev.data== "jogar"){
-        frm.contentWindow.postMessage("a", "*");
         showPage(2);
+        
     }
 
     if(ev.data == "opcoes"){
@@ -77,5 +81,8 @@ function iframeHandler(ev){
 
     var frm = ev.target;
     
-    frm.contentWindow.postMessage(volume, "*")
+    frm.contentWindow.postMessage(volume, "*");
+
 }
+
+

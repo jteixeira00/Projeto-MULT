@@ -36,7 +36,14 @@ var WaveCount = 0;
 var growth;
 var cart = false;
 
-var level;
+var currentLevel;
+
+var softBurn;
+var hardBurn;
+var waitsoftBurn = false;
+var waithardBurn = false;
+
+
 
 var config = {
     type: Phaser.CANVAS,
@@ -46,7 +53,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: false
+            debug: true
         }
     },
     scene: {
@@ -69,7 +76,6 @@ var configMenu = {
         // loader: {},
         // plugins: false,
         // input: {}
-  
 }
 
 var gameOver ={
@@ -78,8 +84,70 @@ var gameOver ={
     visible: true
 }
 
-var game = new Phaser.Game(config);
-window.addEventListener("message", messageHandler);
+var selectLevel = {
+    key: 'LevelSelect',
+    active: true,
+    visible: true
+}
+
+
+
+class LevelSelection extends Phaser.Scene{
+
+    constructor(configMenu){
+        super(configMenu);
+
+    }
+    preload(){
+        this.load.image("background", '../../Resources/Sprites/Level Select/background.png');
+        this.load.image("1", '../../Resources/Sprites/Level Select/1.png');
+        this.load.image("2", '../../Resources/Sprites/Level Select/2.png');
+    }
+
+    create(){
+        var background = this.add.image(600,400,"background");
+        var lvl1 = this.add.image(400, 400, "1");
+        var lvl2 = this.add.image(800,400, "2");
+        lvl1.setInteractive();
+        lvl2.setInteractive();
+       
+        lvl1.on("pointerdown", () => setlevel(1));
+        lvl2.on("pointerdown",() => setlevel(2));
+    }
+
+
+    
+    
+}
+
+
+function setlevel(level){
+    currentLevel = level;
+    
+    lvlselect.destroy(true);
+    game = new Phaser.Game(config);
+    
+
+}
+
+
+var LevelSelectionScene = new LevelSelection();
+var lvlselectConfig = {
+    type: Phaser.CANVAS,
+    width: 1200,
+    height: 800,
+    scene: LevelSelectionScene
+}
+
+
+
+var lvlselect = new Phaser.Game(lvlselectConfig);
+var game;  
+
+
+
+
+
 window.addEventListener("message", messageHandler);
 function messageHandler(ev){
     masterW = ev.source;
@@ -88,10 +156,7 @@ function messageHandler(ev){
     if(aux>=0 || aux<=15){
         volumeFrame = ev.data;
     }
-    if(aux == "a" || aux == "b"){
-        level = aux;
-
-    }
+    
     
     console.log(aux);
     
@@ -100,7 +165,9 @@ function messageHandler(ev){
 
 function preload(){
 
-    mapElements = platformsDesign(this);
+
+
+    mapElements = platformsDesign(this,currentLevel);
     this.load.spritesheet('sky', mapElements[9], { frameWidth: 2400, frameHeight: 800 });
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
     this.load.image('plataforma', '../../Resources/Sprites/Jogo/lvl1/plataforma.png');
@@ -174,6 +241,7 @@ function preload(){
     this.load.spritesheet('healthBarCasa', '../../Resources/Sprites/Jogo/lvl1/healthbar.png',{ frameWidth: 120, frameHeight: 40 });
 
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
+    this.load.audio('level2_music', '../../Resources/Sounds/level2_music.mp3');
     this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
     this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
     this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav');
@@ -188,12 +256,16 @@ function preload(){
     this.load.audio('slash_2', '../../Resources/Sounds/slash_2.mp3'); 
     this.load.audio('slash_3', '../../Resources/Sounds/slash_3.mp3'); 
     this.load.audio('HeavyWalk', '../../Resources/Sounds/HeavyWalk.mp3');
-    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3'); 
+    this.load.audio('padeiraHit', '../../Resources/Sounds/padeiraHit.mp3');
+    this.load.audio('hitWood', '../../Resources/Sounds/hitWood.wav');
+    this.load.audio('softBurn', '../../Resources/Sounds/softBurn.wav');
+    this.load.audio('hardBurn', '../../Resources/Sounds/hardBurn.wav');
     this.load.audio('smallDeath', '../../Resources/Sounds/smallDeath.mp3')  
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
-    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');    
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');  
+    this.load.audio('medievalDeath', '../../Resources/Sounds/medievalDeath.wav');    
 }
 
 
@@ -587,14 +659,17 @@ function loadAnim(scene){
 
 
 function create(){
-
+    
 	var configLvlMusic = {
         mute: false,
         volume: 1*(volumeFrame/10),
         loop: true
     }
 
-	musicTrack = playSound(this,"level1_music",configLvlMusic);
+    if(currentLevel == 1)
+    	musicTrack = playSound(this,"level1_music",configLvlMusic);
+    else if(currentLevel == 2)
+        musicTrack = playSound(this,"level2_music",{volume: 0.7*(volumeFrame/10),loop: true});
 
     this.add.image(1200, 400, 'sky');
 
@@ -678,7 +753,7 @@ function create(){
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
     this.physics.add.collider(enemies, platforms);
-    this.physics.add.collider(enemies, enemies);
+    //this.physics.add.collider(enemies, enemies);
 
     this.time.delayedCall(4000, () => {genesis(this);}, null, this);
     
@@ -744,8 +819,8 @@ function genesis(game){
                 enemyCount += 1;
             }
             if(wave[i][2] == "H"){
-                new Portal(game, wave[i][0], wave[i][1], 'portal',portals,"H");
-                new CastelhanoHeavy(game, wave[i][0], wave[i][1], 'c_h_idle_R', enemies);
+                new Portal(game, wave[i][0], wave[i][1] - 20, 'portal',portals,"H");
+                new CastelhanoHeavy(game, wave[i][0], wave[i][1] - 72, 'c_h_idle_R', enemies);
                 enemyCount += 1;
             }
             i++;
@@ -769,15 +844,13 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
-    enemyNumber = 1;
-
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
         const enemyProb = randInt(0,100);
         if(enemyProb % 10 == 0){
             enemyType = "H";
-            index[1] = index[1] - 60;
+            index[1] = index[1];
         }
         else if(enemyProb % 5 == 0){
             enemyType = "M";
@@ -794,9 +867,12 @@ function dificuldade(start,growth,arrayPortais){
 
 function GameOverS(){
     game.scene.pause("level"); 
-
-    console.log("gameover");
-
+    musicTrack.stop();
+    if(waithardBurn)
+        hardBurn.stop();
+    if(waitsoftBurn)
+        softBurn.stop();
+    playSound(game,"medievalDeath",{volume: 1.2*(volumeFrame/10)});
     game.scene.start("GameOver");
     game.scene.resume("GameOver");
     game.scene.bringToTop("GameOver");
@@ -960,12 +1036,12 @@ function updatePadeira(scene){
             padeira.body.offset.x = 20;
             if (padeira.facingRight == true){
                 padeira.anims.play('padeira_attack0_R', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
             else{
                 padeira.anims.play('padeira_attack0_L', true);
-                playSound(game,"swoosh_0",{volume: 2*(volumeFrame/10)});
+                playSound(game,"swoosh_0",{volume: 1*(volumeFrame/10)});
                 padeira.once('animationcomplete', () => {padeira.immobile = false;padeira.weapon = true;})
             }
         }
@@ -976,7 +1052,7 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1001,7 +1077,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 0.7*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1030,7 +1106,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -1044,7 +1120,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -1294,6 +1370,7 @@ function updateEnemies(enemy, scene){
                                 elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);}
                         }
                         else if (elementos[i].gameObject == objective){
+                            playSound(game,"hitWood",{volume: 0.4*(volumeFrame/10)});
                             elementos[i].gameObject.getHit(enemy.damage, objectiveHealthMeter);  
                         }
                     }
@@ -1372,7 +1449,7 @@ function pixelCollision(s1, s2, scene){
 function updatePortal(portal, scene){
 
 	if(portal.enemy == "H")
-		portal.setScale(2);
+		portal.setScale(1.5);
 
 	if(!openP){
 		portal.anims.play('portalO',true);
@@ -1396,9 +1473,31 @@ function updatePortal(portal, scene){
 
 function updateBackgroud(scene){
 
-    if (objective.healthPoints / 50 >= 66) background.anims.play('sky1', true);
+    if (objective.healthPoints / 50 >= 66){
+        background.anims.play('sky1', true);
+    }
 
-    else if (objective.healthPoints / 50 >= 33) background.anims.play('sky2', true);
+    else if (objective.healthPoints / 50 >= 33){
+        if(!waitsoftBurn){
+            softBurn = playSound(game,"softBurn",{volume: 4*(volumeFrame/10),loop:true});
+            waitsoftBurn = true;
+            if(waithardBurn){
+                hardBurn.stop();
+                waithardBurn = false;
+            }
+        }
+        background.anims.play('sky2', true);
+    }
 
-    else background.anims.play('sky3', true);
+    else{
+        if(!waithardBurn){
+            hardBurn = playSound(game,"hardBurn",{volume: 3*(volumeFrame/10),loop:true});
+            waithardBurn = true;
+            if(waitsoftBurn){
+                softBurn.stop();
+                waitsoftBurn = false;
+            }
+        }
+        background.anims.play('sky3', true);
+    }
 }
