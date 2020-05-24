@@ -55,7 +55,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -729,9 +729,9 @@ function create(){
         loop: true
     }
 
-    if(currentLevel == 1)
+    if(currentLevel == 1 || currentLevel == 3)
     	musicTrack = playSound(this,"level1_music",configLvlMusic);
-    else if(currentLevel == 2)
+    else if(currentLevel == 2 || currentLevel == 4)
         musicTrack = playSound(this,"level2_music",{volume: 0.7*(volumeFrame/10),loop: true});
 
     this.add.image(1200, 400, 'sky');
@@ -801,7 +801,7 @@ function create(){
     scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     scoreText.setScrollFactor(0);
     
-    if(mapElements[4] == 0)
+    if(mapElements[4] == -1)
         waveText =  this.add.text(500, 36, 'WAVE ∞', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
     else
         waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
@@ -874,9 +874,10 @@ function endWave(){
 
 
 function genesis(game){
-    WaveCount++;
-    if(mapElements[4] == 0)
-        waveText =  this.add.text(500, 36, 'WAVE ∞', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    if(mapElements[4] != -1)
+        WaveCount++;
+    if(mapElements[4] == -1)
+        waveText.setText("WAVE ∞");
     else
         waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
     waveText.setBackgroundColor(null);
@@ -1410,12 +1411,10 @@ function updateEnemies(enemy, scene){
     	    }
     	}
         enemy.immobile = true;
-        enemy.once('animationcomplete', () => {
             score += enemy.value;
             scoreText.setText("SCORE: " + score);
             scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
             enemy.destroy();
-        });
     }
 
     else if (enemy.alive() && !enemy.immobile){

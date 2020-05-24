@@ -23,7 +23,7 @@ function platformsDesign(game,level){
 
 
 	if(level == 3 || level == 4)
-		output[4] = 0;
+		output[4] = -1;
 	else
 		output[4] = mydata.waveNumber;
 
