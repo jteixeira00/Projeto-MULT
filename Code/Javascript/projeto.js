@@ -204,6 +204,12 @@ function preload(){
     this.load.spritesheet('padeira_attack2_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack2_L.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_R', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_R_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_R_windup.png', { frameWidth: 164, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack1_L_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack1_L_windup.png', { frameWidth: 164, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack2_R_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack2_R_windup.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack2_L_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack2_L_windup.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack3_R_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R_windup.png', { frameWidth: 160, frameHeight: 168 });
+    this.load.spritesheet('padeira_attack3_L_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L_windup.png', { frameWidth: 160, frameHeight: 168 });
 
     this.load.spritesheet('c_h_idle_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_R.png', { frameWidth: 322, frameHeight: 254 });
     this.load.spritesheet('c_h_idle_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_L.png', { frameWidth: 322, frameHeight: 254 });
@@ -629,6 +635,20 @@ function loadAnim(scene){
         frameRate: 30,
         repeat: 0
     });
+    //new
+    scene.anims.create({
+        key: 'padeira_attack1_R_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_R_windup', { start: 0, end: 7 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'padeira_attack1_L_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_L_windup', { start: 7, end: 0 }),
+        frameRate: 30,
+        repeat: 0
+    });
 
     scene.anims.create({
         key: 'padeira_attack2_R',
@@ -643,6 +663,20 @@ function loadAnim(scene){
         frameRate: 30,
         repeat: 0
     });
+    //new
+    scene.anims.create({
+        key: 'padeira_attack2_R_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_R_windup', { start: 0, end: 11 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'padeira_attack2_L_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_L_windup', { start: 11, end: 0 }),
+        frameRate: 30,
+        repeat: 0
+    });
 
     scene.anims.create({
         key: 'padeira_attack3_R',
@@ -654,6 +688,20 @@ function loadAnim(scene){
     scene.anims.create({
         key: 'padeira_attack3_L',
         frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
+        frameRate: 30,
+        repeat: 0
+    });
+    //new
+    scene.anims.create({
+        key: 'padeira_attack3_R_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_R_windup', { start: 0, end: 11 }),
+        frameRate: 30,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'padeira_attack3_L_windup',
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_L_windup', { start: 11, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
@@ -1030,18 +1078,22 @@ function updatePadeira(scene){
             var array = padeira.updateAttackingHitbox(volumeFrame);
 
             padeira.immobile = true;
-            padeira.anims.play(array[0], true);
-            padeira.once('animationcomplete', () => {padeira.immobile = false;});
+            padeira.anims.play(array[0] + '_windup', true);
+            padeira.once('animationcomplete', () => {
+                var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
+                for (var i = 0; i < elementos.length; i++){
+                    if (enemies.contains(elementos[i].gameObject)){
+                        if (pixelCollision(padeira, elementos[i].gameObject, scene)){
+                            damageCastelaSound(elementos[i].gameObject.body.height);
+                            elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
+                        }
+                    }
+                }
+                padeira.anims.play(array[0], true);                        
+                padeira.once('animationcomplete', () => {padeira.immobile = false;});
+            });
             padeira.updateAnimationCounter(); 
             
-            var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
-            for (var i = 0; i < elementos.length; i++){
-                if (enemies.contains(elementos[i].gameObject)){
-                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
-                        damageCastelaSound(elementos[i].gameObject.body.height);
-                        elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
-                }
-            }
         }
         
         else if (!padeira.weapon){
@@ -1381,7 +1433,8 @@ function updateEnemies(enemy, scene){
                         if (elementos[i].gameObject == padeira){ 
                             if (pixelCollision(enemy, elementos[i].gameObject, scene)){    
                                 playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
-                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);}
+                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
+                            }
                         }
                         else if (elementos[i].gameObject == objective){
                             playSound(game,"hitWood",{volume: 0.4*(volumeFrame/10)});
@@ -1402,10 +1455,7 @@ function pixelCollision(s1, s2, scene){
     var sprite2 = scene.textures.getFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame);
     var datas1 = sprite1.data.cut;
     var datas2 = sprite2.data.cut;
-    
-    // console.log(sprite1.data);
-    // console.log(sprite1);
-    
+
     if (sprite1 && sprite2){
         
         var xs1 = s1.x - s1.width / 2;
@@ -1418,41 +1468,32 @@ function pixelCollision(s1, s2, scene){
         var yMin = Math.max(ys1, ys2);
         var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
         
-        if (xMax - xMin > 0 && yMax - yMin > 0){
-            
-            var context1 = canvasTexture.drawFrame(s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame, 0, 0);
-            var imageDataS1 = context1.getData(0, 0, datas1.w, datas1.h);
+        canvasTexture.clear(0, 0, datas1.w, datas1.h);
+        var context1 = canvasTexture.drawFrame(s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame, 0, 0);
+        var imageDataS1 = context1.getData(0, 0, datas1.w, datas1.h);
 
-            // ctx.clearRect(0, 0, datas2.w, datas2.h);
-            // ctx.drawImage(sprite2.source.image, datas2.x, datas2.y, datas2.w, datas2.h, 0, 0, datas2.w, datas2.h);
-            // console.log(sprite2.source.image);
-            // ctx.drawImage(sprite2.source.image, 0, 0, datas2.w, datas2.h);
+        canvasTexture.clear(0, 0, datas2.w, datas2.h);
+        var context2 = canvasTexture.drawFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame, 0, 0);
+        var imageDataS2 = context2.getData(0, 0, datas2.w, datas2.h);
 
-            var context2 = canvasTexture.drawFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame, 0, 0);
-            var imageDataS2 = context2.getData(0, 0, datas2.w, datas2.h);
+        for (var y = yMin; y < yMax; y++){  
+            for (var x = xMin; x < xMax; x++){
 
-            for (var y = yMin; y < yMax; y++){  
-                for (var x = xMin; x < xMax; x++){
+                var xlocalA = Math.round(x - xs1);
+                var ylocalA = Math.round(y - ys1);
+                var xlocalB = Math.round(x - xs2);
+                var ylocalB = Math.round(y - ys2);
 
-                    var xlocalA = Math.round(x - xs1);
-                    var ylocalA = Math.round(y - ys1);
-                    var xlocalB = Math.round(x - xs2);
-                    var ylocalB = Math.round(y - ys2);
+                var pixelNumS1 = xlocalA + ylocalA * s1.width;
+                var pixelNumS2 = xlocalB + ylocalB * s2.width;
+                
+                var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
+                var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
 
-                    var pixelNumS1 = xlocalA + ylocalA * s1.width;
-                    var pixelNumS2 = xlocalB + ylocalB * s2.width;
-                    
-                    var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
-                    var pixelPostAlphaS2 = pixelNumS2 * 4 + 3;
+                var a1 = imageDataS1.data[pixelPostAlphaS1];
+                var a2 = imageDataS2.data[pixelPostAlphaS2];
 
-                    var a1 = imageDataS1.data[pixelPostAlphaS1];
-                    var a2 = imageDataS2.data[pixelPostAlphaS2];
-
-                    if (a1 != 0 && a2 != 0) {
-                           
-                        return true;
-                    }           
-                }
+                if (a1 != 0 && a2 != 0) return true;           
             }
         }
     }
