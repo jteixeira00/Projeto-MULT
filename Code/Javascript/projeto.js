@@ -1011,6 +1011,7 @@ function pause(){
 function Voltar(){
     console.log("voltar");
     masterW.postMessage("voltar","*");
+    masterW.postMessage(volumeFrame+20);
 }
 
 

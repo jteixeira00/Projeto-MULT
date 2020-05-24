@@ -75,6 +75,12 @@ function messageHandler(ev){
         volume = ev.data;
 
     }
+    if(ev.data>15){
+        console.log(ev.data);
+        volume = ev.data - 20;
+
+
+    }
 }
 
 function iframeHandler(ev){
