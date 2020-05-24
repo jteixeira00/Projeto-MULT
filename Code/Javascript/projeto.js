@@ -661,84 +661,84 @@ function loadAnim(scene){
 
     scene.anims.create({
         key: 'padeira_attack1_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 7 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 2 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack1_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_L', { start: 7, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_L', { start: 2, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack1_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_R_windup', { start: 0, end: 7 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_R_windup', { start: 0, end: 4 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack1_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_L_windup', { start: 7, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_L_windup', { start: 4, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 3 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 3, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack2_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_R_windup', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_R_windup', { start: 0, end: 7 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_L_windup', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_L_windup', { start: 7, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 4 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 4, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack3_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_R_windup', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_R_windup', { start: 0, end: 2 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_L_windup', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_L_windup', { start: 2, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
