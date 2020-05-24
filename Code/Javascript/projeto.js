@@ -736,7 +736,7 @@ function create(){
     pause_btn.on("pointerdown", () => pause());
     
     score = 0;
-    scoreText =  this.add.text(24, 36, '0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
+    scoreText =  this.add.text(24, 36, 'SCORE: 0', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c' });
     scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     scoreText.setScrollFactor(0);
     
@@ -1308,7 +1308,7 @@ function updateEnemies(enemy, scene){
         enemy.immobile = true;
         enemy.once('animationcomplete', () => {
             score += enemy.value;
-            scoreText.setText(score);
+            scoreText.setText("SCORE: " + score);
             scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
             enemy.destroy();
         });
