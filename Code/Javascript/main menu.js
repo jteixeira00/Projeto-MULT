@@ -6,6 +6,8 @@ var masterW;
     window.addEventListener("load", main);
 }());
 
+
+
 function main(){
 
     var jogarBtn = document.getElementById("jogar");
@@ -18,6 +20,7 @@ function main(){
     opcoesBtn.addEventListener("click", Opcoes);
     ajudaBtn.addEventListener("click", Ajuda);
     creditsoBtn.addEventListener("click", Creditos);
+
 
 }
 
