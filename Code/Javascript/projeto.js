@@ -277,7 +277,8 @@ function preload(){
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
-    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');  
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');
+    this.load.audio('victory', '../../Resources/Sounds/victory.wav');  
     this.load.audio('medievalDeath', '../../Resources/Sounds/medievalDeath.wav');    
 }
 
@@ -797,7 +798,10 @@ function create(){
     scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     scoreText.setScrollFactor(0);
     
-    waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    if(mapElements[4] == 0)
+        waveText =  this.add.text(500, 36, 'WAVE ∞', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    else
+        waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
     waveText.setBackgroundColor(null);
     waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     waveText.setScrollFactor(0);
@@ -868,7 +872,10 @@ function endWave(){
 
 function genesis(game){
     WaveCount++;
-    waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
+    if(mapElements[4] == 0)
+        waveText =  this.add.text(500, 36, 'WAVE ∞', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    else
+        waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
     waveText.setBackgroundColor(null);
     waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     waveText.setScrollFactor(0);
@@ -958,6 +965,12 @@ function GameOverS(){
 
 function WinScreenS(){
 
+    if(waithardBurn)
+        hardBurn.stop();
+    if(waitsoftBurn)
+        softBurn.stop();
+
+    playSound(game,"victory",{volume: 1.2*(volumeFrame/10)});
     game.scene.pause("level");
     musicTrack.stop();
     if(waithardBurn)

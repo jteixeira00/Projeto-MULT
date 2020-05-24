@@ -3,9 +3,9 @@ function platformsDesign(game,level){
 	var array = [];
 	var output = [];
 	var platforms = [];
-	if(level == 1)
+	if(level == 1 || level == 3)
 		var mydata = JSON.parse(lvl1);
-	else if(level == 2)
+	else if(level == 2 || level == 4)
 		var mydata = JSON.parse(lvl2);
 	var plat = mydata.plat;
 	var portals = mydata.portais;
@@ -22,12 +22,16 @@ function platformsDesign(game,level){
 	}
 
 
+	if(level == 3 || level == 4)
+		output[4] = 0;
+	else
+		output[4] = mydata.waveNumber;
+
 
 	output[0] = platforms;
 	output[1] = array;
 	output[2] = mydata.dStart;
-	output[3] = mydata.dGrowth;
-	output[4] = mydata.waveNumber;
+	output[3] = mydata.dGrowth;	
 	output[5] = mydata.Objx;
 	output[6] = mydata.Objy;
 	output[7] = mydata.Objw;
