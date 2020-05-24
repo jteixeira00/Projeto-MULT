@@ -90,6 +90,11 @@ var selectLevel = {
     visible: true
 }
 
+var winScreen = {
+    key: 'WinScreen',
+    active: true,
+    visible: true
+}
 
 
 class LevelSelection extends Phaser.Scene{
@@ -659,6 +664,10 @@ function loadAnim(scene){
 
 
 function create(){
+
+
+    
+    
     
 	var configLvlMusic = {
         mute: false,
@@ -767,6 +776,8 @@ function create(){
     
     game.scene.add("PauseScene", PauseScene, false);
     game.scene.add("GameOver", GameOver, false);
+    game.scene.add("WinScreen", WinScreen, false);
+    
     
     drops = this.add.group();
     this.physics.add.collider(drops, platforms);
@@ -841,9 +852,10 @@ function dificuldade(start,growth,arrayPortais){
     var array = [];
     var aux = [];
     var enemyType;
-    var enemyNumber = Math.round(start * 5 + growth * WaveCount)
+    var enemyNumber = Math.round(start * 5 + growth * WaveCount);
     alert(enemyNumber + "\nWAVE " + WaveCount);
     growth *= growth;
+    enemyNumber = 1;
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -880,6 +892,20 @@ function GameOverS(){
      
 }
 
+
+function WinScreenS(){
+
+    game.scene.pause("level");
+    musicTrack.stop();
+    if(waithardBurn)
+        hardBurn.stop();
+    if(waitsoftBurn)
+        softBurn.stop();
+    game.scene.start("WinScreen");
+    game.scene.resume("WinScreen");
+    game.scene.bringToTop("WinScreen");
+
+}
 
 function update (){
 
@@ -1261,7 +1287,10 @@ function updateEnemies(enemy, scene){
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
-            
+            else if(WaveCount == mapElements[4]){
+                console.log("ganhador");
+                WinScreenS();
+            }
     		if(enemy.body.height == 104){
                 playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     	        enemy.anims.play('c_s_death_R', true);
@@ -1278,7 +1307,12 @@ function updateEnemies(enemy, scene){
     	else{
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
+                
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
+            else if(WaveCount == mapElements[4]){
+                console.log("ganhador");
+                WinScreenS();
+            }
     		if(enemy.body.height == 104){
                 playSound(game,"smallDeath",{volume: (volumeFrame/10)});
     			enemy.anims.play('c_s_death_L', false);
