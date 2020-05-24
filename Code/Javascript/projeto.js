@@ -1,6 +1,7 @@
 "use strict";
 
 
+var canvasTexture;
 var steps;
 var padeira;
 var portal;
@@ -697,6 +698,8 @@ function create(){
     this.physics.add.overlap(padeira, drops, () => { spawnCarroca(this)} );
     
     tempocarroca(this);
+
+    canvasTexture = this.textures.createCanvas("pixelcollider", 500, 500);
 }
 
 function endWave(){
@@ -945,7 +948,7 @@ function updatePadeira(scene){
             var elementos = scene.physics.overlapRect(padeira.x + array[1], padeira.y + array[2], array[3], array[4]);
             for (var i = 0; i < elementos.length; i++){
                 if (enemies.contains(elementos[i].gameObject)){
-                    //if (pixelCollision(padeira, elementos[i].gameObject, scene))
+                    if (pixelCollision(padeira, elementos[i].gameObject, scene))
                         damageCastelaSound(elementos[i].gameObject.body.height);
                         elementos[i].gameObject.getHit(padeira.facingRight, padeira.damage);
                 }
@@ -1286,9 +1289,9 @@ function updateEnemies(enemy, scene){
                     var elementos = scene.physics.overlapRect(Math.round(enemy.x) + array[0], enemy.y + array[1], array[2], array[3]);
                     for (var i = 0; i < elementos.length; i++){
                         if (elementos[i].gameObject == padeira){ 
-                            //if (pixelCollision(enemy, elementos[i].gameObject, scene))    
+                            if (pixelCollision(enemy, elementos[i].gameObject, scene)){    
                                 playSound(game,"padeiraHit",{volume: 0.4*(volumeFrame/10)});
-                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);
+                                elementos[i].gameObject.getHit(enemy.facingRight, enemy.damage, scene, healthMeter);}
                         }
                         else if (elementos[i].gameObject == objective){
                             elementos[i].gameObject.getHit(enemy.damage, objectiveHealthMeter);  
@@ -1308,45 +1311,44 @@ function pixelCollision(s1, s2, scene){
     var sprite2 = scene.textures.getFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame);
     var datas1 = sprite1.data.cut;
     var datas2 = sprite2.data.cut;
-
-    var ctx = scene.textures._tempContext;
-
+    
+    // console.log(sprite1.data);
+    // console.log(sprite1);
+    
     if (sprite1 && sprite2){
         
         var xs1 = s1.x - s1.width / 2;
         var xs2 = s2.x - s2.width / 2;
         var ys1 = s1.y - s1.height / 2;
         var ys2 = s2.y - s2.height / 2;
-
+        
         var xMin = Math.max(xs1, xs2);
         var xMax = Math.min(xs1 + s1.width, xs2 + s2.width);
         var yMin = Math.max(ys1, ys2);
         var yMax = Math.min(ys1 + s1.height, ys2 + s2.height);
-
+        
         if (xMax - xMin > 0 && yMax - yMin > 0){
-
-            ctx.clearRect(0, 0, sprite1.source.image.width, sprite1.source.image.height);
-            ctx.drawImage(sprite2.source.image, 0, 0, sprite1.source.image.width, sprite1.source.image.height);
-            var imageDataS1 = ctx.getImageData(0, 0, sprite1.source.image.width, sprite1.source.image.height);
             
-            ctx.clearRect(0, 0, sprite2.source.image.width, sprite2.source.image.height);
-            ctx.drawImage(sprite2.source.image, 0, 0, sprite2.source.image.width, sprite2.source.image.height);
-            var imageDataS2 = ctx.getImageData(0, 0, sprite2.source.image.width, sprite2.source.image.height);
+            var context1 = canvasTexture.drawFrame(s1.anims.getCurrentKey(), s1.anims.currentFrame.textureFrame, 0, 0);
+            var imageDataS1 = context1.getData(0, 0, datas1.w, datas1.h);
 
-            for (var y = 0; y < yMax - yMin; y++){  
-                for (var x = 0; x < xMax - xMin; x++){
+            // ctx.clearRect(0, 0, datas2.w, datas2.h);
+            // ctx.drawImage(sprite2.source.image, datas2.x, datas2.y, datas2.w, datas2.h, 0, 0, datas2.w, datas2.h);
+            // console.log(sprite2.source.image);
+            // ctx.drawImage(sprite2.source.image, 0, 0, datas2.w, datas2.h);
+
+            var context2 = canvasTexture.drawFrame(s2.anims.getCurrentKey(), s2.anims.currentFrame.textureFrame, 0, 0);
+            var imageDataS2 = context2.getData(0, 0, datas2.w, datas2.h);
+
+            for (var y = yMin; y < yMax; y++){  
+                for (var x = xMin; x < xMax; x++){
 
                     var xlocalA = Math.round(x - xs1);
                     var ylocalA = Math.round(y - ys1);
                     var xlocalB = Math.round(x - xs2);
                     var ylocalB = Math.round(y - ys2);
 
-                    xlocalA += datas1.x - sprite1.x
-                    ylocalA += datas1.y - sprite1.y
                     var pixelNumS1 = xlocalA + ylocalA * s1.width;
-
-                    xlocalB += datas2.x - sprite2.x
-                    ylocalB += datas2.y - sprite2.y
                     var pixelNumS2 = xlocalB + ylocalB * s2.width;
                     
                     var pixelPostAlphaS1 = pixelNumS1 * 4 + 3;
@@ -1355,7 +1357,10 @@ function pixelCollision(s1, s2, scene){
                     var a1 = imageDataS1.data[pixelPostAlphaS1];
                     var a2 = imageDataS2.data[pixelPostAlphaS2];
 
-                    if (a1 != 0 && a2 != 0) return true;           
+                    if (a1 != 0 && a2 != 0) {
+                           
+                        return true;
+                    }           
                 }
             }
         }
