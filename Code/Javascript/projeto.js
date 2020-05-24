@@ -109,22 +109,25 @@ class LevelSelection extends Phaser.Scene{
         this.load.image("background", '../../Resources/Sprites/Level Select/background.png');
         this.load.image("1", '../../Resources/Sprites/Level Select/1.png');
         this.load.image("2", '../../Resources/Sprites/Level Select/2.png');
+        this.load.image("1_endless", '../../Resources/Sprites/Level Select/1_endless.png');
+        this.load.image("2_endless", '../../Resources/Sprites/Level Select/2_endless.png');
     }
 
     create(){
         var background = this.add.image(600,400,"background");
-        var lvl1 = this.add.image(400, 400, "1");
-        var lvl2 = this.add.image(800,400, "2");
+        var lvl1 = this.add.image(400, 300, "1");
+        var lvl2 = this.add.image(800,300, "2");
+        var lvl2_endless = this.add.image(800, 500, "2_endless");
+        var lvl1_endless = this.add.image(400, 500, "1_endless");
         lvl1.setInteractive();
         lvl2.setInteractive();
-       
+        lvl1_endless.setInteractive();
+        lvl2_endless.setInteractive();
         lvl1.on("pointerdown", () => setlevel(1));
         lvl2.on("pointerdown",() => setlevel(2));
-    }
-
-
-    
-    
+        lvl1_endless.on("pointerdown", () => setlevel(3));
+        lvl2_endless.on("pointerdown",() => setlevel(4));
+    }   
 }
 
 
