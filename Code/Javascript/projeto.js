@@ -27,6 +27,7 @@ var stepsON;
 var healthMeter;
 var objectiveHealthMeter;
 var volume;
+var carroSound;
 var volumeFrame = 7;
 var drop;
 var drops;
@@ -55,7 +56,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1550 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -219,6 +220,8 @@ function preload(){
     this.load.spritesheet('padeira_attack3_R_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_R_windup.png', { frameWidth: 160, frameHeight: 168 });
     this.load.spritesheet('padeira_attack3_L_windup', '../../Resources/Sprite Sheets/Padeira/Padeira_attack3_L_windup.png', { frameWidth: 160, frameHeight: 168 });
 
+    this.load.spritesheet('padeira_death', '../../Resources/Sprite Sheets/Padeira/padeira_death.png', { frameWidth: 200, frameHeight: 220 });
+
     this.load.spritesheet('c_h_idle_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_R.png', { frameWidth: 322, frameHeight: 254 });
     this.load.spritesheet('c_h_idle_L', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_idle_L.png', { frameWidth: 322, frameHeight: 254 });
     this.load.spritesheet('c_h_death_R', '../../Resources/Sprite Sheets/Castelhano_heavy/knight_death_R.png', { frameWidth: 322, frameHeight: 254 });
@@ -251,6 +254,9 @@ function preload(){
     this.load.spritesheet('portal_ed', '../../Resources/Sprite Sheets/Portal/portal_close.png',{ frameWidth: 277, frameHeight: 156 });
 
     this.load.image("minicarro",'../../Resources/Sprites/Jogo/lvl1/carrinho drop.png' );
+
+    this.load.spritesheet('pepe', '../../Resources/Sprite Sheets/Pepe/pepe.png',{ frameWidth: 96, frameHeight: 51 });
+    this.load.spritesheet('pepehands', '../../Resources/Sprite Sheets/Pepe/pepehands.png',{ frameWidth: 207, frameHeight: 128 });
     
     this.load.spritesheet('carrinho', '../../Resources/Sprite Sheets/Carrinho/carrinho.png',{ frameWidth: 118, frameHeight: 108 });
     this.load.spritesheet('health', '../../Resources/Sprite Sheets/HUD/health bread.png',{ frameWidth: 88, frameHeight: 16 });
@@ -280,12 +286,35 @@ function preload(){
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
-    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');  
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');
+    this.load.audio('victory', '../../Resources/Sounds/victory.wav');  
     this.load.audio('medievalDeath', '../../Resources/Sounds/medievalDeath.wav');    
 }
 
 
 function loadAnim(scene){
+
+    scene.anims.create({
+        key: 'padeira_death',
+        frames: scene.anims.generateFrameNumbers('padeira_death', { start: 0, end: 6 }),
+        frameRate: 7,
+        repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'pepehands',
+        frames: scene.anims.generateFrameNumbers('pepehands', { start: 0, end: 27 }),
+        frameRate: 20,
+        repeat: -1
+    });
+
+    scene.anims.create({
+        key: 'pepe',
+        frames: scene.anims.generateFrameNumbers('pepe', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
 
     scene.anims.create({
         key: 'carrinho',
@@ -632,84 +661,84 @@ function loadAnim(scene){
 
     scene.anims.create({
         key: 'padeira_attack1_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 7 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_R', { start: 0, end: 2 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack1_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_L', { start: 7, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_L', { start: 2, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack1_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_R_windup', { start: 0, end: 7 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_R_windup', { start: 0, end: 4 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack1_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack1_L_windup', { start: 7, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack1_L_windup', { start: 4, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_R', { start: 0, end: 3 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_L', { start: 3, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack2_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_R_windup', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_R_windup', { start: 0, end: 7 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack2_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack2_L_windup', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack2_L_windup', { start: 7, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_R',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_R', { start: 0, end: 4 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_L',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_L', { start: 4, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
     //new
     scene.anims.create({
         key: 'padeira_attack3_R_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_R_windup', { start: 0, end: 11 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_R_windup', { start: 0, end: 2 }),
         frameRate: 30,
         repeat: 0
     });
 
     scene.anims.create({
         key: 'padeira_attack3_L_windup',
-        frames: scene.anims.generateFrameNumbers('padeira_attack3_L_windup', { start: 11, end: 0 }),
+        frames: scene.anims.generateFrameNumbers('padeira_attack3_L_windup', { start: 2, end: 0 }),
         frameRate: 30,
         repeat: 0
     });
@@ -728,9 +757,9 @@ function create(){
         loop: true
     }
 
-    if(currentLevel == 1)
+    if(currentLevel == 1 || currentLevel == 3)
     	musicTrack = playSound(this,"level1_music",configLvlMusic);
-    else if(currentLevel == 2)
+    else if(currentLevel == 2 || currentLevel == 4)
         musicTrack = playSound(this,"level2_music",{volume: 0.7*(volumeFrame/10),loop: true});
 
     this.add.image(1200, 400, 'sky');
@@ -800,7 +829,10 @@ function create(){
     scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     scoreText.setScrollFactor(0);
     
-    waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    if(mapElements[4] == -1)
+        waveText =  this.add.text(500, 36, 'WAVE ∞', { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
+    else
+        waveText =  this.add.text(500, 36, 'WAVE ' + WaveCount + "/" + mapElements[4], { fontFamily: "font1", fontSize: '40px', fill: '#cfae5c'});
     waveText.setBackgroundColor(null);
     waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     waveText.setScrollFactor(0);
@@ -817,7 +849,7 @@ function create(){
     growth = mapElements[3];
     
     objective = new Objective(mapElements[5], mapElements[6], this, mapElements[7], mapElements[8]);
-    padeira = new Padeira(500, 50, this, 1200, 0, 'padeira_idle_R',game);
+    padeira = new Padeira(500, 50, this, 1200, 667, 'padeira_idle_R',game);
     
     this.physics.add.collider(objective, platforms);
     this.physics.add.collider(padeira, platforms);
@@ -870,8 +902,12 @@ function endWave(){
 
 
 function genesis(game){
-    WaveCount++;
-    waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
+    if(mapElements[4] != -1)
+        WaveCount++;
+    if(mapElements[4] == -1)
+        waveText.setText("WAVE ∞");
+    else
+        waveText.setText("WAVE " + WaveCount + "/" + mapElements[4]);
     waveText.setBackgroundColor(null);
     waveText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
     waveText.setScrollFactor(0);
@@ -921,7 +957,6 @@ function dificuldade(start,growth,arrayPortais){
     var enemyNumber = Math.round(start * 5 + growth * WaveCount)
 
     growth *= growth;
-    enemyNumber = 1;
 
     for(var i = 0; i < enemyNumber;i++){
         const index = arrayPortais[randInt(0,arrayPortais.length)];
@@ -945,7 +980,10 @@ function dificuldade(start,growth,arrayPortais){
 
 function GameOverS(){
     game.scene.pause("level"); 
+    steps.stop();
     musicTrack.stop();
+    if(carroSound)
+        carroSound.stop();
     if(waithardBurn)
         hardBurn.stop();
     if(waitsoftBurn)
@@ -954,13 +992,22 @@ function GameOverS(){
     game.scene.start("GameOver");
     game.scene.resume("GameOver");
     game.scene.bringToTop("GameOver");
-
      
 }
 
 
 function WinScreenS(){
 
+    if(waithardBurn)
+        hardBurn.stop();
+    if(waitsoftBurn)
+        softBurn.stop();
+
+    steps.stop();
+    musicTrack.stop();
+    if(carroSound)
+        carroSound.stop();
+    playSound(game,"victory",{volume: 1.2*(volumeFrame/10)});
     game.scene.pause("level");
     musicTrack.stop();
     if(waithardBurn)
@@ -1280,7 +1327,7 @@ function updatePadeira(scene){
 function tempocarroca(scene){
 
     scene.time.addEvent({
-        delay: 5000,
+        delay: 20000,
         callback: ()=>{
             dropcarroca(scene)
         },
@@ -1314,7 +1361,7 @@ function spawnCarroca(scene){
 
 
 function atropelar(enemy, carro){
-    enemy.getHit(true, 1000);
+    enemy.getHit(true, 300);
     damageCastelaSound(enemy.body.height);
 }
 
@@ -1328,7 +1375,7 @@ function updateCarro(){
     carrinho.anims.play("carrinho", true);
     carrinho.body.setVelocityX(1000);
     if(!cart){
-        playSound(game,'cart',config);
+        carroSound = playSound(game,'cart',config);
         cart = true;
     }
 
@@ -1358,8 +1405,7 @@ function updateEnemies(enemy, scene){
             enemyCount -= 1;
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
-            else if(WaveCount == mapElements[4]){
-                console.log("ganhador");
+            else if(WaveCount == mapElements[4] && enemyCount == 0){
                 WinScreenS();
             }
     		if(enemy.body.height == 104){
@@ -1380,7 +1426,7 @@ function updateEnemies(enemy, scene){
             if(enemyCount == 0 && WaveCount != mapElements[4])
                 
                 scene.time.delayedCall(9000, () => {endWave();genesis(scene);}, null, this);
-            else if(WaveCount == mapElements[4]){
+            else if(WaveCount == mapElements[4] && enemyCount == 0){
                 console.log("ganhador");
                 WinScreenS();
             }
@@ -1398,12 +1444,11 @@ function updateEnemies(enemy, scene){
     	    }
     	}
         enemy.immobile = true;
-        enemy.once('animationcomplete', () => {
             score += enemy.value;
             scoreText.setText("SCORE: " + score);
             scoreText.setShadow(-5, 5, 'rgba(0,0,0,0.5)', 0);
-            enemy.destroy();
-        });
+            enemy.once('animationcomplete', () => {enemy.destroy();});
+            
     }
 
     else if (enemy.alive() && !enemy.immobile){
