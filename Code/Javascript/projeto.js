@@ -164,6 +164,8 @@ function messageHandler(ev){
 
 function preload(){
 
+
+
     mapElements = platformsDesign(this,currentLevel);
     this.load.spritesheet('sky', mapElements[9], { frameWidth: 2400, frameHeight: 800 });
     this.load.image('ground', '../../Resources/Sprites/Jogo/lvl1/chao.png');
@@ -238,6 +240,7 @@ function preload(){
     this.load.spritesheet('healthBarCasa', '../../Resources/Sprites/Jogo/lvl1/healthbar.png',{ frameWidth: 120, frameHeight: 40 });
 
     this.load.audio('level1_music', '../../Resources/Sounds/level1_music.wav');
+    this.load.audio('level2_music', '../../Resources/Sounds/level2_music.mp3');
     this.load.audio('swoosh_0', '../../Resources/Sounds/swoosh_0.wav');  
     this.load.audio('swoosh_1', '../../Resources/Sounds/swoosh_1.wav'); 
     this.load.audio('swoosh_2', '../../Resources/Sounds/swoosh_2.wav');
@@ -260,7 +263,8 @@ function preload(){
     this.load.audio('steps', '../../Resources/Sounds/audiosteps.wav'); 
     this.load.audio('cart', '../../Resources/Sounds/wooden_cart.mp3'); 
     this.load.audio('fall', '../../Resources/Sounds/fall.mp3'); 
-    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');    
+    this.load.audio('cartGet', '../../Resources/Sounds/cartGet.wav');  
+    this.load.audio('medievalDeath', '../../Resources/Sounds/medievalDeath.wav');    
 }
 
 
@@ -661,7 +665,10 @@ function create(){
         loop: true
     }
 
-	musicTrack = playSound(this,"level1_music",configLvlMusic);
+    if(currentLevel == 1)
+    	musicTrack = playSound(this,"level1_music",configLvlMusic);
+    else if(currentLevel == 2)
+        musicTrack = playSound(this,"level2_music",{volume: 0.7*(volumeFrame/10),loop: true});
 
     this.add.image(1200, 400, 'sky');
 
@@ -857,9 +864,12 @@ function dificuldade(start,growth,arrayPortais){
 
 function GameOverS(){
     game.scene.pause("level"); 
-
-    console.log("gameover");
-
+    musicTrack.stop();
+    if(waithardBurn)
+        hardBurn.stop();
+    if(waitsoftBurn)
+        softBurn.stop();
+    playSound(game,"medievalDeath",{volume: 1.2*(volumeFrame/10)});
     game.scene.start("GameOver");
     game.scene.resume("GameOver");
     game.scene.bringToTop("GameOver");
@@ -1039,7 +1049,7 @@ function updatePadeira(scene){
         padeira.facingRight = false
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1064,7 +1074,7 @@ function updatePadeira(scene){
         padeira.facingRight = true
         if (padeira.body.touching.down){
         	if(!falling){
-        		playSound(game,"fall",{volume: 0.7*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
             if (!padeira.weapon){
@@ -1093,7 +1103,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)
@@ -1107,7 +1117,7 @@ function updatePadeira(scene){
         		steps.stop();
         	}
         	if(!falling){
-        		playSound(game,"fall",{volume: 1*(volumeFrame/10)});
+        		playSound(game,"fall",{volume: 0.6*(volumeFrame/10)});
         		falling = true;
         	}
         	if(padeira.facingRight == true)

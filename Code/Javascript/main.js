@@ -9,6 +9,8 @@ var frm;
 
 }());
 
+
+
 function main(){
     var startPage = 1;
     showPage(startPage);
@@ -16,7 +18,6 @@ function main(){
     window.addEventListener("message", messageHandler);
     frm = document.getElementsByTagName("iframe")[0];
     frm.addEventListener("load", iframeHandler);
-
 }
 
 
