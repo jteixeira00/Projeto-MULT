@@ -1,0 +1,19 @@
+#voltar{
+
+    outline: none;
+    -moz-outline : none;
+    border: none;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    background: none;
+    position: absolute;
+    left: 30px;
+    top: 700px;
+
+}
+body{
+    background-image: url("../../Resources/Sprites/Creditos/background.png");
+    background-repeat: no-repeat;
+    background-size: 1200px 800px;
+}

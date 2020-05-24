@@ -67,7 +67,7 @@ function messageHandler(ev){
         showPage(4);
     }
     if(ev.data == "creditos"){
-        
+        showPage(5);
     }
     if(ev.data>=0 && ev.data<15){
         
